@@ -189,7 +189,16 @@ export function RiderPanel() {
                 </div>
 
                 <div className="rounded-xl border border-hairline bg-obsidian p-3 text-xs space-y-1.5">
-                  <p className="font-bold text-ink">{order.user?.name || 'Cliente'}</p>
+                  <p className="font-bold text-ink">
+                    {order.user?.name || 'Cliente'}{' '}
+                    <span className="ml-1.5 rounded bg-joycyan/15 px-1.5 py-0.5 font-mono text-[10px] text-joycyan">
+                      {order.deliveryType === 'CONSUMO_LOCAL'
+                        ? 'En el Local (Mesa)'
+                        : order.deliveryType === 'RECOGER_LOCAL'
+                        ? 'Recojo en Local'
+                        : 'Delivery'}
+                    </span>
+                  </p>
                   <p className="flex items-start gap-1.5 text-slate-300">
                     <MapPin className="mt-0.5 h-3.5 w-3.5 shrink-0 text-joycyan" />
                     <span>

@@ -55,7 +55,13 @@ export function ReceiptPrintModal({
               <strong>Cliente:</strong> {order.user?.name || 'Cliente Joy Ride'}
             </p>
             <p>
-              <strong>Entrega:</strong> {order.deliveryAddress || 'Recojo en Local'}
+              <strong>Modalidad:</strong>{' '}
+              {order.deliveryType === 'CONSUMO_LOCAL'
+                ? 'En el Local (Mesa)'
+                : order.deliveryType === 'RECOGER_LOCAL'
+                ? 'Recoger en Local'
+                : 'Delivery Sucre'}{' '}
+              · {order.deliveryAddress || 'Calle Nicolás Ortiz N° 14'}
             </p>
             <p>
               <strong>Pago:</strong> {order.payment?.method || 'QR'} ({order.payment?.status || 'COMPLETADO'})

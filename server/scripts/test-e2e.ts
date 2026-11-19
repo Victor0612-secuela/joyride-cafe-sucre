@@ -596,6 +596,40 @@ async function run() {
   assert.equal(stripeConfirm.status, 200);
   assert.equal(stripeConfirm.data.status, 'PAGO_CONFIRMADO');
 
+  // Dine-in CONSUMO_LOCAL zero delivery fee test
+  const dineInIntent = await api(
+    '/payments/stripe/create-intent',
+    {
+      method: 'POST',
+      body: JSON.stringify({
+        items: [{ productId: targetProd.id, quantity: 1 }],
+        deliveryType: 'CONSUMO_LOCAL',
+        deliveryAddress: 'En el Local · Patio Colonial · Mesa 7',
+        phoneContact: '+591 71123456',
+        splitCount: 1,
+      }),
+    },
+    clientToken
+  );
+  assert.equal(dineInIntent.status, 201);
+  assert.equal(Number(dineInIntent.data.totalBs), Number(targetProd.precioBs));
+  const dineInConfirm = await api(
+    '/payments/stripe/confirm-intent',
+    {
+      method: 'POST',
+      body: JSON.stringify({
+        orderId: dineInIntent.data.orderId,
+        paymentIntentId: dineInIntent.data.paymentIntentId,
+        cardBrand: 'VISA',
+        cardLast4: '4242',
+      }),
+    },
+    clientToken
+  );
+  assert.equal(dineInConfirm.status, 200);
+  const dineInOrder = await api(`/orders/${dineInIntent.data.orderId}`, {}, clientToken);
+  assert.equal(dineInOrder.data.order.deliveryType, 'CONSUMO_LOCAL');
+
   // F12 API tampering checks
   const anonAdminCreate = await api('/admin/products', { method: 'POST', body: JSON.stringify({ name: 'Hack' }) });
   assert.equal(anonAdminCreate.status, 401);

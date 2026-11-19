@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   Calendar,
+  Check,
   ChevronDown,
   Clock,
   Compass,
@@ -23,7 +24,7 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
 import { useTheme } from '../../context/ThemeContext';
-import { useI18n } from '../../context/I18nContext';
+import { SUPPORTED_LANGS, useI18n } from '../../context/I18nContext';
 import { isSoundEnabled, joySound, setSoundEnabled } from '../../lib/sound';
 import { getSucreStatusInfo, ROLE_META } from '../../lib/format';
 import { Category } from '../../types';
@@ -39,10 +40,11 @@ export function Navbar({ categories = [], onSelectCategory, onOpenReservation }:
   const { user, logout } = useAuth();
   const { totalItems, setDrawerOpen, currency, setCurrency } = useCart();
   const { theme, toggleTheme } = useTheme();
-  const { lang, toggleLang, t } = useI18n();
+  const { lang, setLang, t } = useI18n();
   const navigate = useNavigate();
 
   const [catOpen, setCatOpen] = useState(false);
+  const [langOpen, setLangOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [soundOn, setSoundOn] = useState(() => isSoundEnabled());
@@ -56,6 +58,7 @@ export function Navbar({ categories = [], onSelectCategory, onOpenReservation }:
   };
 
   const catRef = useRef<HTMLDivElement>(null);
+  const langRef = useRef<HTMLDivElement>(null);
   const userRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -66,6 +69,7 @@ export function Navbar({ categories = [], onSelectCategory, onOpenReservation }:
   useEffect(() => {
     const onDocClick = (e: MouseEvent) => {
       if (catRef.current && !catRef.current.contains(e.target as Node)) setCatOpen(false);
+      if (langRef.current && !langRef.current.contains(e.target as Node)) setLangOpen(false);
       if (userRef.current && !userRef.current.contains(e.target as Node)) setUserMenuOpen(false);
     };
     document.addEventListener('mousedown', onDocClick);
@@ -135,7 +139,7 @@ export function Navbar({ categories = [], onSelectCategory, onOpenReservation }:
                   onClick={() => handleCatClick('all')}
                   className="flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-left text-sm font-semibold text-ink transition-colors hover:bg-elevated hover:text-joycyan"
                 >
-                  <span>Toda la Carta Joy Ride</span>
+                  <span>{t('Toda la Carta Joy Ride', 'Full Joy Ride Menu')}</span>
                   <Sparkles className="h-4 w-4 text-joymagenta" />
                 </button>
                 <div className="my-1 border-t border-hairline" />
@@ -210,12 +214,12 @@ export function Navbar({ categories = [], onSelectCategory, onOpenReservation }:
             <span className="font-mono tabular-nums text-ink">{sucreClock.sucreTimeStr} Sucre</span>
             {sucreClock.isHappyHour && (
               <span className="rounded bg-joymagenta/20 px-1.5 py-0.5 text-[10px] font-bold text-pink-300">
-                2x1 EN VIVO
+                {t('2x1 ACTIVO', '2x1 ACTIVE')}
               </span>
             )}
           </div>
 
-          {/* Compact Theme / Language / Sound Controls (Desktop) */}
+          {/* Compact Theme / Multi-Language / Sound Controls (Desktop) */}
           <div className="hidden items-center gap-1 rounded-xl border border-hairline bg-surface p-0.5 lg:flex">
             <button
               type="button"
@@ -229,19 +233,60 @@ export function Navbar({ categories = [], onSelectCategory, onOpenReservation }:
             >
               {theme === 'dark' ? <Sun className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />}
             </button>
-            <button
-              type="button"
-              onClick={() => {
-                toggleLang();
-                joySound.toggle();
-              }}
-              aria-label="Cambiar idioma ES/EN"
-              title="Idioma ES / EN"
-              className="flex items-center gap-1 rounded-lg px-2 py-1 font-mono text-[11px] font-bold text-ink transition-colors hover:bg-elevated hover:text-joycyan"
-            >
-              <Globe className="h-3 w-3 text-joycyan" />
-              <span>{lang.toUpperCase()}</span>
-            </button>
+
+            <div ref={langRef} className="relative">
+              <button
+                type="button"
+                onClick={() => {
+                  joySound.click();
+                  setLangOpen((v) => !v);
+                }}
+                aria-label="Seleccionar idioma"
+                aria-expanded={langOpen}
+                title="Idioma / Language"
+                className="flex items-center gap-1 rounded-lg px-2 py-1 font-mono text-[11px] font-bold text-ink transition-colors hover:bg-elevated hover:text-joycyan"
+              >
+                <Globe className="h-3 w-3 text-joycyan" />
+                <span>{lang.toUpperCase()}</span>
+                <ChevronDown className={`h-3 w-3 transition-transform ${langOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {langOpen && (
+                <div
+                  role="menu"
+                  aria-label="Idiomas disponibles"
+                  className="absolute right-0 top-full z-50 mt-2 w-48 rounded-2xl border border-hairline bg-surface p-1.5 shadow-elevated"
+                >
+                  {SUPPORTED_LANGS.map((item) => {
+                    const active = lang === item.id;
+                    return (
+                      <button
+                        key={item.id}
+                        type="button"
+                        role="menuitem"
+                        onClick={() => {
+                          setLang(item.id);
+                          setLangOpen(false);
+                          joySound.toggle();
+                        }}
+                        className={`flex w-full items-center justify-between rounded-xl px-3 py-2 text-left text-xs font-semibold transition-colors ${
+                          active
+                            ? 'bg-joycyan/15 text-joycyan'
+                            : 'text-ink/90 hover:bg-elevated hover:text-ink'
+                        }`}
+                      >
+                        <span className="flex items-center gap-2">
+                          <span className="font-mono text-[11px] font-bold opacity-80">{item.code}</span>
+                          <span>{item.native}</span>
+                        </span>
+                        {active && <Check className="h-3.5 w-3.5 shrink-0 text-joycyan" />}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
             <button
               type="button"
               onClick={handleToggleSound}
@@ -293,7 +338,7 @@ export function Navbar({ categories = [], onSelectCategory, onOpenReservation }:
             className="relative flex items-center gap-2 rounded-xl border border-joycyan/40 bg-surface px-3 py-2 text-sm font-semibold text-ink transition-colors hover:border-joycyan hover:bg-elevated active:scale-[0.96]"
           >
             <ShoppingBag className="h-4 w-4 text-joycyan" />
-            <span className="hidden sm:inline">Pedido</span>
+            <span className="hidden sm:inline">{t('Pedido', 'Order')}</span>
             {totalItems > 0 && (
               <span className="flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-joymagenta px-1.5 font-mono text-[11px] font-bold tabular-nums text-white">
                 {totalItems}
@@ -336,7 +381,7 @@ export function Navbar({ categories = [], onSelectCategory, onOpenReservation }:
                         onClick={() => setUserMenuOpen(false)}
                         className="flex items-center justify-between rounded-xl bg-joycyan/15 px-3 py-2 text-sm font-semibold text-joycyan transition-colors hover:bg-joycyan/25"
                       >
-                        <span>Ir a Panel Operativo</span>
+                        <span>{t('Ir a Panel Operativo', 'Open Staff Panel')}</span>
                         <ShieldCheck className="h-4 w-4" />
                       </Link>
                     )}
@@ -347,7 +392,7 @@ export function Navbar({ categories = [], onSelectCategory, onOpenReservation }:
                       className="flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-ink transition-colors hover:bg-elevated"
                     >
                       <Package className="h-4 w-4 text-muted" />
-                      <span>Mis Pedidos & Reservas</span>
+                      <span>{t('Mis Pedidos & Reservas', 'My Orders & Bookings')}</span>
                     </Link>
 
                     <button
@@ -371,7 +416,7 @@ export function Navbar({ categories = [], onSelectCategory, onOpenReservation }:
               className="flex items-center gap-1.5 rounded-xl bg-joycyan px-3.5 py-2 text-sm font-bold text-obsidian transition-colors hover:bg-joycyan-deep active:scale-[0.96]"
             >
               <LogIn className="h-4 w-4" />
-              <span className="hidden sm:inline">Ingresar</span>
+              <span className="hidden sm:inline">{t('Ingresar', 'Sign In')}</span>
             </Link>
           )}
 
@@ -391,8 +436,8 @@ export function Navbar({ categories = [], onSelectCategory, onOpenReservation }:
       {mobileOpen && (
         <div className="border-t border-hairline bg-obsidian px-4 py-4 xl:hidden">
           <div className="flex flex-col gap-1.5">
-            <div className="mb-2 flex flex-wrap items-center justify-between gap-2 rounded-xl border border-hairline bg-surface px-3 py-2">
-              <div className="flex items-center gap-1.5">
+            <div className="mb-2 flex flex-col gap-2 rounded-xl border border-hairline bg-surface px-3 py-2.5">
+              <div className="flex flex-wrap items-center justify-between gap-2">
                 <button
                   type="button"
                   onClick={() => {
@@ -402,45 +447,53 @@ export function Navbar({ categories = [], onSelectCategory, onOpenReservation }:
                   className="inline-flex items-center gap-1 rounded-lg border border-hairline bg-obsidian px-2.5 py-1 text-xs font-semibold text-ink"
                 >
                   {theme === 'dark' ? <Sun className="h-3.5 w-3.5 text-amber-400" /> : <Moon className="h-3.5 w-3.5 text-joycyan" />}
-                  <span>{theme === 'dark' ? 'Claro' : 'Oscuro'}</span>
+                  <span>{theme === 'dark' ? t('Claro', 'Light') : t('Oscuro', 'Dark')}</span>
                 </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    toggleLang();
-                    joySound.toggle();
-                  }}
-                  className="inline-flex items-center gap-1 rounded-lg border border-hairline bg-obsidian px-2.5 py-1 font-mono text-xs font-bold text-ink"
-                >
-                  <Globe className="h-3.5 w-3.5 text-joycyan" />
-                  <span>{lang.toUpperCase()}</span>
-                </button>
+                <div className="flex items-center gap-1 rounded-lg bg-obsidian p-0.5 text-xs font-bold">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCurrency('BOB');
+                      joySound.currency();
+                    }}
+                    className={`rounded-md px-2.5 py-1 ${
+                      currency === 'BOB' ? 'bg-joycyan text-obsidian' : 'text-muted'
+                    }`}
+                  >
+                    Bs.
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCurrency('USD');
+                      joySound.currency();
+                    }}
+                    className={`rounded-md px-2.5 py-1 ${
+                      currency === 'USD' ? 'bg-joycyan text-obsidian' : 'text-muted'
+                    }`}
+                  >
+                    USD
+                  </button>
+                </div>
               </div>
-              <div className="flex items-center gap-1 rounded-lg bg-obsidian p-0.5 text-xs font-bold">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setCurrency('BOB');
-                    joySound.currency();
-                  }}
-                  className={`rounded-md px-2.5 py-1 ${
-                    currency === 'BOB' ? 'bg-joycyan text-obsidian' : 'text-muted'
-                  }`}
-                >
-                  Bs.
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setCurrency('USD');
-                    joySound.currency();
-                  }}
-                  className={`rounded-md px-2.5 py-1 ${
-                    currency === 'USD' ? 'bg-joycyan text-obsidian' : 'text-muted'
-                  }`}
-                >
-                  USD
-                </button>
+              <div className="grid grid-cols-3 gap-1 sm:grid-cols-6">
+                {SUPPORTED_LANGS.map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => {
+                      setLang(item.id);
+                      joySound.toggle();
+                    }}
+                    className={`rounded-lg border px-2 py-1 font-mono text-[11px] font-bold transition-colors ${
+                      lang === item.id
+                        ? 'border-joycyan bg-joycyan/20 text-joycyan'
+                        : 'border-hairline bg-obsidian text-muted hover:text-ink'
+                    }`}
+                  >
+                    {item.code}
+                  </button>
+                ))}
               </div>
             </div>
             <Link
@@ -473,7 +526,7 @@ export function Navbar({ categories = [], onSelectCategory, onOpenReservation }:
               className="flex items-center gap-2 rounded-xl px-3 py-2.5 text-left text-sm font-medium text-ink hover:bg-surface"
             >
               <Calendar className="h-4 w-4 text-joycyan" />
-              <span>Reservar Zona / Clases de Salsa</span>
+              <span>{t('Reservar Zona / Clases de Salsa', 'Book Area / Salsa Classes')}</span>
             </button>
             <Link
               to="/mapa-sucre"
@@ -481,7 +534,7 @@ export function Navbar({ categories = [], onSelectCategory, onOpenReservation }:
               className="flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium text-ink hover:bg-surface"
             >
               <Compass className="h-4 w-4 text-joymagenta" />
-              <span>Mapa Turístico de Sucre</span>
+              <span>{t('Mapa Turístico de Sucre', 'Sucre Tourist Map')}</span>
             </Link>
             {user && (
               <Link
@@ -490,7 +543,7 @@ export function Navbar({ categories = [], onSelectCategory, onOpenReservation }:
                 className="flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-medium text-ink hover:bg-surface"
               >
                 <Package className="h-4 w-4 text-joycyan" />
-                <span>Mis Pedidos & PIN de Entrega</span>
+                <span>{t('Mis Pedidos & PIN de Entrega', 'My Orders & Delivery PIN')}</span>
               </Link>
             )}
           </div>

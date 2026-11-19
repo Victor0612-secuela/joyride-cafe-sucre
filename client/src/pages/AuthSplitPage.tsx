@@ -130,7 +130,6 @@ export function AuthSplitPage({ initialMode = 'login' }: { initialMode?: 'login'
               className="h-36 w-36 rounded-full object-contain ring-2 ring-joycyan/35 shadow-card"
             />
             <JoyRideHeritageLockup
-              forceTone="white"
               className="h-28 w-auto opacity-95 drop-shadow-[0_6px_18px_rgba(0,0,0,0.45)]"
             />
           </div>
@@ -139,7 +138,7 @@ export function AuthSplitPage({ initialMode = 'login' }: { initialMode?: 'login'
             <span className="mt-1.5 block text-joycyan">PROBABLY THE BEST BAR IN TOWN</span>
           </h1>
           <p className="mt-5 text-base leading-relaxed text-slate-300 xl:text-lg">
-            Plataforma integral de pedidos en vivo, reservas y seguimiento paso a paso para el
+            Plataforma integral de pedidos, mesas, reservas y seguimiento paso a paso para el
             resto-bar más icónico de Sucre, Bolivia.
           </p>
 

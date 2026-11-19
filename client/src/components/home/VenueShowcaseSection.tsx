@@ -137,7 +137,11 @@ export function VenueShowcaseSection({
 
   return (
     <section className="relative overflow-hidden border-y border-hairline bg-surface/45 py-16 sm:py-24">
-      <BrandWatermarkBg variant="editorial" />
+      <BrandWatermarkBg
+        variant="editorial"
+        bgImage="/images/joyride-official-portada.webp"
+        emblemSide="left"
+      />
 
       <div className="relative z-10 mx-auto max-w-[1640px] px-5 sm:px-8 lg:px-12 xl:px-14">
         {/* Historia + Letrero Catedral sin recortes + Patio */}
@@ -151,8 +155,8 @@ export function VenueShowcaseSection({
           >
             <h2 className="font-display text-3xl font-extrabold leading-tight tracking-tight text-ink sm:text-4xl xl:text-5xl">
               {t(
-                'Veinticinco años de chimenea, montaña y noches sucrenses',
-                'Twenty-five years of hearth, mountains & Sucre nights'
+                '25 años de chimenea, montaña y noches en Sucre',
+                '25 years of hearth, mountains & Sucre nights'
               )}
             </h2>
             <p className="mt-5 text-base leading-relaxed text-muted sm:text-lg">
@@ -378,12 +382,14 @@ export function VenueShowcaseSection({
         <div className="mt-14">
           <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
             <div>
-              <p className="inline-flex items-center gap-1.5 font-mono text-xs font-bold uppercase tracking-[0.2em] text-joycyan">
-                <Sparkles className="h-3.5 w-3.5 text-joymagenta" />
-                {t('Selección de la Casa', 'House Favorites')}
-              </p>
+              <ProbablyTagline
+                subject="Combos"
+                accent="magenta"
+                size="sm"
+                spanishHint={t('Favoritos de Cocina & Barra', 'Kitchen & Bar Favorites')}
+              />
               <h3 className="mt-1 font-display text-2xl font-extrabold text-ink sm:text-3xl">
-                {t('Favoritos listos para pedir ahora', 'Popular Picks Ready to Order')}
+                {t('Favoritos listos para pedir ahora', 'House Picks Ready to Order')}
               </h3>
             </div>
 

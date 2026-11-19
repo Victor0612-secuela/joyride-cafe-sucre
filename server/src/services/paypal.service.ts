@@ -94,6 +94,8 @@ export async function createPayPalOrder(input: CreateOrderInput) {
         deliveryAddress:
           input.deliveryType === DeliveryType.DELIVERY
             ? input.deliveryAddress || 'Sucre Centro'
+            : input.deliveryType === DeliveryType.CONSUMO_LOCAL
+            ? input.deliveryAddress?.trim() || 'En el Local — Mesa en Joy Ride Café (Nicolás Ortiz N° 14)'
             : 'Recojo en Local — Calle Nicolás Ortiz N° 14',
         deliveryReference: input.deliveryReference,
         destLat: input.destLat ?? (input.deliveryType === DeliveryType.DELIVERY ? -19.0442 : -19.04804),

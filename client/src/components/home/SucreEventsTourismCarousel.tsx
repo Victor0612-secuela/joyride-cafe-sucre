@@ -18,6 +18,7 @@ import { JOYRIDE_LOCATION, SUCRE_TOURIST_SPOTS } from '../../lib/constants';
 import { useI18n } from '../../context/I18nContext';
 import { joySound } from '../../lib/sound';
 import { JoyRideEvent } from '../../types';
+import { BrandWatermarkBg } from '../ui/BrandWatermarkBg';
 import { EditorialSplitModal } from '../ui/EditorialSplitModal';
 import { ProbablyTagline } from '../ui/ProbablyTagline';
 
@@ -112,10 +113,16 @@ export function SucreEventsTourismCarousel({
   return (
     <section
       id="turismo"
-      className="mx-auto max-w-[1640px] px-5 py-14 sm:px-8 lg:px-12 xl:px-14"
+      className="relative overflow-hidden py-14"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
+      <BrandWatermarkBg
+        variant="editorial"
+        bgImage="/images/sucre-mirador-sunset.webp"
+        emblemSide="right"
+      />
+      <div className="relative z-10 mx-auto max-w-[1640px] px-5 sm:px-8 lg:px-12 xl:px-14">
       <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
         <div>
           <ProbablyTagline
@@ -304,6 +311,7 @@ export function SucreEventsTourismCarousel({
           </div>
         </div>
       )}
+      </div>
 
       {/* Wide 2-Column Split Modal (Auto-rotating Left Photos/Video + Right Dynamic Info) */}
       <EditorialSplitModal

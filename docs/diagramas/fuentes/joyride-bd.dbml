@@ -46,6 +46,7 @@ Enum PaymentStatus {
 Enum DeliveryType {
   DELIVERY
   RECOGER_LOCAL
+  CONSUMO_LOCAL
 }
 
 Enum StockMovementType {

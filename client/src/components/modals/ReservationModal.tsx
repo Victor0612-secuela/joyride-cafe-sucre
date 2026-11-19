@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { QRCodeSVG } from 'qrcode.react';
 import { Calendar, CheckCircle2, Music, Users } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { useI18n } from '../../context/I18nContext';
 import { useToast } from '../../context/ToastContext';
 import { api, getErrorMessage } from '../../lib/api';
 import { ZONE_META } from '../../lib/format';
@@ -41,6 +42,7 @@ const ZONE_IMAGES: Record<ReservationZone, string[]> = {
 
 export function ReservationModal({ open, defaultSalsa = false, onClose }: ReservationModalProps) {
   const { user } = useAuth();
+  const { t } = useI18n();
   const { pushToast } = useToast();
   const queryClient = useQueryClient();
 
@@ -121,9 +123,17 @@ export function ReservationModal({ open, defaultSalsa = false, onClose }: Reserv
     <EditorialSplitModal
       open={open}
       onClose={handleClose}
-      title={createdReservation ? `Pase Confirmado · ${createdReservation.code}` : 'Reservar Mesa & Clases de Salsa'}
+      title={
+        createdReservation
+          ? `Pase Confirmado · ${createdReservation.code}`
+          : t('Reservar Mesa & Clases de Salsa', 'Book a Table & Salsa Classes')
+      }
       subtitle={`Probably the Best Table in Town® · ${ZONE_META[zone].label}`}
-      badge={includeSalsaClass ? 'INCLUYE SALSA & BACHATA' : 'RESERVA EN VIVO'}
+      badge={
+        includeSalsaClass
+          ? t('PISTA SALSA & BACHATA', 'SALSA & BACHATA FLOOR')
+          : t('RESERVA DE MESA', 'TABLE BOOKING')
+      }
       accent={includeSalsaClass ? 'magenta' : 'cyan'}
       images={ZONE_IMAGES[zone]}
     >
@@ -344,7 +354,11 @@ export function ReservationModal({ open, defaultSalsa = false, onClose }: Reserv
             className="flex w-full items-center justify-center gap-2 rounded-xl bg-joycyan py-3.5 text-sm font-bold text-obsidian transition-colors hover:bg-joycyan-deep active:scale-[0.96] disabled:opacity-60"
           >
             <Calendar className="h-4 w-4" />
-            <span>{submitting ? 'Generando pase QR…' : 'Confirmar Reserva y Pase QR'}</span>
+            <span>
+              {submitting
+                ? 'Generando pase QR…'
+                : t('Confirmar Reserva y Pase QR', 'Confirm Booking & QR Pass')}
+            </span>
           </button>
         </form>
       )}

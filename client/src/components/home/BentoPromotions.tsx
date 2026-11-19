@@ -21,6 +21,7 @@ import { joySound } from '../../lib/sound';
 import { Product, Promotion } from '../../types';
 import { BentoGridSkeleton } from '../ui/Skeleton';
 import { AnimatedPrice } from '../ui/AnimatedPrice';
+import { BrandWatermarkBg } from '../ui/BrandWatermarkBg';
 import { EditorialSplitModal } from '../ui/EditorialSplitModal';
 import { ProbablyTagline } from '../ui/ProbablyTagline';
 
@@ -92,8 +93,14 @@ export function BentoPromotions({
   return (
     <section
       id="happy-hour-bento"
-      className="mx-auto max-w-[1640px] px-5 py-16 sm:px-8 sm:py-24 lg:px-12 xl:px-14"
+      className="relative overflow-hidden py-16 sm:py-24"
     >
+      <BrandWatermarkBg
+        variant="editorial"
+        bgImage="/images/experiencia-bar.webp"
+        emblemSide="right"
+      />
+      <div className="relative z-10 mx-auto max-w-[1640px] px-5 sm:px-8 lg:px-12 xl:px-14">
       <div className="mb-10 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
         <div>
           <ProbablyTagline
@@ -372,6 +379,7 @@ export function BentoPromotions({
           </div>
         </motion.div>
       )}
+      </div>
 
       {/* Wide 2-Column Editorial Split Modal fed directly by DB products & promotions */}
       <EditorialSplitModal

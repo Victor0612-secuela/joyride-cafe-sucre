@@ -5,11 +5,13 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { CheckCircle2, MapPin, MessageSquarePlus, Plus, Sparkles, Star, X } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
+import { useI18n } from '../../context/I18nContext';
 import { useToast } from '../../context/ToastContext';
 import { api, getErrorMessage } from '../../lib/api';
 import { formatPrice } from '../../lib/format';
 import { joySound } from '../../lib/sound';
 import { Product, Review } from '../../types';
+import { BrandWatermarkBg } from '../ui/BrandWatermarkBg';
 import { ProbablyTagline } from '../ui/ProbablyTagline';
 
 interface MasonryCommunityProps {
@@ -59,6 +61,7 @@ function GoogleBadgeIcon() {
 export function MasonryCommunity({ products, onOpenReservation }: MasonryCommunityProps) {
   const { user } = useAuth();
   const { currency, addItem } = useCart();
+  const { t } = useI18n();
   const { pushToast } = useToast();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -122,8 +125,13 @@ export function MasonryCommunity({ products, onOpenReservation }: MasonryCommuni
   const displayReviews = reviews || [];
 
   return (
-    <section className="overflow-hidden border-t border-hairline bg-surface/35 py-16 sm:py-24">
-      <div className="mx-auto max-w-[1640px] px-5 sm:px-8 lg:px-12 xl:px-14">
+    <section className="relative overflow-hidden border-t border-hairline bg-surface/35 py-16 sm:py-24">
+      <BrandWatermarkBg
+        variant="editorial"
+        bgImage="/images/venue-lounge-lights.webp"
+        emblemSide="left"
+      />
+      <div className="relative z-10 mx-auto max-w-[1640px] px-5 sm:px-8 lg:px-12 xl:px-14">
         <div className="mb-12 flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
           <div>
             <div className="mb-2 flex flex-wrap items-center gap-3">
@@ -131,14 +139,21 @@ export function MasonryCommunity({ products, onOpenReservation }: MasonryCommuni
                 <Sparkles className="h-3.5 w-3.5 text-joymagenta" />
                 <span>4.3 ★ EN GOOGLE · COMUNIDAD JOY RIDE</span>
               </div>
-              <ProbablyTagline subject="Nights" accent="magenta" size="sm" spanishHint="Voces reales de Sucre" />
+              <ProbablyTagline
+                subject="Nights"
+                accent="magenta"
+                size="sm"
+                spanishHint={t('Voces de Sucre & Viajeros', 'Sucre & Traveler Voices')}
+              />
             </div>
             <h2 className="font-display text-3xl font-extrabold tracking-tight text-ink sm:text-4xl xl:text-5xl">
-              Reseñas Reales &amp; Memorias en la Casona
+              {t('Noches & Reseñas en la Casona', 'Nights & Reviews at the Casona')}
             </h2>
             <p className="mt-2.5 max-w-2xl text-base text-muted sm:text-lg">
-              Experiencias de sucrenses y viajeros que pasaron por Nicolás Ortiz N° 14. Deja tu
-              reseña con tu cuenta Joy Ride o vinculada con Google.
+              {t(
+                'Experiencias de sucrenses y viajeros que pasaron por Nicolás Ortiz N° 14. Comparte tu reseña con tu cuenta Joy Ride.',
+                'Stories from locals and travelers who visited Nicolás Ortiz N° 14. Share your own review with your Joy Ride account.'
+              )}
             </p>
           </div>
 
@@ -162,14 +177,14 @@ export function MasonryCommunity({ products, onOpenReservation }: MasonryCommuni
               className="inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-joycyan px-5 py-2.5 text-sm font-bold text-obsidian transition-colors hover:bg-joycyan-deep active:scale-[0.96]"
             >
               <MessageSquarePlus className="h-4 w-4" />
-              <span>Dejar Reseña</span>
+              <span>{t('Dejar Reseña', 'Write Review')}</span>
             </button>
             <button
               type="button"
               onClick={onOpenReservation}
               className="inline-flex min-h-[44px] items-center gap-2 rounded-xl border border-joymagenta/45 bg-surface px-5 py-2.5 text-sm font-semibold text-ink transition-colors hover:border-joymagenta hover:text-pink-200"
             >
-              <span>Planificar Evento o Mesa</span>
+              <span>{t('Planificar Evento o Mesa', 'Plan Event or Table')}</span>
             </button>
           </div>
         </div>

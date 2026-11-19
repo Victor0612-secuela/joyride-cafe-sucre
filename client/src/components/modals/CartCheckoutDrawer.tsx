@@ -17,6 +17,7 @@ import {
   Trash2,
   Upload,
   Users,
+  UtensilsCrossed,
   X,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
@@ -27,6 +28,7 @@ import { api, getErrorMessage } from '../../lib/api';
 import { SUCRE_DELIVERY_ZONES } from '../../lib/constants';
 import { EXCHANGE_RATE } from '../../lib/format';
 import { joySound } from '../../lib/sound';
+import { DeliveryType } from '../../types';
 import { AnimatedPrice } from '../ui/AnimatedPrice';
 import { QrSessionData } from './QrLivePaymentModal';
 
@@ -68,7 +70,9 @@ export function CartCheckoutDrawer({ onQrStarted, onOrderCreated }: CartCheckout
   const { pushToast } = useToast();
   const navigate = useNavigate();
 
-  const [deliveryType, setDeliveryType] = useState<'DELIVERY' | 'RECOGER_LOCAL'>('DELIVERY');
+  const [deliveryType, setDeliveryType] = useState<DeliveryType>('DELIVERY');
+  const [tableZone, setTableZone] = useState('Patio Colonial');
+  const [tableNumber, setTableNumber] = useState('Mesa 04');
   const [selectedZoneId, setSelectedZoneId] = useState(SUCRE_DELIVERY_ZONES[0].id);
   const [customCoords, setCustomCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [locatingGps, setLocatingGps] = useState(false);
@@ -160,7 +164,12 @@ export function CartCheckoutDrawer({ onQrStarted, onOrderCreated }: CartCheckout
   const buildOrderPayload = () => ({
     items: items.map((i) => ({ productId: i.product.id, quantity: i.quantity })),
     deliveryType,
-    deliveryAddress: deliveryType === 'DELIVERY' ? deliveryAddress : undefined,
+    deliveryAddress:
+      deliveryType === 'DELIVERY'
+        ? deliveryAddress
+        : deliveryType === 'CONSUMO_LOCAL'
+        ? `En el Local · ${tableZone} · ${tableNumber.trim() || 'Mesa'}`
+        : undefined,
     deliveryReference: deliveryReference || undefined,
     destLat: deliveryType === 'DELIVERY' ? (customCoords?.lat ?? selectedZone.lat) : -19.04804,
     destLng: deliveryType === 'DELIVERY' ? (customCoords?.lng ?? selectedZone.lng) : -65.25973,
@@ -553,37 +562,103 @@ export function CartCheckoutDrawer({ onQrStarted, onOrderCreated }: CartCheckout
                     ))}
                   </div>
 
-                  {/* Delivery Mode */}
+                  {/* Order Mode (Delivery / Dine-in at Table / Pickup) */}
                   <div className="space-y-3 rounded-2xl border border-hairline bg-obsidian p-4">
                     <p className="text-xs font-bold uppercase tracking-wider text-muted">
-                      Modalidad de Entrega
+                      {t('Modalidad de Entrega', 'Order Mode')}
                     </p>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-3 gap-2">
                       <button
                         type="button"
-                        onClick={() => setDeliveryType('DELIVERY')}
-                        className={`flex items-center justify-center gap-2 rounded-xl border py-2.5 text-xs font-semibold transition-colors ${
+                        onClick={() => {
+                          joySound.tab();
+                          setDeliveryType('DELIVERY');
+                        }}
+                        className={`flex flex-col items-center justify-center gap-1 rounded-xl border px-2 py-2.5 text-center text-[11px] font-semibold transition-colors ${
                           deliveryType === 'DELIVERY'
                             ? 'border-joycyan bg-joycyan/15 text-joycyan'
-                            : 'border-hairline bg-surface text-muted'
+                            : 'border-hairline bg-surface text-muted hover:text-ink'
                         }`}
                       >
-                        <Bike className="h-4 w-4" />
-                        <span>Delivery Sucre (+Bs. 8)</span>
+                        <Bike className="h-4 w-4 shrink-0" />
+                        <span>{t('Delivery Sucre', 'Delivery Sucre')}</span>
+                        <span className="font-mono text-[10px] opacity-80">+Bs. 8</span>
                       </button>
+
                       <button
                         type="button"
-                        onClick={() => setDeliveryType('RECOGER_LOCAL')}
-                        className={`flex items-center justify-center gap-2 rounded-xl border py-2.5 text-xs font-semibold transition-colors ${
-                          deliveryType === 'RECOGER_LOCAL'
-                            ? 'border-joycyan bg-joycyan/15 text-joycyan'
-                            : 'border-hairline bg-surface text-muted'
+                        onClick={() => {
+                          joySound.tab();
+                          setDeliveryType('CONSUMO_LOCAL');
+                        }}
+                        className={`flex flex-col items-center justify-center gap-1 rounded-xl border px-2 py-2.5 text-center text-[11px] font-semibold transition-colors ${
+                          deliveryType === 'CONSUMO_LOCAL'
+                            ? 'border-joymagenta bg-joymagenta/15 text-joymagenta'
+                            : 'border-hairline bg-surface text-muted hover:text-ink'
                         }`}
                       >
-                        <Store className="h-4 w-4" />
-                        <span>Recoger en Local</span>
+                        <UtensilsCrossed className="h-4 w-4 shrink-0" />
+                        <span>{t('En el Local (Mesa)', 'Dine-in (At Table)')}</span>
+                        <span className="font-mono text-[10px] opacity-80">Bs. 0</span>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          joySound.tab();
+                          setDeliveryType('RECOGER_LOCAL');
+                        }}
+                        className={`flex flex-col items-center justify-center gap-1 rounded-xl border px-2 py-2.5 text-center text-[11px] font-semibold transition-colors ${
+                          deliveryType === 'RECOGER_LOCAL'
+                            ? 'border-joycyan bg-joycyan/15 text-joycyan'
+                            : 'border-hairline bg-surface text-muted hover:text-ink'
+                        }`}
+                      >
+                        <Store className="h-4 w-4 shrink-0" />
+                        <span>{t('Recoger en Local', 'Pick up in Bar')}</span>
+                        <span className="font-mono text-[10px] opacity-80">Bs. 0</span>
                       </button>
                     </div>
+
+                    {deliveryType === 'CONSUMO_LOCAL' && (
+                      <div className="space-y-2.5 rounded-xl border border-joymagenta/35 bg-joymagenta/10 p-3">
+                        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                          <div>
+                            <label htmlFor="dinein-zone" className="block text-[11px] font-semibold text-ink">
+                              {t('Tu mesa o zona en la casona', 'Your table or zone inside')}
+                            </label>
+                            <select
+                              id="dinein-zone"
+                              value={tableZone}
+                              onChange={(e) => setTableZone(e.target.value)}
+                              className="mt-1 w-full rounded-xl border border-hairline bg-surface px-2.5 py-2 text-base text-ink focus:border-joymagenta focus:outline-none sm:text-xs"
+                            >
+                              <option value="Patio Colonial">Patio Colonial</option>
+                              <option value="Mezzanine & Terraza">Mezzanine &amp; Terraza</option>
+                              <option value="Zona Pantalla Gigante">Zona Pantalla Gigante</option>
+                              <option value="Barra Principal">Barra Principal</option>
+                              <option value="Pista Salsa & Bachata">Pista Salsa &amp; Bachata</option>
+                            </select>
+                          </div>
+                          <div>
+                            <label htmlFor="dinein-table" className="block text-[11px] font-semibold text-ink">
+                              {t('N° de Mesa / Barra', 'Table / Bar #')}
+                            </label>
+                            <input
+                              id="dinein-table"
+                              type="text"
+                              value={tableNumber}
+                              onChange={(e) => setTableNumber(e.target.value)}
+                              placeholder="Mesa 04"
+                              className="mt-1 w-full rounded-xl border border-hairline bg-surface px-2.5 py-2 text-base text-ink focus:border-joymagenta focus:outline-none sm:text-xs"
+                            />
+                          </div>
+                        </div>
+                        <p className="text-[11px] font-medium text-pink-200">
+                          Pedido servido directo a tu mesa en Nicolás Ortiz N° 14 sin costo de envío (Bs. 0).
+                        </p>
+                      </div>
+                    )}
 
                     {deliveryType === 'DELIVERY' && (
                       <div className="space-y-2.5">

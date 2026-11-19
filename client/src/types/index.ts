@@ -13,7 +13,7 @@ export type OrderStatus =
 
 export type PaymentMethod = 'QR' | 'DEPOSITO_BANCARIO' | 'PAYPAL' | 'STRIPE';
 export type PaymentStatus = 'PENDIENTE' | 'EN_REVISION' | 'COMPLETADO' | 'RECHAZADO' | 'EXPIRADO';
-export type DeliveryType = 'DELIVERY' | 'RECOGER_LOCAL';
+export type DeliveryType = 'DELIVERY' | 'RECOGER_LOCAL' | 'CONSUMO_LOCAL';
 export type ReservationZone =
   | 'PATIO_COLONIAL'
   | 'MEZZANINE_TERRAZA'

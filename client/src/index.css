@@ -258,3 +258,19 @@
   background-image: radial-gradient(rgba(var(--c-ink), 0.045) 1px, transparent 1px);
   background-size: 24px 24px;
 }
+
+/* Soft Full-Bleed Ambient Photos Across Sections */
+.ambient-bleed-photo {
+  opacity: 0.14;
+}
+:root[data-theme='light'] .ambient-bleed-photo {
+  opacity: 0.065;
+}
+.ambient-bleed-scrim {
+  background: linear-gradient(
+    to bottom,
+    rgb(var(--c-obsidian) / 0.94) 0%,
+    rgb(var(--c-obsidian) / 0.62) 50%,
+    rgb(var(--c-obsidian) / 0.94) 100%
+  );
+}

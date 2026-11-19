@@ -257,7 +257,8 @@ export function PackerPanel() {
                       Etiqueta: {o.delivery?.packageLabelCode || o.packaging?.sealCode}
                     </p>
                     <p className="mt-1 text-xs text-muted">
-                      Destino: {o.delivery?.deliveryAddress || o.deliveryAddress}
+                      {o.deliveryType === 'CONSUMO_LOCAL' ? 'Mesa Local: ' : o.deliveryType === 'RECOGER_LOCAL' ? 'Recojo Barra: ' : 'Destino: '}
+                      <span className="font-semibold text-ink">{o.delivery?.deliveryAddress || o.deliveryAddress}</span>
                     </p>
                     <button
                       type="button"

@@ -402,7 +402,11 @@ export function MenuCatalogSection({
       id="carta-joyride"
       className="relative overflow-hidden py-14 sm:py-20"
     >
-      <BrandWatermarkBg variant="menu" />
+      <BrandWatermarkBg
+        variant="menu"
+        bgImage="/images/venue-bar-cocktails.webp"
+        emblemSide="right"
+      />
 
       <div className="relative z-10 mx-auto max-w-[1640px] px-5 sm:px-8 lg:px-12 xl:px-14">
         <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">

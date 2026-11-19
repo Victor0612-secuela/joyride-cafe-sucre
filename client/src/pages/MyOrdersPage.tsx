@@ -13,6 +13,7 @@ import {
   XCircle,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useI18n } from '../context/I18nContext';
 import { useToast } from '../context/ToastContext';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import { useOrderStream } from '../hooks/useOrderStream';
@@ -32,6 +33,7 @@ import { ProbablyTagline } from '../components/ui/ProbablyTagline';
 export function MyOrdersPage() {
   useDocumentTitle('Mis Pedidos y Reservas — Joy Ride Café® Sucre');
   const { user } = useAuth();
+  const { t } = useI18n();
   const { pushToast } = useToast();
   const queryClient = useQueryClient();
 
@@ -99,13 +101,18 @@ export function MyOrdersPage() {
               className="inline-flex items-center gap-1.5 text-xs font-semibold text-joycyan hover:underline"
             >
               <ArrowLeft className="h-3.5 w-3.5" />
-              <span>Volver al Inicio</span>
+              <span>{t('Volver al Inicio', 'Back to Home')}</span>
             </Link>
             <div className="mt-2">
-              <ProbablyTagline subject="Delivery" accent="cyan" size="sm" spanishHint="Seguimiento en vivo con PIN" />
+              <ProbablyTagline
+                subject="Delivery"
+                accent="cyan"
+                size="sm"
+                spanishHint={t('Seguimiento paso a paso con PIN', 'Step-by-step tracking with PIN')}
+              />
             </div>
             <h1 className="mt-1 font-display text-3xl font-extrabold text-ink">
-              Mis Pedidos &amp; Reservas
+              {t('Mis Pedidos & Reservas', 'My Orders & Bookings')}
             </h1>
             <p className="mt-1 text-sm text-muted">
               Seguimiento en tiempo real desde Cocina/Bar hasta tu PIN de entrega.
@@ -167,7 +174,14 @@ export function MyOrdersPage() {
                     </p>
 
                     <p className="text-xs text-muted">
-                      {order.deliveryAddress} · Método: {order.payment?.method || 'N/A'}
+                      <span className="font-semibold text-joycyan">
+                        {order.deliveryType === 'CONSUMO_LOCAL'
+                          ? t('En el Local (Mesa)', 'Dine-in (At Table)')
+                          : order.deliveryType === 'RECOGER_LOCAL'
+                          ? t('Recoger en Local', 'Pick up in Bar')
+                          : t('Delivery Sucre', 'Delivery Sucre')}
+                      </span>{' '}
+                      · {order.deliveryAddress} · {order.payment?.method || 'N/A'}
                     </p>
 
                     {/* Highlight PIN directly on card when ready */}
@@ -237,7 +251,7 @@ export function MyOrdersPage() {
                         className="inline-flex min-h-[38px] items-center gap-1.5 rounded-xl border border-hairline bg-elevated px-3.5 py-2 text-xs font-semibold text-ink hover:border-joycyan/60"
                       >
                         <Eye className="h-4 w-4 text-joycyan" />
-                        <span>Auditoría en Vivo</span>
+                        <span>{t('Seguir Pedido', 'Track Order')}</span>
                       </button>
                     </div>
                   </div>
