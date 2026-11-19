@@ -17,6 +17,7 @@ import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import { getErrorMessage } from '../lib/api';
 import { ROLE_META } from '../lib/format';
 import { Role } from '../types';
+import { BrandWatermarkBg } from '../components/ui/BrandWatermarkBg';
 
 const DEMO_ACCOUNTS: Array<{
   role: Role;
@@ -119,22 +120,22 @@ export function AuthSplitPage({ initialMode = 'login' }: { initialMode?: 'login'
           <img
             src="/logo-joyride.png"
             alt="Logo oficial Joy Ride Café"
-            className="h-28 w-28 rounded-full object-contain"
+            className="h-36 w-36 rounded-full object-contain ring-2 ring-joycyan/35 shadow-card"
           />
           <h1 className="mt-7 font-display text-4xl font-extrabold leading-tight text-ink xl:text-5xl 2xl:text-6xl">
             NO SOLO PARA GRINGOS
             <span className="mt-1.5 block text-joycyan">PROBABLY THE BEST BAR IN TOWN</span>
           </h1>
           <p className="mt-5 text-base leading-relaxed text-slate-300 xl:text-lg">
-            Plataforma integral de pedidos en vivo, pagos verificables y control logístico por roles
-            para el resto-bar más icónico de Sucre, Bolivia.
+            Plataforma integral de pedidos en vivo, reservas y seguimiento paso a paso para el
+            resto-bar más icónico de Sucre, Bolivia.
           </p>
 
           {/* Flow Summary */}
           <div className="mt-9 grid grid-cols-2 gap-4 text-sm">
             {[
               ['1. Pedido & Stock', 'Disponibilidad en tiempo real'],
-              ['2. Pago Verificable', 'Simple QR BNB, Depósito o PayPal'],
+              ['2. Pago Verificable', 'Simple QR BNB, Tarjeta, Depósito o PayPal'],
               ['3. Cocina & Empaque', 'Checklist 100% + PIN único'],
               ['4. Entrega Auditada', 'Validación estricta con PIN 4 dígitos'],
             ].map(([stepTitle, stepDesc]) => (
@@ -159,15 +160,16 @@ export function AuthSplitPage({ initialMode = 'login' }: { initialMode?: 'login'
         initial={{ opacity: 0, x: 40 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ type: 'spring', duration: 0.55, bounce: 0 }}
-        className="flex flex-col justify-center px-6 py-12 sm:px-12 lg:px-16"
+        className="relative flex flex-col justify-center overflow-hidden px-6 py-12 sm:px-12 lg:px-16"
       >
-        <div className="mx-auto w-full max-w-xl">
+        <BrandWatermarkBg variant="split-form" />
+        <div className="relative z-10 mx-auto w-full max-w-xl">
           <div className="mb-6 flex items-center justify-between lg:hidden">
             <Link to="/" className="inline-flex items-center gap-2 text-sm font-semibold text-joycyan">
               <ArrowLeft className="h-4 w-4" />
-              <span>Tienda</span>
+              <span>Inicio</span>
             </Link>
-            <img src="/logo-joyride.png" alt="Joy Ride Café" className="h-11 w-11 rounded-full" />
+            <img src="/logo-joyride.png" alt="Joy Ride Café" className="h-14 w-14 rounded-full object-contain ring-1 ring-joycyan/30" />
           </div>
 
           <div className="flex rounded-xl border border-hairline bg-surface p-1.5">

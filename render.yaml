@@ -32,6 +32,10 @@ services:
         sync: false
       - key: PAYPAL_CLIENT_SECRET
         sync: false
+      - key: STRIPE_PUBLISHABLE_KEY
+        sync: false
+      - key: STRIPE_SECRET_KEY
+        sync: false
       - key: MANAGER_EMAIL
         value: victor2004612@gmail.com
       - key: RESEND_API_KEY
@@ -41,11 +45,11 @@ services:
       - key: SMTP_PORT
         value: "587"
       - key: SMTP_USER
-        sync: false
+        value: villarroelmolina2004612@gmail.com
       - key: SMTP_PASS
         sync: false
       - key: SMTP_FROM
-        value: Joy Ride Café Sucre <no-reply@joyridebol.com>
+        value: Joy Ride Café Sucre <villarroelmolina2004612@gmail.com>
       - key: CORS_ORIGINS
         sync: false
 

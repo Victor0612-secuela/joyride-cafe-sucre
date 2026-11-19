@@ -41,6 +41,7 @@ export async function getAdminAnalytics() {
     QR: { count: 0, totalBs: 0, totalUsd: 0 },
     DEPOSITO_BANCARIO: { count: 0, totalBs: 0, totalUsd: 0 },
     PAYPAL: { count: 0, totalBs: 0, totalUsd: 0 },
+    STRIPE: { count: 0, totalBs: 0, totalUsd: 0 },
   };
 
   for (const p of paidOrders) {
@@ -67,7 +68,8 @@ export async function getAdminAnalytics() {
     revenueByMethod: [
       { method: 'QR', label: 'Simple QR', ...byMethod.QR },
       { method: 'DEPOSITO_BANCARIO', label: 'Depósito Bancario', ...byMethod.DEPOSITO_BANCARIO },
-      { method: 'PAYPAL', label: 'PayPal API v2', ...byMethod.PAYPAL },
+      { method: 'PAYPAL', label: 'PayPal', ...byMethod.PAYPAL },
+      { method: 'STRIPE', label: 'Tarjeta / Stripe', ...byMethod.STRIPE },
     ],
     ordersByStatus: statusCounts.map((s) => ({
       status: s.status,

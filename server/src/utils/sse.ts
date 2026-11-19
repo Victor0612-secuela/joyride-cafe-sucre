@@ -34,6 +34,8 @@ export function registerSseClient(id: string, res: Response, filter: { orderId?:
   });
 }
 
+const STAFF_SET = new Set(['CAJERO', 'EMPAQUETADOR', 'REPARTIDOR', 'ADMIN']);
+
 export function emitOrderUpdate(payload: {
   orderId: string;
   orderCode: string;
@@ -46,8 +48,9 @@ export function emitOrderUpdate(payload: {
 }) {
   const serialized = `event: order_update\ndata: ${JSON.stringify(payload)}\n\n`;
   for (const [id, client] of clients.entries()) {
-    const matchesOrder = !client.orderId || client.orderId === payload.orderId;
-    if (matchesOrder) {
+    const isStaff = Boolean(client.role && STAFF_SET.has(client.role));
+    const matchesOrder = Boolean(client.orderId && client.orderId === payload.orderId);
+    if (isStaff || matchesOrder) {
       try {
         client.res.write(serialized);
       } catch {
@@ -60,7 +63,7 @@ export function emitOrderUpdate(payload: {
 export function emitStaffBroadcast(event: string, payload: unknown) {
   const serialized = `event: ${event}\ndata: ${JSON.stringify(payload)}\n\n`;
   for (const [id, client] of clients.entries()) {
-    if (client.role && ['CAJERO', 'EMPAQUETADOR', 'REPARTIDOR', 'ADMIN'].includes(client.role)) {
+    if (client.role && STAFF_SET.has(client.role)) {
       try {
         client.res.write(serialized);
       } catch {
@@ -82,15 +85,16 @@ export function emitChatMessage(msg: {
 }) {
   const serialized = `event: chat_message\ndata: ${JSON.stringify(msg)}\n\n`;
   for (const [id, client] of clients.entries()) {
+    const isStaff = Boolean(client.role && STAFF_SET.has(client.role));
     if (msg.channelType === 'STAFF_OPS') {
-      if (client.role && ['CAJERO', 'EMPAQUETADOR', 'REPARTIDOR', 'ADMIN'].includes(client.role)) {
+      if (isStaff) {
         try {
           client.res.write(serialized);
         } catch {
           clients.delete(id);
         }
       }
-    } else if (!client.orderId || client.orderId === msg.orderId) {
+    } else if (isStaff || Boolean(client.orderId && client.orderId === msg.orderId)) {
       try {
         client.res.write(serialized);
       } catch {

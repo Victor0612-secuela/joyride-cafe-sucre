@@ -31,7 +31,7 @@ export function ReceiptPrintModal({
         >
           <div className="flex items-center justify-between border-b border-slate-200 pb-4">
             <div className="flex items-center gap-3">
-              <img src="/logo-joyride.png" alt="Joy Ride Café" className="h-12 w-12 rounded-full" />
+              <img src="/logo-joyride.png" alt="Joy Ride Café" className="h-14 w-14 rounded-full object-contain" />
               <div>
                 <h4 className="font-display text-base font-extrabold tracking-tight">
                   JOY RIDE CAFÉ® SUCRE

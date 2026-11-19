@@ -44,6 +44,15 @@ interface PayPalConfig {
   expressSandboxReady?: boolean;
 }
 
+interface StripeConfig {
+  configured: boolean;
+  expressReady: boolean;
+  publishableKey: string | null;
+  currency: string;
+  mode: string;
+  exchangeRate: number;
+}
+
 export function CartCheckoutDrawer({ onQrStarted, onOrderCreated }: CartCheckoutDrawerProps) {
   const { user } = useAuth();
   const { t } = useI18n();
@@ -69,7 +78,9 @@ export function CartCheckoutDrawer({ onQrStarted, onOrderCreated }: CartCheckout
   const [notes, setNotes] = useState('');
   const [splitCount, setSplitCount] = useState(1);
 
-  const [paymentMethod, setPaymentMethod] = useState<'QR' | 'DEPOSITO_BANCARIO' | 'PAYPAL'>('QR');
+  const [paymentMethod, setPaymentMethod] = useState<
+    'QR' | 'DEPOSITO_BANCARIO' | 'PAYPAL' | 'STRIPE'
+  >('QR');
   const [bankName, setBankName] = useState('Banco Nacional de Bolivia (BNB)');
   const [referenceNumber, setReferenceNumber] = useState('');
   const [comprobanteBase64, setComprobanteBase64] = useState('');
@@ -84,9 +95,17 @@ export function CartCheckoutDrawer({ onQrStarted, onOrderCreated }: CartCheckout
   } | null>(null);
   const [paypalBusy, setPaypalBusy] = useState(false);
 
+  const [stripeConfig, setStripeConfig] = useState<StripeConfig | null>(null);
+  const [cardHolder, setCardHolder] = useState(user?.name || '');
+  const [cardNumber, setCardNumber] = useState('');
+  const [cardExpiry, setCardExpiry] = useState('');
+  const [cardCvc, setCardCvc] = useState('');
+  const [stripeBusy, setStripeBusy] = useState(false);
+
   useEffect(() => {
     if (user?.phone) setPhoneContact(user.phone);
-  }, [user?.phone]);
+    if (user?.name && !cardHolder) setCardHolder(user.name);
+  }, [user?.phone, user?.name]);
 
   useEffect(() => {
     if (!drawerOpen) {
@@ -104,6 +123,19 @@ export function CartCheckoutDrawer({ onQrStarted, onOrderCreated }: CartCheckout
           mode: 'sandbox_express',
           exchangeRate: EXCHANGE_RATE,
           expressSandboxReady: true,
+        })
+      );
+    api
+      .get<StripeConfig>('/payments/stripe/config')
+      .then((res) => setStripeConfig(res.data))
+      .catch(() =>
+        setStripeConfig({
+          configured: false,
+          expressReady: true,
+          publishableKey: null,
+          currency: 'USD',
+          mode: 'test',
+          exchangeRate: EXCHANGE_RATE,
         })
       );
   }, [drawerOpen]);
@@ -300,6 +332,63 @@ export function CartCheckoutDrawer({ onQrStarted, onOrderCreated }: CartCheckout
     }
   };
 
+  const detectCardBrand = (digits: string) => {
+    if (digits.startsWith('4')) return 'VISA';
+    if (/^(5[1-5]|2[2-7])/.test(digits)) return 'MASTERCARD';
+    if (digits.startsWith('3')) return 'AMEX';
+    return 'TARJETA';
+  };
+
+  const handleStripeCheckout = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!requireAuthenticatedUser() || items.length === 0) return;
+    const digits = cardNumber.replace(/\D/g, '');
+    if (digits.length < 13 || !/^\d{2}\/\d{2}$/.test(cardExpiry.trim()) || cardCvc.trim().length < 3) {
+      pushToast(
+        t('Revisa los datos de tu tarjeta', 'Check card details'),
+        'error',
+        t('Ingresa número de tarjeta válido, vencimiento MM/AA y CVC', 'Enter valid number, MM/YY and CVC')
+      );
+      return;
+    }
+
+    setStripeBusy(true);
+    joySound.click();
+    try {
+      const intentRes = await api.post<{
+        orderId: string;
+        orderCode: string;
+        paymentIntentId: string;
+      }>('/payments/stripe/create-intent', buildOrderPayload());
+
+      const brand = detectCardBrand(digits);
+      const last4 = digits.slice(-4);
+      const confirmRes = await api.post<{ orderId: string; orderCode: string }>(
+        '/payments/stripe/confirm-intent',
+        {
+          orderId: intentRes.data.orderId,
+          paymentIntentId: intentRes.data.paymentIntentId,
+          cardBrand: brand,
+          cardLast4: last4,
+        }
+      );
+
+      joySound.success();
+      clearCart();
+      setDrawerOpen(false);
+      pushToast(
+        t('Pago con tarjeta aprobado', 'Card payment approved'),
+        'success',
+        `${confirmRes.data.orderCode} · ${brand} •••• ${last4}`
+      );
+      onOrderCreated(confirmRes.data.orderId);
+    } catch (err) {
+      pushToast(t('No se pudo procesar la tarjeta', 'Card payment failed'), 'error', getErrorMessage(err));
+    } finally {
+      setStripeBusy(false);
+    }
+  };
+
   const handleSubmitCheckout = async () => {
     if (!requireAuthenticatedUser() || items.length === 0) return;
 
@@ -387,7 +476,7 @@ export function CartCheckoutDrawer({ onQrStarted, onOrderCreated }: CartCheckout
                 <div className="rounded-2xl border border-hairline bg-obsidian p-8 text-center">
                   <ShoppingBag className="mx-auto h-10 w-10 text-muted" />
                   <p className="mt-3 font-display text-lg font-bold text-ink">
-                    Tu ronda está vacía
+                    {t('Tu pedido está vacío', 'Your order is empty')}
                   </p>
                   <p className="mt-1 text-xs text-muted">
                     Agrega un Super Pique a lo Macho, una Mountain Burger o unos Chuflays desde la carta.
@@ -590,7 +679,7 @@ export function CartCheckoutDrawer({ onQrStarted, onOrderCreated }: CartCheckout
                       <div className="flex items-center gap-2">
                         <Users className="h-4 w-4 text-joycyan" />
                         <span className="text-xs font-bold text-ink">
-                          Dividir la Ronda (Split-Bill)
+                          {t('Dividir la cuenta entre amigos', 'Split the bill')}
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
@@ -630,9 +719,10 @@ export function CartCheckoutDrawer({ onQrStarted, onOrderCreated }: CartCheckout
                       {t('Método de Pago', 'Payment Method')}
                     </p>
 
-                    <div className="grid grid-cols-3 gap-2">
+                    <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                       {[
                         { id: 'QR' as const, label: 'Simple QR', icon: <QrCode className="h-4 w-4" /> },
+                        { id: 'STRIPE' as const, label: t('Tarjeta', 'Card'), icon: <CreditCard className="h-4 w-4" /> },
                         { id: 'DEPOSITO_BANCARIO' as const, label: t('Depósito', 'Deposit'), icon: <Receipt className="h-4 w-4" /> },
                         { id: 'PAYPAL' as const, label: 'PayPal', icon: <CreditCard className="h-4 w-4" /> },
                       ].map((m) => (
@@ -719,7 +809,7 @@ export function CartCheckoutDrawer({ onQrStarted, onOrderCreated }: CartCheckout
                             onClick={handleUseDemoReceipt}
                             className="rounded-xl border border-joycyan/40 bg-joycyan/10 px-3 py-2 text-xs font-semibold text-joycyan hover:bg-joycyan/20"
                           >
-                            {t('Adjuntar Voucher Referencial', 'Attach Sample Voucher')}
+                            {t('Usar comprobante de prueba', 'Attach Sample Receipt')}
                           </button>
                         </div>
 
@@ -731,6 +821,123 @@ export function CartCheckoutDrawer({ onQrStarted, onOrderCreated }: CartCheckout
                           />
                         )}
                       </div>
+                    )}
+
+                    {paymentMethod === 'STRIPE' && (
+                      <form onSubmit={handleStripeCheckout} className="space-y-3 pt-1">
+                        <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-violet-400/40 bg-violet-500/10 p-3 text-xs">
+                          <div>
+                            <p className="font-bold text-ink">
+                              {t('Tarjeta Débito / Crédito (Stripe)', 'Debit / Credit Card (Stripe)')}
+                            </p>
+                            <p className="text-[11px] text-muted">
+                              {stripeConfig?.configured
+                                ? t('Pasarela Stripe conectada', 'Stripe gateway connected')
+                                : t('Modo prueba seguro activado · Visa / Mastercard', 'Safe test mode active · Visa / Mastercard')}
+                            </p>
+                          </div>
+                          {!stripeConfig?.configured && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                joySound.click();
+                                setCardHolder(user?.name || 'Cliente Joy Ride');
+                                setCardNumber('4242 4242 4242 4242');
+                                setCardExpiry('12/28');
+                                setCardCvc('424');
+                              }}
+                              className="rounded-lg border border-joycyan/50 bg-joycyan/15 px-2.5 py-1 text-[11px] font-bold text-joycyan hover:bg-joycyan/25"
+                            >
+                              {t('Usar tarjeta prueba 4242', 'Fill test card 4242')}
+                            </button>
+                          )}
+                        </div>
+
+                        <div>
+                          <label className="block text-[11px] font-semibold text-muted">
+                            {t('Nombre en la tarjeta', 'Cardholder name')}
+                          </label>
+                          <input
+                            type="text"
+                            required
+                            value={cardHolder}
+                            onChange={(e) => setCardHolder(e.target.value)}
+                            placeholder="Camila Mendoza"
+                            className="mt-1 w-full rounded-xl border border-hairline bg-surface px-3 py-2 text-base text-ink focus:border-joycyan focus:outline-none sm:text-sm"
+                          />
+                        </div>
+
+                        <div>
+                          <label className="block text-[11px] font-semibold text-muted">
+                            {t('Número de tarjeta', 'Card number')}
+                          </label>
+                          <div className="relative mt-1">
+                            <input
+                              type="text"
+                              inputMode="numeric"
+                              required
+                              maxLength={19}
+                              value={cardNumber}
+                              onChange={(e) => {
+                                const raw = e.target.value.replace(/\D/g, '').slice(0, 16);
+                                setCardNumber(raw.replace(/(\d{4})(?=\d)/g, '$1 '));
+                              }}
+                              placeholder="4242 4242 4242 4242"
+                              className="w-full rounded-xl border border-hairline bg-surface px-3 py-2 pr-20 font-mono text-base text-ink focus:border-joycyan focus:outline-none sm:text-sm"
+                            />
+                            <span className="absolute right-3 top-1/2 -translate-y-1/2 font-mono text-[10px] font-bold text-joycyan">
+                              {detectCardBrand(cardNumber.replace(/\D/g, ''))}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2.5">
+                          <div>
+                            <label className="block text-[11px] font-semibold text-muted">
+                              {t('Vencimiento (MM/AA)', 'Expiry (MM/YY)')}
+                            </label>
+                            <input
+                              type="text"
+                              inputMode="numeric"
+                              required
+                              maxLength={5}
+                              value={cardExpiry}
+                              onChange={(e) => {
+                                const d = e.target.value.replace(/\D/g, '').slice(0, 4);
+                                setCardExpiry(d.length > 2 ? `${d.slice(0, 2)}/${d.slice(2)}` : d);
+                              }}
+                              placeholder="12/28"
+                              className="mt-1 w-full rounded-xl border border-hairline bg-surface px-3 py-2 font-mono text-base text-ink focus:border-joycyan focus:outline-none sm:text-sm"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-[11px] font-semibold text-muted">CVC</label>
+                            <input
+                              type="password"
+                              inputMode="numeric"
+                              required
+                              maxLength={4}
+                              value={cardCvc}
+                              onChange={(e) => setCardCvc(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                              placeholder="424"
+                              className="mt-1 w-full rounded-xl border border-hairline bg-surface px-3 py-2 font-mono text-base text-ink focus:border-joycyan focus:outline-none sm:text-sm"
+                            />
+                          </div>
+                        </div>
+
+                        <button
+                          type="submit"
+                          disabled={stripeBusy}
+                          className="flex min-h-[44px] w-full items-center justify-center gap-2 rounded-xl bg-violet-600 px-4 py-3 text-sm font-extrabold text-white transition-colors hover:bg-violet-500 disabled:opacity-60"
+                        >
+                          <ShieldCheck className="h-4 w-4" />
+                          <span>
+                            {stripeBusy
+                              ? t('Autorizando con Stripe…', 'Authorizing with Stripe…')
+                              : `${t('Pagar con Tarjeta', 'Pay with Card')} · Bs. ${totalBs.toFixed(2)}`}
+                          </span>
+                        </button>
+                      </form>
                     )}
 
                     {paymentMethod === 'PAYPAL' && (
@@ -832,7 +1039,7 @@ export function CartCheckoutDrawer({ onQrStarted, onOrderCreated }: CartCheckout
                             <div className="flex items-center justify-between">
                               <span className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-400">
                                 <ShieldCheck className="h-4 w-4" />
-                                PayPal Express Ready
+                                {t('Autorización PayPal lista', 'PayPal Ready')}
                               </span>
                               <span className="font-mono text-xs text-joycyan">
                                 {paypalSandboxOrder.orderCode}
@@ -902,7 +1109,7 @@ export function CartCheckoutDrawer({ onQrStarted, onOrderCreated }: CartCheckout
                   </div>
                 </div>
 
-                {paymentMethod !== 'PAYPAL' && (
+                {paymentMethod !== 'PAYPAL' && paymentMethod !== 'STRIPE' && (
                   <button
                     type="button"
                     disabled={submitting}

@@ -254,8 +254,8 @@ export function QrLivePaymentModal({ session, onClose, onConfirmed }: QrLivePaym
             </div>
           ) : (
             <div className="flex flex-col items-center rounded-2xl border border-joymagenta/35 bg-obsidian p-5">
-              <div className="flex items-center gap-2.5 pb-3">
-                <img src="/logo-joyride.png" alt="Joy Ride" className="h-8 w-8 rounded-full" />
+              <div className="flex items-center gap-3 pb-3">
+                <img src="/logo-joyride.png" alt="Joy Ride" className="h-12 w-12 rounded-full object-contain" />
                 <div className="text-left">
                   <p className="font-display text-sm font-bold text-ink">JOY RIDE CAFÉ® SUCRE</p>
                   <p className="text-[11px] text-joycyan">Simple QR Verificable en Vivo</p>

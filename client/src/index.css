@@ -252,3 +252,9 @@
     border: 1px solid #cbd5e1 !important;
   }
 }
+
+/* Subtle Architectural Relief Texture for Editorial & Form Surfaces */
+.bg-relief-pattern {
+  background-image: radial-gradient(rgba(var(--c-ink), 0.045) 1px, transparent 1px);
+  background-size: 24px 24px;
+}

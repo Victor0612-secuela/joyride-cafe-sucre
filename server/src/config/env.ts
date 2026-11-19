@@ -20,13 +20,15 @@ export const env = {
   PAYPAL_MODE: (process.env.PAYPAL_MODE || 'sandbox').toLowerCase() === 'live' ? 'live' : 'sandbox',
   PAYPAL_CLIENT_ID: (process.env.PAYPAL_CLIENT_ID || '').trim(),
   PAYPAL_CLIENT_SECRET: (process.env.PAYPAL_CLIENT_SECRET || '').trim(),
+  STRIPE_PUBLISHABLE_KEY: (process.env.STRIPE_PUBLISHABLE_KEY || '').trim(),
+  STRIPE_SECRET_KEY: (process.env.STRIPE_SECRET_KEY || '').trim(),
   MANAGER_EMAIL: (process.env.MANAGER_EMAIL || 'victor2004612@gmail.com').trim(),
   RESEND_API_KEY: (process.env.RESEND_API_KEY || '').trim(),
-  SMTP_HOST: (process.env.SMTP_HOST || '').trim(),
+  SMTP_HOST: (process.env.SMTP_HOST || 'smtp.gmail.com').trim(),
   SMTP_PORT: Number(process.env.SMTP_PORT || 587),
   SMTP_USER: (process.env.SMTP_USER || '').trim(),
   SMTP_PASS: (process.env.SMTP_PASS || '').trim(),
-  SMTP_FROM: (process.env.SMTP_FROM || 'Joy Ride Café Sucre <no-reply@joyridebol.com>').trim(),
+  SMTP_FROM: (process.env.SMTP_FROM || 'Joy Ride Café Sucre <villarroelmolina2004612@gmail.com>').trim(),
 };
 
 if (env.NODE_ENV === 'production' && env.JWT_SECRET === DEFAULT_JWT_SECRET) {

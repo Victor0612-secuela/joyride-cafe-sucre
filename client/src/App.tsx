@@ -5,6 +5,7 @@ import { useAuth } from './context/AuthContext';
 import { ROLE_META } from './lib/format';
 import { Role } from './types';
 import { HomePage } from './pages/HomePage';
+import { MenuPage } from './pages/MenuPage';
 import { AuthSplitPage } from './pages/AuthSplitPage';
 import { QrMobileGatewayPage } from './pages/QrMobileGatewayPage';
 import { MyOrdersPage } from './pages/MyOrdersPage';
@@ -55,6 +56,7 @@ function AnimatedRoutes() {
       >
         <Routes location={location}>
           <Route path="/" element={<HomePage />} />
+          <Route path="/carta" element={<MenuPage />} />
           <Route path="/login" element={<AuthSplitPage initialMode="login" />} />
           <Route path="/registro" element={<AuthSplitPage initialMode="register" />} />
           <Route path="/mapa-sucre" element={<SucreMapGuidePage />} />

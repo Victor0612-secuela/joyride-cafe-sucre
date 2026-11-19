@@ -71,7 +71,7 @@ export function OperationsLayout({
       {/* Desktop Sidebar (Operate Mode) */}
       <aside className="hidden w-64 shrink-0 flex-col border-r border-hairline bg-surface lg:flex">
         <div className="flex items-center gap-3 border-b border-hairline px-5 py-4">
-          <img src="/logo-joyride.png" alt="Joy Ride Café" className="h-9 w-9 rounded-full" />
+          <img src="/logo-joyride.png" alt="Joy Ride Café" className="h-12 w-12 rounded-full object-contain" />
           <div className="min-w-0">
             <p className="truncate font-display text-sm font-bold text-ink">JOY RIDE OPS</p>
             <p className="truncate text-xs text-muted">Sucre, Bolivia</p>
@@ -135,7 +135,7 @@ export function OperationsLayout({
           <aside className="relative z-10 flex w-72 flex-col border-r border-hairline bg-surface">
             <div className="flex items-center justify-between border-b border-hairline px-5 py-4">
               <div className="flex items-center gap-2.5">
-                <img src="/logo-joyride.png" alt="Joy Ride Café" className="h-8 w-8 rounded-full" />
+                <img src="/logo-joyride.png" alt="Joy Ride Café" className="h-11 w-11 rounded-full object-contain" />
                 <span className="font-display text-sm font-bold">JOY RIDE OPS</span>
               </div>
               <button

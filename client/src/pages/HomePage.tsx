@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Compass, ExternalLink, Mail, MapPin, Phone, Send } from 'lucide-react';
 import { api, getErrorMessage } from '../lib/api';
@@ -12,7 +12,7 @@ import { Category, Product, Promotion } from '../types';
 import { Navbar } from '../components/layout/Navbar';
 import { HeroFullBleed } from '../components/home/HeroFullBleed';
 import { BentoPromotions } from '../components/home/BentoPromotions';
-import { EditorialCultureAndMenu } from '../components/home/EditorialCultureAndMenu';
+import { VenueShowcaseSection } from '../components/home/VenueShowcaseSection';
 import { SucreEventsTourismCarousel } from '../components/home/SucreEventsTourismCarousel';
 import { MasonryCommunity } from '../components/home/MasonryCommunity';
 import { ProductQuickViewModal } from '../components/modals/ProductQuickViewModal';
@@ -20,18 +20,16 @@ import { CartCheckoutDrawer } from '../components/modals/CartCheckoutDrawer';
 import { QrLivePaymentModal, QrSessionData } from '../components/modals/QrLivePaymentModal';
 import { OrderTimelineModal } from '../components/modals/OrderTimelineModal';
 import { ReservationModal } from '../components/modals/ReservationModal';
+import { BrandWatermarkBg } from '../components/ui/BrandWatermarkBg';
+import { PwaInstallButton } from '../components/ui/PwaInstallButton';
 import { WhatsAppFloat } from '../components/ui/WhatsAppFloat';
 import { useCart } from '../context/CartContext';
 
 export function HomePage() {
   useDocumentTitle('Joy Ride Café® — Sucre, Bolivia | No Solo Para Gringos');
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
   const { setDrawerOpen } = useCart();
-
-  const [selectedCategory, setSelectedCategory] = useState(() => searchParams.get('cat') || 'all');
-  const [veganOnly, setVeganOnly] = useState(false);
-  const [happyHourOnly, setHappyHourOnly] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
 
   const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null);
   const [qrSession, setQrSession] = useState<QrSessionData | null>(null);
@@ -100,24 +98,12 @@ export function HomePage() {
   });
 
   const allProducts = allProductsData || [];
-  const filteredProducts = allProducts.filter((p) => {
-    if (selectedCategory !== 'all' && p.category.slug !== selectedCategory) return false;
-    if (veganOnly && !p.esVegano) return false;
-    if (happyHourOnly && !p.enHappyHour) return false;
-    if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase();
-      if (!p.name.toLowerCase().includes(q) && !p.description.toLowerCase().includes(q)) {
-        return false;
-      }
-    }
-    return true;
-  });
+  const featuredProducts = allProducts.filter((p) => p.esDestacado);
 
   return (
     <div className="min-h-screen bg-obsidian text-ink">
       <Navbar
         categories={categoriesData || []}
-        onSelectCategory={(slug) => setSelectedCategory(slug)}
         onOpenReservation={() => {
           setReservationSalsa(false);
           setReservationOpen(true);
@@ -137,16 +123,8 @@ export function HomePage() {
           loading={productsLoading}
           products={allProducts}
           promotions={promotionsData || []}
-          onFilterHappyHour={() => {
-            setSelectedCategory('all');
-            setHappyHourOnly(true);
-            setVeganOnly(false);
-          }}
-          onFilterVegan={() => {
-            setSelectedCategory('all');
-            setVeganOnly(true);
-            setHappyHourOnly(false);
-          }}
+          onFilterHappyHour={() => navigate('/carta?happyHour=1')}
+          onFilterVegan={() => navigate('/carta?vegan=1')}
           onQuickView={(prod) => setQuickViewProduct(prod)}
           onOpenSalsaReservation={() => {
             setReservationSalsa(true);
@@ -154,19 +132,9 @@ export function HomePage() {
           }}
         />
 
-        <EditorialCultureAndMenu
+        <VenueShowcaseSection
+          featuredProducts={featuredProducts}
           loading={productsLoading}
-          categories={categoriesData || []}
-          products={filteredProducts}
-          allProducts={allProducts}
-          selectedCategory={selectedCategory}
-          onSelectCategory={setSelectedCategory}
-          veganOnly={veganOnly}
-          onToggleVegan={() => setVeganOnly((v) => !v)}
-          happyHourOnly={happyHourOnly}
-          onToggleHappyHour={() => setHappyHourOnly((v) => !v)}
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
           onQuickView={(prod) => setQuickViewProduct(prod)}
         />
 
@@ -187,15 +155,20 @@ export function HomePage() {
       </main>
 
       <footer className="relative overflow-hidden border-t border-white/10 bg-obsidian pb-24 pt-16 sm:pt-20">
+        <BrandWatermarkBg variant="subtle-emblem" />
         <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-joycyan/60 to-transparent" />
-        <div className="mx-auto max-w-[1640px] px-5 sm:px-8 lg:px-12 xl:px-14">
+        <div className="relative z-10 mx-auto max-w-[1640px] px-5 sm:px-8 lg:px-12 xl:px-14">
           <div className="grid grid-cols-1 gap-12 border-b border-hairline pb-12 lg:grid-cols-12">
             {/* Editorial Brand Statement */}
             <div className="space-y-5 lg:col-span-5">
               <div className="flex items-center gap-4">
-                <img src="/logo-joyride.png" alt="Joy Ride Café" className="h-16 w-16 rounded-full" />
+                <img
+                  src="/logo-joyride.png"
+                  alt="Joy Ride Café"
+                  className="h-20 w-20 rounded-full object-contain ring-2 ring-joycyan/30 sm:h-24 sm:w-24"
+                />
                 <div>
-                  <p className="font-display text-2xl font-extrabold tracking-tight text-ink">
+                  <p className="font-display text-2xl font-extrabold tracking-tight text-ink sm:text-3xl">
                     JOY RIDE CAFÉ® <span className="text-joycyan">SUCRE</span>
                   </p>
                   <p className="text-sm text-muted">
@@ -232,6 +205,10 @@ export function HomePage() {
                   <Compass className="h-4 w-4" />
                   <span>Guía &amp; Mapa Sucre</span>
                 </Link>
+              </div>
+
+              <div className="pt-1">
+                <PwaInstallButton />
               </div>
             </div>
 

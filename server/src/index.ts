@@ -118,6 +118,16 @@ app.get('/api/events/stream', optionalAuth, (req: AuthRequest, res) => {
   registerSseClient(crypto.randomUUID(), res, { orderId, role });
 });
 
+// Prevent sensitive auth/payment/order API payloads from being cached in browser or proxies
+app.use(
+  ['/api/auth', '/api/admin', '/api/orders', '/api/payments', '/api/empaque', '/api/delivery', '/api/chat'],
+  (_req, res, next) => {
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+    res.setHeader('Pragma', 'no-cache');
+    next();
+  }
+);
+
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api', catalogRoutes);

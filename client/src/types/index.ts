@@ -11,7 +11,7 @@ export type OrderStatus =
   | 'CANCELADO'
   | 'RECHAZADO';
 
-export type PaymentMethod = 'QR' | 'DEPOSITO_BANCARIO' | 'PAYPAL';
+export type PaymentMethod = 'QR' | 'DEPOSITO_BANCARIO' | 'PAYPAL' | 'STRIPE';
 export type PaymentStatus = 'PENDIENTE' | 'EN_REVISION' | 'COMPLETADO' | 'RECHAZADO' | 'EXPIRADO';
 export type DeliveryType = 'DELIVERY' | 'RECOGER_LOCAL';
 export type ReservationZone =

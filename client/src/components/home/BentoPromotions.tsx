@@ -81,7 +81,7 @@ export function BentoPromotions({
   const handleQuickAdd = (prod: Product) => {
     const res = addItem(prod, 1);
     if (!res.ok) {
-      pushToast('Stock insuficiente', 'error', res.reason);
+      pushToast(t('Sin más unidades disponibles', 'No more units available'), 'error', res.reason);
       return;
     }
     joySound.add();
@@ -192,7 +192,7 @@ export function BentoPromotions({
                   <ArrowUpRight className="h-4 w-4" />
                 </button>
                 <span className="text-xs font-semibold text-joycyan group-hover:underline">
-                  {t('Abrir lista viva 2x1 →', 'Open live 2x1 list →')}
+                  {t('Ver catálogo 2x1 →', 'View 2x1 selection →')}
                 </span>
               </div>
             </div>
@@ -212,7 +212,7 @@ export function BentoPromotions({
               <div className="flex items-center justify-between gap-2">
                 <span className="inline-flex items-center gap-1 text-xs font-semibold text-joycyan">
                   <Flame className="h-3.5 w-3.5" />
-                  {t('Stock en Vivo', 'Live Kitchen')}
+                  {t('Disponible hoy', 'Fresh Today')}
                 </span>
                 <span className="rounded-full border border-joycyan/40 bg-joycyan/15 px-2.5 py-0.5 font-mono text-xs font-semibold tabular-nums text-joycyan">
                   {t(`Quedan ${featuredHouse.stockDisponible}`, `${featuredHouse.stockDisponible} left`)}

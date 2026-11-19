@@ -1,6 +1,8 @@
 import { Router } from 'express';
+import { Role } from '@prisma/client';
 import { prisma } from '../config/prisma';
 import { env } from '../config/env';
+import { AuthRequest, optionalAuth } from '../middleware/auth.middleware';
 
 const router = Router();
 
@@ -18,12 +20,13 @@ router.get('/categories', async (_req, res, next) => {
   }
 });
 
-router.get('/products', async (req, res, next) => {
+router.get('/products', optionalAuth, async (req: AuthRequest, res, next) => {
   try {
     const { category, vegan, happyHour, search, includeInactive } = req.query;
 
     const where: Record<string, unknown> = {};
-    if (includeInactive !== 'true') where.active = true;
+    const allowInactive = includeInactive === 'true' && req.user?.role === Role.ADMIN;
+    if (!allowInactive) where.active = true;
     if (typeof category === 'string' && category && category !== 'all') {
       where.category = { slug: category };
     }

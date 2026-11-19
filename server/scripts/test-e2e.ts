@@ -381,16 +381,20 @@ async function run() {
   const imgFetch = await fetch(`http://127.0.0.1:4000${uploadImgRes.data.imageUrl}`);
   assert.equal(imgFetch.status, 200);
 
-  const reviewPost = await api('/reviews', {
-    method: 'POST',
-    body: JSON.stringify({
-      authorName: 'Viajero E2E Google',
-      authorOrigin: 'Sucre, Bolivia',
-      verifiedVia: 'GOOGLE',
-      rating: 5,
-      comment: 'Excelente atencion y mapa interactivo de Sucre en Joy Ride Cafe.',
-    }),
-  });
+  const reviewPost = await api(
+    '/reviews',
+    {
+      method: 'POST',
+      body: JSON.stringify({
+        authorName: 'Viajero E2E Google',
+        authorOrigin: 'Sucre, Bolivia',
+        verifiedVia: 'GOOGLE',
+        rating: 5,
+        comment: 'Excelente atencion y mapa interactivo de Sucre en Joy Ride Cafe.',
+      }),
+    },
+    clientToken
+  );
   assert.equal(reviewPost.status, 201);
   const reviewsList = await api('/reviews');
   assert.equal(reviewsList.status, 200);
@@ -529,15 +533,19 @@ async function run() {
   assert.equal(suiteRes.data.count, 5);
   assert.ok(['SMTP', 'RESEND', 'PREVIEW_ONLY'].includes(suiteRes.data.deliveryMode));
 
-  const xssReviewRes = await api('/reviews', {
-    method: 'POST',
-    body: JSON.stringify({
-      authorName: 'Security Probe',
-      rating: 5,
-      comment: 'Validacion de URL maliciosa en foto de resena.',
-      photoUrl: 'javascript:alert(1)',
-    }),
-  });
+  const xssReviewRes = await api(
+    '/reviews',
+    {
+      method: 'POST',
+      body: JSON.stringify({
+        authorName: 'Security Probe',
+        rating: 5,
+        comment: 'Validacion de URL maliciosa en foto de resena.',
+        photoUrl: 'javascript:alert(1)',
+      }),
+    },
+    clientToken
+  );
   assert.equal(xssReviewRes.status, 400);
 
   const staticUploadCheck = await fetch(`http://127.0.0.1:4000${uploadImgRes.data.imageUrl}`);
@@ -546,6 +554,84 @@ async function run() {
   assert.ok((staticUploadCheck.headers.get('content-security-policy') || '').includes('sandbox'));
   assert.equal(staticUploadCheck.headers.get('x-powered-by'), null);
   console.log('[PASS] 15. Dynamic Bento Promotions + 5-Template Email Suite + Security Hardening');
+
+  // 16. Stripe PaymentIntents Flow + Deep F12 DevTools Tampering Guards
+  const stripeCfg = await api('/payments/stripe/config');
+  assert.equal(stripeCfg.status, 200);
+  assert.equal(stripeCfg.data.expressReady, true);
+
+  const targetProd = products[0];
+  const expectedMinTotalBs = Number(targetProd.precioBs);
+  const stripeIntent = await api(
+    '/payments/stripe/create-intent',
+    {
+      method: 'POST',
+      body: JSON.stringify({
+        items: [{ productId: targetProd.id, quantity: 1 }],
+        deliveryType: 'RECOGER_LOCAL',
+        phoneContact: '+591 71123456',
+        totalBs: 0.01, // Tampered client total must be completely ignored
+        splitCount: 1,
+      }),
+    },
+    clientToken
+  );
+  assert.equal(stripeIntent.status, 201);
+  assert.ok(stripeIntent.data.paymentIntentId);
+  assert.ok(Number(stripeIntent.data.totalBs) >= expectedMinTotalBs);
+
+  const stripeConfirm = await api(
+    '/payments/stripe/confirm-intent',
+    {
+      method: 'POST',
+      body: JSON.stringify({
+        orderId: stripeIntent.data.orderId,
+        paymentIntentId: stripeIntent.data.paymentIntentId,
+        cardBrand: 'VISA',
+        cardLast4: '4242',
+      }),
+    },
+    clientToken
+  );
+  assert.equal(stripeConfirm.status, 200);
+  assert.equal(stripeConfirm.data.status, 'PAGO_CONFIRMADO');
+
+  // F12 API tampering checks
+  const anonAdminCreate = await api('/admin/products', { method: 'POST', body: JSON.stringify({ name: 'Hack' }) });
+  assert.equal(anonAdminCreate.status, 401);
+
+  const clientAdminCreate = await api(
+    '/admin/products',
+    { method: 'POST', body: JSON.stringify({ name: 'Hack' }) },
+    clientToken
+  );
+  assert.equal(clientAdminCreate.status, 403);
+
+  const anonReview = await api('/reviews', {
+    method: 'POST',
+    body: JSON.stringify({ comment: 'Intento sin autenticacion desde F12', rating: 5 }),
+  });
+  assert.equal(anonReview.status, 401);
+
+  const f12RegisterAdmin = await api('/auth/register', {
+    method: 'POST',
+    body: JSON.stringify({
+      name: 'F12 Escalation Probe',
+      email: `f12probe-${Date.now()}@example.com`,
+      password: 'Password123!',
+      role: 'ADMIN',
+    }),
+  });
+  assert.equal(f12RegisterAdmin.status, 201);
+  assert.equal(f12RegisterAdmin.data.user.role, 'CLIENTE');
+
+  const noCacheOrders = await fetch(`${BASE}/orders/mine`, {
+    headers: { Authorization: `Bearer ${clientToken}` },
+  });
+  assert.equal(noCacheOrders.status, 200);
+  assert.ok((noCacheOrders.headers.get('cache-control') || '').includes('no-store'));
+
+  console.log('[PASS] 16. Stripe Gateway + Server Price Authority + Deep F12 Security Guards');
 
   console.log('\nALL E2E INTEGRATION TESTS PASSED!');
 }

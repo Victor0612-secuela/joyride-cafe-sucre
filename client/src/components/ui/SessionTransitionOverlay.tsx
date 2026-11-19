@@ -53,7 +53,7 @@ export function SessionTransitionOverlay({
               transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
               src="/logo-joyride.png"
               alt="Joy Ride Café"
-              className="h-28 w-28 rounded-full object-contain shadow-card ring-2 ring-joycyan/30"
+              className="h-36 w-36 rounded-full object-contain shadow-card ring-2 ring-joycyan/35"
             />
             <span className="mt-5 font-mono text-xs font-bold uppercase tracking-[0.22em] text-joymagenta">
               NO SOLO PARA GRINGOS

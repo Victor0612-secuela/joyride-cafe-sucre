@@ -224,6 +224,9 @@ export async function capturePayPalOrder(params: {
   if (!payment || payment.orderId !== params.orderId) {
     throw new AppError(404, 'Orden PayPal no encontrada en el sistema');
   }
+  if (payment.order.userId !== params.userId) {
+    throw new AppError(403, 'No tienes autorización sobre esta orden PayPal');
+  }
 
   if (payment.status === PaymentStatus.COMPLETADO) {
     return {

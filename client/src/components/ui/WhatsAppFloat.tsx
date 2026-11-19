@@ -76,7 +76,7 @@ export function WhatsAppFloat() {
                   <img
                     src="/logo-joyride.png"
                     alt="Joy Ride Café"
-                    className="h-10 w-10 rounded-full object-contain ring-2 ring-emerald-400/50"
+                    className="h-12 w-12 rounded-full object-contain ring-2 ring-emerald-400/50"
                   />
                   <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-surface bg-emerald-400" />
                 </div>

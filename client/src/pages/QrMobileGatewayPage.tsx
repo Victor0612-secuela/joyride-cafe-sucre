@@ -72,7 +72,7 @@ export function QrMobileGatewayPage() {
         <div className="border-b border-hairline bg-elevated px-5 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <img src="/logo-joyride.png" alt="Joy Ride Café" className="h-10 w-10 rounded-full" />
+              <img src="/logo-joyride.png" alt="Joy Ride Café" className="h-12 w-12 rounded-full object-contain" />
               <div>
                 <p className="font-display text-sm font-extrabold text-ink">SIMPLE QR BOLIVIA</p>
                 <p className="text-xs text-joycyan">Billetera Bancaria Móvil</p>

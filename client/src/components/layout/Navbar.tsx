@@ -27,6 +27,7 @@ import { useI18n } from '../../context/I18nContext';
 import { isSoundEnabled, joySound, setSoundEnabled } from '../../lib/sound';
 import { getSucreStatusInfo, ROLE_META } from '../../lib/format';
 import { Category } from '../../types';
+import { PwaInstallButton } from '../ui/PwaInstallButton';
 
 interface NavbarProps {
   categories?: Category[];
@@ -74,23 +75,24 @@ export function Navbar({ categories = [], onSelectCategory, onOpenReservation }:
   const handleCatClick = (slug: string) => {
     setCatOpen(false);
     setMobileOpen(false);
+    joySound.click();
     if (onSelectCategory) {
       onSelectCategory(slug);
       document.getElementById('carta-joyride')?.scrollIntoView({ behavior: 'smooth' });
     } else {
-      navigate(`/?cat=${encodeURIComponent(slug)}#carta-joyride`);
+      navigate(slug === 'all' ? '/carta' : `/carta?cat=${encodeURIComponent(slug)}`);
     }
   };
 
   return (
     <header className="fixed inset-x-0 top-0 z-40 border-b border-white/10 bg-obsidian/85 backdrop-blur-xl">
-      <div className="mx-auto flex h-[72px] max-w-[1640px] items-center justify-between gap-3 px-4 sm:px-6 lg:px-10 xl:px-12">
+      <div className="mx-auto flex h-[78px] max-w-[1640px] items-center justify-between gap-3 px-4 sm:px-6 lg:px-10 xl:px-12">
         {/* Brand */}
-        <Link to="/" className="flex min-w-0 shrink-0 items-center gap-2.5 focus-visible:rounded-lg sm:gap-3">
+        <Link to="/" className="flex min-w-0 shrink-0 items-center gap-3 focus-visible:rounded-lg">
           <img
             src="/logo-joyride.png"
             alt="Joy Ride Café Sucre"
-            className="h-10 w-10 shrink-0 rounded-full object-contain sm:h-11 sm:w-11"
+            className="h-12 w-12 shrink-0 rounded-full object-contain ring-1 ring-joycyan/35 sm:h-14 sm:w-14"
           />
           <div className="min-w-0 leading-tight">
             <span className="block whitespace-nowrap font-display text-sm font-extrabold tracking-tight text-ink sm:text-base xl:text-lg">
@@ -108,6 +110,14 @@ export function Navbar({ categories = [], onSelectCategory, onOpenReservation }:
           className="hidden min-w-0 flex-1 items-center justify-center gap-1 whitespace-nowrap xl:flex 2xl:gap-2"
           aria-label="Navegación principal"
         >
+          <Link
+            to="/"
+            onClick={() => joySound.click()}
+            className="whitespace-nowrap rounded-lg px-2.5 py-2 text-sm font-medium text-ink/90 transition-colors hover:bg-surface hover:text-joycyan xl:px-3 xl:text-[15px]"
+          >
+            {t('Inicio', 'Home')}
+          </Link>
+
           <div ref={catRef} className="relative">
             <button
               type="button"
@@ -433,13 +443,26 @@ export function Navbar({ categories = [], onSelectCategory, onOpenReservation }:
                 </button>
               </div>
             </div>
+            <Link
+              to="/"
+              onClick={() => {
+                setMobileOpen(false);
+                joySound.click();
+              }}
+              className="rounded-xl px-3 py-2.5 text-left text-sm font-semibold text-ink hover:bg-surface"
+            >
+              {t('Inicio · La Casona', 'Home')}
+            </Link>
             <button
               type="button"
               onClick={() => handleCatClick('all')}
               className="rounded-xl px-3 py-2.5 text-left text-sm font-semibold text-ink hover:bg-surface"
             >
-              Explorar Carta Completa
+              {t('Explorar Carta Completa', 'Explore Full Menu')}
             </button>
+            <div className="px-3 py-1">
+              <PwaInstallButton compact />
+            </div>
             <button
               type="button"
               onClick={() => {

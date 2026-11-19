@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowDownRight, Calendar, MapPin, ShoppingBag, Sparkles } from 'lucide-react';
 import { getSucreStatusInfo } from '../../lib/format';
@@ -74,21 +75,21 @@ export function HeroFullBleed({ onOpenReservation, onOpenCart }: HeroFullBleedPr
 
             <p className="mt-6 max-w-3xl text-base leading-relaxed text-slate-300 sm:text-lg xl:text-xl">
               {t(
-                'Desde 2001 frente a la Catedral Metropolitana de Sucre. Pique a lo Macho, Singani Chuflay, cervezas bien frías, café boliviano de altura y noches de Salsa & Bachata. Ordena en vivo con QR o PayPal y sigue cada etapa hasta tu puerta con PIN.',
-                'Facing Sucre’s Metropolitan Cathedral since 2001. Pique a lo Macho, Singani Chuflay, ice-cold craft beers, high-altitude Bolivian coffee, and Salsa & Bachata nights. Order live with QR or PayPal and track every step to your door with your personal PIN.'
+                'Desde 2001 frente a la Catedral Metropolitana de Sucre. Pique a lo Macho, Singani Chuflay, cervezas bien frías, café boliviano de altura y noches de Salsa & Bachata. Pide al instante con QR, Tarjeta o PayPal y sigue cada paso hasta tu puerta con PIN.',
+                'Facing Sucre’s Metropolitan Cathedral since 2001. Pique a lo Macho, Singani Chuflay, ice-cold craft beers, high-altitude Bolivian coffee, and Salsa & Bachata nights. Order live with QR, Card or PayPal and track every step to your door with your personal PIN.'
               )}
             </p>
 
             {/* Primary & Secondary CTAs */}
             <div className="mt-9 flex flex-wrap items-center gap-4">
-              <a
-                href="#carta-joyride"
+              <Link
+                to="/carta"
                 onClick={() => joySound.click()}
                 className="inline-flex items-center gap-2 rounded-xl bg-joymagenta px-7 py-4 text-sm font-bold text-white shadow-elevated transition-transform hover:bg-joymagenta-deep active:scale-[0.96] sm:text-base"
               >
                 <span>{t('Explorar la Carta', 'Explore Menu')}</span>
                 <ArrowDownRight className="h-4 w-4" />
-              </a>
+              </Link>
 
               <button
                 type="button"
@@ -128,7 +129,7 @@ export function HeroFullBleed({ onOpenReservation, onOpenCart }: HeroFullBleedPr
                 <img
                   src="/logo-joyride.png"
                   alt="Emblema oficial Joy Ride Café"
-                  className="h-24 w-24 shrink-0 rounded-full object-contain"
+                  className="h-28 w-28 shrink-0 rounded-full object-contain sm:h-32 sm:w-32 ring-2 ring-joycyan/30"
                 />
                 <div>
                   <p className="font-display text-2xl font-extrabold text-ink">JOY RIDE CAFÉ®</p>

@@ -17,10 +17,17 @@ import {
   getPayPalPublicConfig,
 } from '../services/paypal.service';
 import {
+  cancelStripePaymentIntent,
+  confirmStripePaymentIntent,
+  createStripePaymentIntent,
+  getStripePublicConfig,
+} from '../services/stripe.service';
+import {
   createOrderBaseSchema,
   depositSubmitSchema,
   paypalCaptureSchema,
   reviewDepositSchema,
+  stripeConfirmSchema,
 } from '../validators/schemas';
 
 const router = Router();
@@ -165,6 +172,50 @@ router.post('/payments/paypal/capture-order', requireAuth, async (req: AuthReque
 router.post('/payments/paypal/cancel-order/:orderId', requireAuth, async (req: AuthRequest, res, next) => {
   try {
     const result = await cancelPayPalOrder(String(req.params.orderId), req.user!.userId);
+    res.json(result || { cancelled: false });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// --- Stripe Cards Gateway (PaymentIntents API / Test Express) ---
+router.get('/payments/stripe/config', (_req, res) => {
+  res.json(getStripePublicConfig());
+});
+
+router.post('/payments/stripe/create-intent', requireAuth, async (req: AuthRequest, res, next) => {
+  try {
+    const body = createOrderBaseSchema.parse(req.body);
+    const result = await createStripePaymentIntent({
+      ...body,
+      userId: req.user!.userId,
+      userName: req.user!.name,
+    });
+    res.status(201).json(result);
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.post('/payments/stripe/confirm-intent', requireAuth, async (req: AuthRequest, res, next) => {
+  try {
+    const body = stripeConfirmSchema.parse(req.body);
+    const result = await confirmStripePaymentIntent({
+      orderId: body.orderId,
+      paymentIntentId: body.paymentIntentId,
+      cardBrand: body.cardBrand,
+      cardLast4: body.cardLast4,
+      userId: req.user!.userId,
+    });
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.post('/payments/stripe/cancel-intent/:orderId', requireAuth, async (req: AuthRequest, res, next) => {
+  try {
+    const result = await cancelStripePaymentIntent(String(req.params.orderId), req.user!.userId);
     res.json(result || { cancelled: false });
   } catch (err) {
     next(err);

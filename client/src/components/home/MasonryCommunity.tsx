@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'framer-motion';
 import { CheckCircle2, MapPin, MessageSquarePlus, Plus, Sparkles, Star, X } from 'lucide-react';
@@ -57,6 +58,7 @@ export function MasonryCommunity({ products, onOpenReservation }: MasonryCommuni
   const { user } = useAuth();
   const { currency, addItem } = useCart();
   const { pushToast } = useToast();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
 
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
@@ -135,8 +137,17 @@ export function MasonryCommunity({ products, onOpenReservation }: MasonryCommuni
             <button
               type="button"
               onClick={() => {
-                setAuthorName(user?.name || '');
-                setVerifiedVia(user ? 'CUENTA_JOYRIDE' : 'GOOGLE');
+                if (!user) {
+                  pushToast(
+                    'Inicia sesión para publicar tu reseña',
+                    'info',
+                    'Solo cuentas verificadas pueden dejar comentarios en la casona'
+                  );
+                  navigate('/login');
+                  return;
+                }
+                setAuthorName(user.name || '');
+                setVerifiedVia('CUENTA_JOYRIDE');
                 setReviewModalOpen(true);
               }}
               className="inline-flex min-h-[44px] items-center gap-2 rounded-xl bg-joycyan px-5 py-2.5 text-sm font-bold text-obsidian transition-colors hover:bg-joycyan-deep active:scale-[0.96]"

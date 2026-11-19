@@ -41,6 +41,13 @@ export const paypalCaptureSchema = z.object({
   orderId: z.string().min(2),
 });
 
+export const stripeConfirmSchema = z.object({
+  orderId: z.string().min(2),
+  paymentIntentId: z.string().min(4),
+  cardBrand: z.string().min(2).max(20).optional(),
+  cardLast4: z.string().regex(/^\d{4}$/, 'Últimos 4 dígitos inválidos').optional(),
+});
+
 export const reviewDepositSchema = z.object({
   decision: z.enum(['APPROVE', 'REJECT']),
   notes: z.string().max(300).optional().default(''),

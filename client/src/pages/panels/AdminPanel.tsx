@@ -68,7 +68,7 @@ interface StockMovementRow {
   actor?: { name: string; role: string } | null;
 }
 
-const CHART_COLORS = ['#00A0DF', '#F59E0B', '#F20574'];
+const CHART_COLORS = ['#00A0DF', '#F59E0B', '#F20574', '#8B5CF6'];
 
 export function AdminPanel() {
   useDocumentTitle('Panel Administrador — Joy Ride Café® Sucre');
@@ -726,7 +726,7 @@ export function AdminPanel() {
                 {/* Payment Methods Chart */}
                 <div className="rounded-2xl border border-hairline bg-surface p-5 lg:col-span-7">
                   <h2 className="font-display text-base font-bold text-ink">
-                    Ingresos por Pasarela (QR vs Depósito vs PayPal)
+                    Ingresos por Pasarela (QR, Depósito, PayPal y Tarjeta)
                   </h2>
                   <p className="mt-0.5 text-xs text-muted">Totales confirmados en Bolivianos (Bs.)</p>
 

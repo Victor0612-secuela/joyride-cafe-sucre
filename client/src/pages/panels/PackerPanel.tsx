@@ -357,7 +357,7 @@ export function PackerPanel() {
         {labelPreview && (
           <div className="space-y-4">
             <div className="rounded-xl border-2 border-dashed border-slate-400 bg-white p-5 text-center text-slate-900">
-              <img src="/logo-joyride.png" alt="Joy Ride" className="mx-auto h-12 w-12 rounded-full" />
+              <img src="/logo-joyride.png" alt="Joy Ride" className="mx-auto h-14 w-14 rounded-full object-contain" />
               <p className="mt-2 font-display text-base font-extrabold">JOY RIDE CAFÉ® SUCRE</p>
               <p className="text-[11px] text-slate-600">Calle Nicolás Ortiz N° 14</p>
               <div className="my-3 border-y border-slate-300 py-2 font-mono">

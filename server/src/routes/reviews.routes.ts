@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { z } from 'zod';
 import { prisma } from '../config/prisma';
-import { AuthRequest, optionalAuth } from '../middleware/auth.middleware';
+import { AuthRequest, requireAuth } from '../middleware/auth.middleware';
 import { createRateLimiter } from '../middleware/rateLimit.middleware';
 
 const router = Router();
@@ -43,7 +43,7 @@ router.get('/', async (_req, res, next) => {
   }
 });
 
-router.post('/', publicReviewLimiter, optionalAuth, async (req: AuthRequest, res, next) => {
+router.post('/', publicReviewLimiter, requireAuth, async (req: AuthRequest, res, next) => {
   try {
     const body = createReviewSchema.parse(req.body);
     const authorName = (req.user?.name || body.authorName || 'Viajero Joy Ride').trim();
