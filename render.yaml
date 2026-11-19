@@ -45,11 +45,11 @@ services:
       - key: SMTP_PORT
         value: "587"
       - key: SMTP_USER
-        value: villarroelmolina2004612@gmail.com
+        value: victor2004612@gmail.com
       - key: SMTP_PASS
         sync: false
       - key: SMTP_FROM
-        value: Joy Ride Café Sucre <villarroelmolina2004612@gmail.com>
+        value: Joy Ride Café Sucre <victor2004612@gmail.com>
       - key: CORS_ORIGINS
         value: ""
 
