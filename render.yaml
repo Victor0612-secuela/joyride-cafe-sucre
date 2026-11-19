@@ -4,7 +4,7 @@ services:
     runtime: node
     plan: free
     region: ohio
-    buildCommand: npm install --prefix server && npm install --prefix client && npm run build:client && npm run build:server
+    buildCommand: npm install --include=dev --prefix server && npm install --include=dev --prefix client && npm run build:client && npm run build:server
     startCommand: npm run render:start --prefix server
     healthCheckPath: /api/health
     envVars:
@@ -39,7 +39,7 @@ services:
       - key: MANAGER_EMAIL
         value: victor2004612@gmail.com
       - key: RESEND_API_KEY
-        sync: false
+        value: ""
       - key: SMTP_HOST
         value: smtp.gmail.com
       - key: SMTP_PORT
@@ -51,7 +51,7 @@ services:
       - key: SMTP_FROM
         value: Joy Ride Café Sucre <villarroelmolina2004612@gmail.com>
       - key: CORS_ORIGINS
-        sync: false
+        value: ""
 
 databases:
   - name: joyride-db
