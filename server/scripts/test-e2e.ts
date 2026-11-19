@@ -287,7 +287,7 @@ async function run() {
   const analytics = await api('/admin/analytics', {}, adminToken);
   assert.equal(analytics.status, 200);
   assert.ok(analytics.data.summary.totalRevenueBs > 0);
-  assert.equal(analytics.data.revenueByMethod.length, 3);
+  assert.equal(analytics.data.revenueByMethod.length, 4);
 
   const kardex = await api('/admin/kardex', {}, adminToken);
   assert.equal(kardex.status, 200);
