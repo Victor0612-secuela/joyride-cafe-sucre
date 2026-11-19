@@ -1,0 +1,44 @@
+@startuml
+title Diagrama de Componentes y Despliegue UML 2.5 — Joy Ride Café® Sucre
+skinparam shadowing false
+skinparam backgroundColor #FFFFFF
+
+node "Dispositivo Cliente / Staff\n(Web Browser / PWA Android-iOS)" as CLIENT {
+  [React 18 + Vite SPA\n(Tailwind + Framer Motion + SSE)] as SPA
+  [Service Worker PWA\n(sw.js + manifest.webmanifest)] as SW
+  [CartContext\n(localStorage + Cookies Tema/Audio)] as STORE
+}
+
+node "Servidor Web Render / Node.js 22 LTS\n(HTTP/HTTPS Puerto 4000)" as SERVER {
+  component "API Gateway & Seguridad\n(Helmet, CORS, RateLimit 429, Zod)" as MW
+  component "Controladores RESTful (11 módulos)\n(/api/auth, /catalog, /payments, /orders, /empaque, /delivery, /admin)" as ROUTES
+  component "Servicios Transaccionales\n(Inventory ACID, QR HMAC, Stripe, PayPal, OrderState)" as SVC
+  component "Broker SSE en Vivo\n(/api/events/stream por role/orderId)" as SSE
+  component "SPA Static Host & Uploads Sandbox\n(client/dist + /uploads con CSP)" as STATIC
+}
+
+node "Base de Datos PostgreSQL 16\n(Local :5433 / Render Managed DB)" as DBNODE {
+  database "PostgreSQL JoyRide DB\n(16 Tablas + 9 Enums\nPrisma ORM v6)" as PG
+}
+
+cloud "Servicios Externos" {
+  [PayPal Orders API v2] as PAYPAL
+  [Stripe PaymentIntents API] as STRIPE
+  [Gmail SMTP :587 / Resend] as EMAIL
+  [Esri World Topo + OSM Nominatim + OSRM] as MAPS
+}
+
+SPA --> MW : HTTPS REST JSON + Bearer JWT
+SPA <-- SSE : EventSource (Tiempo Real)
+SPA --> MAPS : Tiles Relieve, Rutas a Pie & Reverse GPS
+SW --> SPA : Instalación App & Caché Estática
+
+MW --> ROUTES
+ROUTES --> SVC
+SVC --> PG : prisma.$transaction ACID
+SVC --> SSE : emitOrderUpdate / staffBroadcast
+SVC --> PAYPAL : HTTPS Orders v2
+SVC --> STRIPE : HTTPS PaymentIntents
+SVC --> EMAIL : TLS SMTP (villarroelmolina2004612 -> victor2004612)
+STATIC --> SPA : Entrega client/dist & imágenes WebP
+@enduml

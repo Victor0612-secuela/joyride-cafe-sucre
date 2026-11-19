@@ -1,0 +1,55 @@
+@startuml
+title Diagrama de Secuencia UML 2.5 — Ciclo Pedido, Pago, Empaque y Entrega con PIN
+skinparam shadowing false
+skinparam backgroundColor #FFFFFF
+autonumber
+
+actor "Cliente" as C
+participant "React SPA\n(CartCheckoutDrawer)" as UI
+participant "API Express + Zod\n(/api/payments/*)" as API
+database "PostgreSQL 16\n(Prisma Tx ACID)" as DB
+participant "PayPal / Stripe\n(API Externa)" as PSP
+participant "SSE Stream\n(/api/events/stream)" as SSE
+actor "Cajero" as CAJ
+actor "Empaquetador" as EMP
+actor "Repartidor" as REP
+participant "Nodemailer SMTP\n(Email HTML)" as MAIL
+
+C -> UI : Selecciona productos + ubicación GPS
+UI -> API : POST /api/payments/{qr|deposit|paypal|stripe}\n(JWT Bearer, items[{productId, qty}], SIN totales)
+API -> DB : $transaction: leer precios reales y\nreserveStockTx() (stockDisponible -> stockReservado)
+alt stockDisponible < qty
+  DB --> API : Error 409 Conflict
+  API --> UI : 409 Sin stock suficiente
+else Stock reservado OK
+  DB --> API : Order + Payment (PENDIENTE)
+  alt Método == QR BNB (HMAC-SHA256)
+    API --> UI : QrSession (qrToken + firma SHA-256)
+    C -> API : POST /api/payments/qr/confirm/:qrToken
+  else Método == Stripe Tarjeta / PayPal Orders v2
+    API -> PSP : Crear Intent / Order con totalBs de BD
+    PSP --> API : Intent/Order ID aprobado
+    C -> API : POST /confirm-intent o /capture-order
+  else Método == Depósito Bancario
+    API --> UI : Estado PAGO_EN_REVISION
+    CAJ -> API : PATCH /api/cajero/payments/:id/review (APPROVE)
+  end
+  API -> DB : $transaction: Confirmar venta,\nStockMovement(VENTA_CONFIRMADA), Order -> PAGO_CONFIRMADO
+  API -> SSE : broadcastOrderChange(orderId, PAGO_CONFIRMADO)
+  API -> MAIL : Enviar recibo HTML al Cliente + Alerta Low Stock Admin
+  API --> UI : 200 OK (Tracking + PIN visible solo al Cliente)
+end
+
+EMP -> API : PATCH /api/empaque/orders/:id/start (EN_PREPARACION)
+EMP -> API : PATCH /api/empaque/orders/:id/finish-packing\n(Checklist 100% + Sello -> EMPACADO)
+API -> SSE : broadcastOrderChange(EMPACADO)
+
+REP -> API : PATCH /api/delivery/orders/:id/pickup (EN_CAMINO)
+API -> MAIL : Notificar al Cliente (Pedido en camino + PIN 4 dígitos)
+REP -> API : PATCH /api/delivery/orders/:id/location (Lat/Lng GPS + ETA)
+API -> SSE : Emitir tracking GPS al Cliente
+REP -> API : PATCH /api/delivery/orders/:id/deliver (PIN entregado por Cliente)
+API -> DB : Validar DeliveryTracking.deliveryPin -> ENTREGADO
+API -> SSE : broadcastOrderChange(ENTREGADO)
+API -> MAIL : Enviar confirmación de entrega final HTML
+@enduml

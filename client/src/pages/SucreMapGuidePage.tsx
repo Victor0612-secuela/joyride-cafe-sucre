@@ -22,6 +22,7 @@ import { useI18n } from '../context/I18nContext';
 import { useToast } from '../context/ToastContext';
 import { joySound } from '../lib/sound';
 import { Navbar } from '../components/layout/Navbar';
+import { ProbablyTagline } from '../components/ui/ProbablyTagline';
 
 const CATEGORY_FILTERS: Array<{
   id: 'ALL' | SucreTouristSpot['category'];
@@ -351,8 +352,16 @@ export function SucreMapGuidePage() {
               <ArrowLeft className="h-4 w-4" />
               <span>{t('Volver a Joy Ride Café®', 'Back to Joy Ride Café®')}</span>
             </Link>
-            <h1 className="mt-2 font-display text-3xl font-extrabold tracking-tight text-ink sm:text-4xl xl:text-5xl">
-              Probably the Best Map in Town
+            <div className="mt-3">
+              <ProbablyTagline
+                subject="Map"
+                accent="cyan"
+                size="md"
+                spanishHint={t('Ruta Turística & Nocturna de Sucre', 'Sucre Nightlife & Heritage Guide')}
+              />
+            </div>
+            <h1 className="mt-1 font-display text-3xl font-extrabold tracking-tight text-ink sm:text-4xl xl:text-5xl">
+              Probably the Best Map in Town®
             </h1>
             <p className="mt-2.5 max-w-3xl text-base text-muted sm:text-lg">
               {t(
@@ -401,7 +410,7 @@ export function SucreMapGuidePage() {
               key={cat.id}
               type="button"
               onClick={() => {
-                joySound.click();
+                joySound.tab();
                 setFilter(cat.id);
               }}
               className={`shrink-0 rounded-full border px-4 py-2 text-xs font-semibold transition-colors sm:text-sm ${
@@ -475,11 +484,12 @@ export function SucreMapGuidePage() {
                         <>
                           <button
                             type="button"
-                            onClick={() =>
+                            onClick={() => {
+                              joySound.slide();
                               setPhotoIdx(
                                 (i) => (i - 1 + selectedSpot.images.length) % selectedSpot.images.length
-                              )
-                            }
+                              );
+                            }}
                             aria-label="Foto anterior"
                             className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full border border-white/20 bg-obsidian/75 p-1.5 text-ink hover:border-joycyan"
                           >
@@ -487,7 +497,10 @@ export function SucreMapGuidePage() {
                           </button>
                           <button
                             type="button"
-                            onClick={() => setPhotoIdx((i) => (i + 1) % selectedSpot.images.length)}
+                            onClick={() => {
+                              joySound.slide();
+                              setPhotoIdx((i) => (i + 1) % selectedSpot.images.length);
+                            }}
                             aria-label="Siguiente foto"
                             className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full border border-white/20 bg-obsidian/75 p-1.5 text-ink hover:border-joycyan"
                           >

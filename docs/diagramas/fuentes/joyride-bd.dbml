@@ -1,0 +1,393 @@
+// ============================================================================
+// JOY RIDE CAFÉ® SUCRE — Modelo Físico Relacional PostgreSQL (DBML / dbdiagram.io)
+// Fuente oficial: server/prisma/schema.prisma (17 tablas, 9 enums)
+// ============================================================================
+
+Project JoyRideCafeSucre {
+  database_type: 'PostgreSQL'
+  Note: 'Plataforma E-Commerce, Reservas y Logística 5 Roles - Calle Nicolás Ortiz N° 14, Sucre, Bolivia'
+}
+
+Enum Role {
+  CLIENTE
+  CAJERO
+  EMPAQUETADOR
+  REPARTIDOR
+  ADMIN
+}
+
+Enum OrderStatus {
+  PENDIENTE_PAGO
+  PAGO_EN_REVISION
+  PAGO_CONFIRMADO
+  EN_PREPARACION
+  EMPACADO
+  EN_CAMINO
+  ENTREGADO
+  CANCELADO
+  RECHAZADO
+}
+
+Enum PaymentMethod {
+  QR
+  DEPOSITO_BANCARIO
+  PAYPAL
+  STRIPE
+}
+
+Enum PaymentStatus {
+  PENDIENTE
+  EN_REVISION
+  COMPLETADO
+  RECHAZADO
+  EXPIRADO
+}
+
+Enum DeliveryType {
+  DELIVERY
+  RECOGER_LOCAL
+}
+
+Enum StockMovementType {
+  ENTRADA_INICIAL
+  RESERVA_PEDIDO
+  VENTA_CONFIRMADA
+  LIBERACION_STOCK
+  AJUSTE_ADMIN
+}
+
+Enum ReservationZone {
+  PATIO_COLONIAL
+  MEZZANINE_TERRAZA
+  PANTALLA_GIGANTE
+  PISTA_SALSA_BACHATA
+}
+
+Enum ReservationStatus {
+  CONFIRMADA
+  CHECK_IN
+  CANCELADA
+}
+
+Enum ChatChannelType {
+  ORDER_DELIVERY
+  STAFF_OPS
+}
+
+Table User {
+  id varchar [pk]
+  name varchar [not null]
+  email varchar [unique, not null]
+  passwordHash varchar [not null]
+  role Role [not null, default: 'CLIENTE']
+  phone varchar
+  active boolean [not null, default: true]
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null]
+
+  Indexes {
+    (role, active)
+  }
+}
+
+Table Category {
+  id varchar [pk]
+  slug varchar [unique, not null]
+  name varchar [not null]
+  description text [not null]
+  sortOrder int [not null, default: 0]
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null]
+}
+
+Table Product {
+  id varchar [pk]
+  categoryId varchar [not null, ref: > Category.id]
+  slug varchar [unique, not null]
+  name varchar [not null]
+  description text [not null]
+  precioBs decimal(10,2) [not null]
+  precioUsd decimal(10,2) [not null]
+  stockDisponible int [not null, default: 0]
+  stockReservado int [not null, default: 0]
+  stockMinimoAlerta int [not null, default: 5]
+  esVegano boolean [not null, default: false]
+  esPicante boolean [not null, default: false]
+  esDestacado boolean [not null, default: false]
+  enHappyHour boolean [not null, default: false]
+  tiempoPreparacionMin int [not null, default: 15]
+  imageUrl varchar [not null]
+  maridajeSlug varchar
+  active boolean [not null, default: true]
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null]
+
+  Indexes {
+    (categoryId, active)
+    (enHappyHour, active)
+    (esDestacado, active)
+  }
+}
+
+Table Order {
+  id varchar [pk]
+  orderCode varchar [unique, not null]
+  userId varchar [not null, ref: > User.id]
+  status OrderStatus [not null, default: 'PENDIENTE_PAGO']
+  deliveryType DeliveryType [not null, default: 'DELIVERY']
+  subtotalBs decimal(10,2) [not null]
+  discountBs decimal(10,2) [not null, default: 0]
+  totalBs decimal(10,2) [not null]
+  totalUsd decimal(10,2) [not null]
+  deliveryAddress varchar
+  deliveryReference varchar
+  destLat float [default: -19.0442]
+  destLng float [default: -65.2618]
+  phoneContact varchar [not null]
+  notes text
+  splitCount int [not null, default: 1]
+  expiresAt timestamp
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null]
+
+  Indexes {
+    (status, createdAt)
+    (userId, createdAt)
+  }
+}
+
+Table OrderItem {
+  id varchar [pk]
+  orderId varchar [not null, ref: > Order.id]
+  productId varchar [not null, ref: > Product.id]
+  productName varchar [not null]
+  unitPriceBs decimal(10,2) [not null]
+  quantity int [not null]
+  subtotalBs decimal(10,2) [not null]
+
+  Indexes {
+    (orderId)
+    (productId)
+  }
+}
+
+Table Payment {
+  id varchar [pk]
+  orderId varchar [unique, not null, ref: - Order.id]
+  method PaymentMethod [not null]
+  status PaymentStatus [not null, default: 'PENDIENTE']
+  amountBs decimal(10,2) [not null]
+  amountUsd decimal(10,2) [not null]
+  qrToken varchar [unique]
+  qrSignature varchar
+  bankName varchar
+  referenceNumber varchar
+  comprobanteUrl varchar
+  paypalOrderId varchar [unique]
+  paypalCaptureId varchar
+  paypalPayerEmail varchar
+  stripePaymentIntentId varchar [unique]
+  cardBrand varchar
+  cardLast4 varchar
+  reviewNotes varchar
+  verificadoPorId varchar [ref: > User.id]
+  verifiedAt timestamp
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null]
+
+  Indexes {
+    (status, method)
+  }
+}
+
+Table PackagingChecklist {
+  id varchar [pk]
+  orderId varchar [unique, not null, ref: - Order.id]
+  empaquetadorId varchar [ref: > User.id]
+  items jsonb [not null]
+  sealCode varchar
+  allVerified boolean [not null, default: false]
+  notes text
+  startedAt timestamp [not null, default: `now()`]
+  completedAt timestamp
+}
+
+Table DeliveryTracking {
+  id varchar [pk]
+  orderId varchar [unique, not null, ref: - Order.id]
+  repartidorId varchar [ref: > User.id]
+  deliveryAddress varchar [not null]
+  deliveryReference varchar
+  destLat float [default: -19.0442]
+  destLng float [default: -65.2618]
+  riderLat float [default: -19.04804]
+  riderLng float [default: -65.25973]
+  etaMinutes int [default: 14]
+  deliveryPin varchar [not null]
+  packageLabelCode varchar [not null]
+  pickedUpAt timestamp
+  deliveredAt timestamp
+  receiverName varchar
+  deliveryNotes text
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null]
+
+  Indexes {
+    (repartidorId)
+  }
+}
+
+Table OrderStatusHistory {
+  id varchar [pk]
+  orderId varchar [not null, ref: > Order.id]
+  actorId varchar [ref: > User.id]
+  actorName varchar [not null]
+  actorRole varchar [not null]
+  fromStatus OrderStatus
+  toStatus OrderStatus [not null]
+  reason varchar [not null]
+  createdAt timestamp [not null, default: `now()`]
+
+  Indexes {
+    (orderId, createdAt)
+  }
+}
+
+Table StockMovement {
+  id varchar [pk]
+  productId varchar [not null, ref: > Product.id]
+  orderId varchar [ref: > Order.id]
+  actorId varchar [ref: > User.id]
+  type StockMovementType [not null]
+  quantity int [not null]
+  previousStock int [not null]
+  newStock int [not null]
+  reason varchar [not null]
+  createdAt timestamp [not null, default: `now()`]
+
+  Indexes {
+    (productId, createdAt)
+    (orderId)
+  }
+}
+
+Table Reservation {
+  id varchar [pk]
+  code varchar [unique, not null]
+  userId varchar [ref: > User.id]
+  guestName varchar [not null]
+  guestEmail varchar [not null]
+  guestPhone varchar [not null]
+  zone ReservationZone [not null]
+  date varchar [not null]
+  timeSlot varchar [not null]
+  partySize int [not null]
+  includeSalsaClass boolean [not null, default: false]
+  specialNotes text
+  status ReservationStatus [not null, default: 'CONFIRMADA']
+  qrPassToken varchar [unique, not null]
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null]
+
+  Indexes {
+    (date, zone, status)
+    (userId)
+  }
+}
+
+Table ChatMessage {
+  id varchar [pk]
+  channelType ChatChannelType [not null]
+  orderId varchar [ref: > Order.id]
+  senderId varchar [not null, ref: > User.id]
+  senderName varchar [not null]
+  senderRole varchar [not null]
+  content text [not null]
+  createdAt timestamp [not null, default: `now()`]
+
+  Indexes {
+    (channelType, orderId, createdAt)
+  }
+}
+
+Table Promotion {
+  id varchar [pk]
+  slug varchar [unique, not null]
+  title varchar [not null]
+  subtitle varchar [not null]
+  description text [not null]
+  badgeText varchar [not null]
+  scheduleText varchar [not null]
+  discountPercent int [not null, default: 0]
+  imageUrl varchar [not null]
+  active boolean [not null, default: true]
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null]
+}
+
+Table Event {
+  id varchar [pk]
+  slug varchar [unique, not null]
+  title varchar [not null]
+  subtitle varchar [not null]
+  description text [not null]
+  badge varchar [not null, default: 'EVENTO JOY RIDE']
+  accent varchar [not null, default: 'magenta']
+  locationLabel varchar [not null, default: 'Calle Nicolas Ortiz N 14']
+  scheduleLabel varchar [not null, default: '18:00 - 02:30']
+  imageUrl varchar [not null]
+  imagesJson jsonb
+  videoUrl varchar
+  spotId varchar [not null, default: 'joyride-hq']
+  isActive boolean [not null, default: true]
+  isFeatured boolean [not null, default: true]
+  sortOrder int [not null, default: 0]
+  createdAt timestamp [not null, default: `now()`]
+  updatedAt timestamp [not null]
+
+  Indexes {
+    (isActive, sortOrder)
+  }
+}
+
+Table Review {
+  id varchar [pk]
+  userId varchar
+  authorName varchar [not null]
+  authorOrigin varchar [not null, default: 'Sucre, Bolivia']
+  verifiedVia varchar [not null, default: 'CUENTA_JOYRIDE']
+  rating int [not null, default: 5]
+  comment text [not null]
+  photoUrl varchar
+  createdAt timestamp [not null, default: `now()`]
+
+  Indexes {
+    (createdAt)
+  }
+}
+
+Table NewsletterSubscriber {
+  id varchar [pk]
+  email varchar [unique, not null]
+  name varchar
+  active boolean [not null, default: true]
+  createdAt timestamp [not null, default: `now()`]
+}
+
+Table EmailLog {
+  id varchar [pk]
+  toEmail varchar [not null]
+  recipientRole varchar [not null]
+  templateType varchar [not null]
+  subject varchar [not null]
+  htmlBody text [not null]
+  status varchar [not null, default: 'STORED_PREVIEW']
+  previewUrl varchar
+  relatedOrderId varchar
+  createdAt timestamp [not null, default: `now()`]
+
+  Indexes {
+    (createdAt)
+    (templateType)
+  }
+}

@@ -1280,7 +1280,12 @@ async function main() {
           locationLabel: 'Calle Nicolas Ortiz N 14',
           scheduleLabel: '18:00 - 02:30 AM',
           imageUrl: '/images/venue-lounge-lights.webp',
-          imagesJson: ['/images/venue-lounge-lights.webp', '/images/salsa-bachata.webp', '/images/fiesta-amigos.webp'],
+          imagesJson: [
+            '/images/venue-lounge-lights.webp',
+            '/images/salsa-bachata.webp',
+            '/images/joyride-friends-night.webp',
+            '/images/joyride-evento-2.webp',
+          ],
           spotId: 'joyride-hq',
           sortOrder: 1,
           isActive: true,
@@ -1296,8 +1301,13 @@ async function main() {
           accent: 'cyan',
           locationLabel: 'Patio & Barra Joy Ride',
           scheduleLabel: 'Happy Hour 18:00 - 21:00',
-          imageUrl: '/images/venue-patio-night.webp',
-          imagesJson: ['/images/venue-patio-night.webp', '/images/venue-bar-cocktails.webp', '/images/dish-the-hulk.webp'],
+          imageUrl: '/images/joyride-official-portada.webp',
+          imagesJson: [
+            '/images/joyride-official-portada.webp',
+            '/images/venue-patio-night.webp',
+            '/images/venue-bar-cocktails.webp',
+            '/images/joyride-evento-3.webp',
+          ],
           spotId: 'joyride-hq',
           sortOrder: 2,
           isActive: true,
@@ -1389,6 +1399,31 @@ async function main() {
           isFeatured: true,
         },
       ],
+    });
+  } else {
+    // Keep Joy Ride HQ galleries enriched with authentic venue media
+    await prisma.event.updateMany({
+      where: { slug: 'noches-salsa-bachata' },
+      data: {
+        imagesJson: [
+          '/images/venue-lounge-lights.webp',
+          '/images/salsa-bachata.webp',
+          '/images/joyride-friends-night.webp',
+          '/images/joyride-evento-2.webp',
+        ],
+      },
+    });
+    await prisma.event.updateMany({
+      where: { slug: 'patio-colonial-barra' },
+      data: {
+        imageUrl: '/images/joyride-official-portada.webp',
+        imagesJson: [
+          '/images/joyride-official-portada.webp',
+          '/images/venue-patio-night.webp',
+          '/images/venue-bar-cocktails.webp',
+          '/images/joyride-evento-3.webp',
+        ],
+      },
     });
   }
 

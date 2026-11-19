@@ -4,6 +4,7 @@ import { Printer } from 'lucide-react';
 import { formatDateTime, formatDualPrice } from '../../lib/format';
 import { Order } from '../../types';
 import { Modal } from '../ui/Modal';
+import { JoyRideHeritageLockup } from '../ui/JoyRideHeritageLockup';
 
 export function ReceiptPrintModal({
   order,
@@ -100,9 +101,12 @@ export function ReceiptPrintModal({
             </div>
           </div>
 
-          <p className="mt-4 border-t border-dashed border-slate-300 pt-3 text-center text-[10px] text-slate-500">
-            &ldquo;No solo para gringos — Probably the best bar in town&rdquo; · Gracias por su preferencia
-          </p>
+          <div className="mt-4 flex flex-col items-center gap-2 border-t border-dashed border-slate-300 pt-3 text-center text-[10px] text-slate-500">
+            <JoyRideHeritageLockup forceTone="dark" className="h-12 w-auto opacity-85" />
+            <p>
+              &ldquo;No solo para gringos — Probably the best bar in town&rdquo; · Gracias por su preferencia
+            </p>
+          </div>
         </div>
 
         <button

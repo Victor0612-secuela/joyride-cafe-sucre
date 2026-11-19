@@ -344,6 +344,7 @@ export function CartCheckoutDrawer({ onQrStarted, onOrderCreated }: CartCheckout
     if (!requireAuthenticatedUser() || items.length === 0) return;
     const digits = cardNumber.replace(/\D/g, '');
     if (digits.length < 13 || !/^\d{2}\/\d{2}$/.test(cardExpiry.trim()) || cardCvc.trim().length < 3) {
+      joySound.error();
       pushToast(
         t('Revisa los datos de tu tarjeta', 'Check card details'),
         'error',
@@ -383,6 +384,7 @@ export function CartCheckoutDrawer({ onQrStarted, onOrderCreated }: CartCheckout
       );
       onOrderCreated(confirmRes.data.orderId);
     } catch (err) {
+      joySound.error();
       pushToast(t('No se pudo procesar la tarjeta', 'Card payment failed'), 'error', getErrorMessage(err));
     } finally {
       setStripeBusy(false);
@@ -401,6 +403,7 @@ export function CartCheckoutDrawer({ onQrStarted, onOrderCreated }: CartCheckout
         onQrStarted(res.data);
       } else if (paymentMethod === 'DEPOSITO_BANCARIO') {
         if (!referenceNumber.trim() || !comprobanteBase64) {
+          joySound.error();
           pushToast('Faltan datos del depósito', 'error', 'Ingresa el N° de operación y sube el comprobante');
           setSubmitting(false);
           return;
@@ -411,6 +414,7 @@ export function CartCheckoutDrawer({ onQrStarted, onOrderCreated }: CartCheckout
           referenceNumber,
           comprobanteBase64,
         });
+        joySound.success();
         clearCart();
         setDrawerOpen(false);
         pushToast(
@@ -421,6 +425,7 @@ export function CartCheckoutDrawer({ onQrStarted, onOrderCreated }: CartCheckout
         onOrderCreated(res.data.orderId);
       }
     } catch (err) {
+      joySound.error();
       pushToast('Error al procesar pedido', 'error', getErrorMessage(err));
     } finally {
       setSubmitting(false);
@@ -508,7 +513,7 @@ export function CartCheckoutDrawer({ onQrStarted, onOrderCreated }: CartCheckout
                           <button
                             type="button"
                             onClick={() => {
-                              joySound.click();
+                              joySound.remove();
                               updateQuantity(item.product.id, item.quantity - 1);
                             }}
                             aria-label="Restar"
@@ -523,7 +528,7 @@ export function CartCheckoutDrawer({ onQrStarted, onOrderCreated }: CartCheckout
                             type="button"
                             disabled={item.quantity >= item.product.stockDisponible}
                             onClick={() => {
-                              joySound.click();
+                              joySound.add();
                               updateQuantity(item.product.id, item.quantity + 1);
                             }}
                             aria-label="Sumar"
@@ -535,7 +540,10 @@ export function CartCheckoutDrawer({ onQrStarted, onOrderCreated }: CartCheckout
 
                         <button
                           type="button"
-                          onClick={() => removeItem(item.product.id)}
+                          onClick={() => {
+                            joySound.remove();
+                            removeItem(item.product.id);
+                          }}
                           aria-label="Eliminar producto"
                           className="rounded-lg p-1.5 text-muted hover:bg-rose-500/10 hover:text-rose-400"
                         >
@@ -730,7 +738,7 @@ export function CartCheckoutDrawer({ onQrStarted, onOrderCreated }: CartCheckout
                           key={m.id}
                           type="button"
                           onClick={() => {
-                            joySound.click();
+                            joySound.tab();
                             setPaymentMethod(m.id);
                           }}
                           className={`flex flex-col items-center gap-1 rounded-xl border p-2.5 text-xs font-semibold transition-colors ${

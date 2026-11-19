@@ -1,0 +1,76 @@
+@startuml
+title Diagrama de Casos de Uso UML 2.5 — Joy Ride Café® Sucre
+left to right direction
+skinparam shadowing false
+skinparam backgroundColor #FFFFFF
+skinparam monochrome false
+skinparam actorStyle stick
+skinparam packageStyle rectangle
+
+actor "Cliente" as C
+actor "Cajero" as CAJ
+actor "Empaquetador" as EMP
+actor "Repartidor" as REP
+actor "Administrador" as ADM
+
+actor "PayPal / Stripe\n(Pasarela Externa)" as PSP <<system>>
+actor "Gmail SMTP / Resend\n(Correo HTML)" as SMTP <<system>>
+actor "OSM / Leaflet OSRM\n(Georuta Sucre)" as GEO <<system>>
+
+rectangle "Sistema Web Joy Ride Café® Sucre (E-Commerce & Logística)" {
+  usecase "UC-01 Explorar Inicio,\nCarta (/carta) y Mapa" as UC01
+  usecase "UC-02 Autenticarse\n(JWT + Refresh)" as UC02
+  usecase "UC-03 Armar Carrito y\nSeleccionar Ubicación GPS" as UC03
+  usecase "UC-04 Pagar Pedido\n(QR / Tarjeta / PayPal / Depósito)" as UC04
+  usecase "UC-05 Reservar Zona /\nClases Salsa & Pase QR" as UC05
+  usecase "UC-06 Seguir Pedido en\nVivo (SSE + Chat Rider)" as UC06
+  usecase "UC-07 Publicar Reseña\nAutenticada" as UC07
+
+  usecase "UC-08 Aprobar / Rechazar\nDepósitos Bancarios" as UC08
+  usecase "UC-09 Verificar Checklist 100%,\nSello y Emitir PIN" as UC09
+  usecase "UC-10 Retirar Pedido,\nReportar GPS y Validar PIN" as UC10
+  usecase "UC-11 Gestionar Catálogo,\nKardex, Eventos, Bento y KPIs" as UC11
+  usecase "UC-12 Gestionar Roles,\nAuditoría y Campañas HTML" as UC12
+
+  usecase "Reservar Stock Atómico\nen PostgreSQL" as INC_STOCK
+  usecase "Emitir Alerta Email\ny Evento SSE" as EXT_NOTIFY
+}
+
+C --> UC01
+C --> UC02
+C --> UC03
+C --> UC04
+C --> UC05
+C --> UC06
+C --> UC07
+
+CAJ --> UC02
+CAJ --> UC08
+
+EMP --> UC02
+EMP --> UC09
+
+REP --> UC02
+REP --> UC10
+
+ADM --> UC02
+ADM --> UC08
+ADM --> UC09
+ADM --> UC10
+ADM --> UC11
+ADM --> UC12
+
+UC04 ..> INC_STOCK : <<include>>
+UC04 ..> UC02 : <<include>>
+UC05 ..> EXT_NOTIFY : <<include>>
+UC08 ..> EXT_NOTIFY : <<extend>>
+UC09 ..> EXT_NOTIFY : <<extend>>
+UC10 ..> EXT_NOTIFY : <<extend>>
+
+UC04 --> PSP
+UC01 --> GEO
+UC03 --> GEO
+UC10 --> GEO
+EXT_NOTIFY --> SMTP
+UC12 --> SMTP
+@enduml

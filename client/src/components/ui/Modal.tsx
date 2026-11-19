@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { X } from 'lucide-react';
+import { joySound } from '../../lib/sound';
 
 interface ModalProps {
   open: boolean;
@@ -19,6 +20,17 @@ export function Modal({
   maxWidthClass = 'max-w-2xl',
   children,
 }: ModalProps) {
+  const wasOpenRef = useRef(false);
+
+  useEffect(() => {
+    if (open && !wasOpenRef.current) {
+      joySound.modalOpen();
+    } else if (!open && wasOpenRef.current) {
+      joySound.modalClose();
+    }
+    wasOpenRef.current = open;
+  }, [open]);
+
   useEffect(() => {
     if (!open) return;
     const prevOverflow = document.body.style.overflow;

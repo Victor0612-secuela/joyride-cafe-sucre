@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { joySound } from '../../lib/sound';
+import { JoyRideHeritageLockup } from './JoyRideHeritageLockup';
 
 export function SessionTransitionOverlay({
   active,
@@ -12,7 +13,7 @@ export function SessionTransitionOverlay({
   subtitle?: string;
 }) {
   useEffect(() => {
-    if (active) joySound.transition();
+    if (active) joySound.logout();
   }, [active]);
 
   return (
@@ -62,7 +63,8 @@ export function SessionTransitionOverlay({
               {title}
             </p>
             <p className="mt-2 text-sm text-muted sm:text-base">{subtitle}</p>
-            <div className="mt-6 h-2 w-60 overflow-hidden rounded-full bg-elevated">
+            <JoyRideHeritageLockup className="mt-4 h-12 w-auto opacity-85" />
+            <div className="mt-5 h-2 w-60 overflow-hidden rounded-full bg-elevated">
               <motion.div
                 initial={{ x: '-100%' }}
                 animate={{ x: '0%' }}

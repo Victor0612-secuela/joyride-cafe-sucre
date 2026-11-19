@@ -16,8 +16,10 @@ import { useToast } from '../context/ToastContext';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import { getErrorMessage } from '../lib/api';
 import { ROLE_META } from '../lib/format';
+import { joySound } from '../lib/sound';
 import { Role } from '../types';
 import { BrandWatermarkBg } from '../components/ui/BrandWatermarkBg';
+import { JoyRideHeritageLockup } from '../components/ui/JoyRideHeritageLockup';
 
 const DEMO_ACCOUNTS: Array<{
   role: Role;
@@ -66,9 +68,11 @@ export function AuthSplitPage({ initialMode = 'login' }: { initialMode?: 'login'
         mode === 'login'
           ? await login(email, password)
           : await register({ name, email, password, phone });
+      joySound.login();
       pushToast(`Bienvenido, ${user.name}`, 'success', `Rol activo: ${ROLE_META[user.role].label}`);
       handleRouteAfterAuth(user.role);
     } catch (err) {
+      joySound.error();
       setErrorMsg(getErrorMessage(err));
     } finally {
       setSubmitting(false);
@@ -80,9 +84,11 @@ export function AuthSplitPage({ initialMode = 'login' }: { initialMode?: 'login'
     setSubmitting(true);
     try {
       const user = await login(demoEmail, 'JoyRide2026!');
+      joySound.login();
       pushToast(`Sesión demo: ${user.name}`, 'success', `Panel ${ROLE_META[user.role].label}`);
       handleRouteAfterAuth(user.role);
     } catch (err) {
+      joySound.error();
       setErrorMsg(getErrorMessage(err));
     } finally {
       setSubmitting(false);
@@ -117,11 +123,17 @@ export function AuthSplitPage({ initialMode = 'login' }: { initialMode?: 'login'
         </div>
 
         <div className="relative z-10 my-auto max-w-2xl py-10">
-          <img
-            src="/logo-joyride.png"
-            alt="Logo oficial Joy Ride Café"
-            className="h-36 w-36 rounded-full object-contain ring-2 ring-joycyan/35 shadow-card"
-          />
+          <div className="flex flex-wrap items-center gap-6">
+            <img
+              src="/logo-joyride.png"
+              alt="Logo oficial Joy Ride Café"
+              className="h-36 w-36 rounded-full object-contain ring-2 ring-joycyan/35 shadow-card"
+            />
+            <JoyRideHeritageLockup
+              forceTone="white"
+              className="h-28 w-auto opacity-95 drop-shadow-[0_6px_18px_rgba(0,0,0,0.45)]"
+            />
+          </div>
           <h1 className="mt-7 font-display text-4xl font-extrabold leading-tight text-ink xl:text-5xl 2xl:text-6xl">
             NO SOLO PARA GRINGOS
             <span className="mt-1.5 block text-joycyan">PROBABLY THE BEST BAR IN TOWN</span>

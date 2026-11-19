@@ -22,6 +22,7 @@ import { Product, Promotion } from '../../types';
 import { BentoGridSkeleton } from '../ui/Skeleton';
 import { AnimatedPrice } from '../ui/AnimatedPrice';
 import { EditorialSplitModal } from '../ui/EditorialSplitModal';
+import { ProbablyTagline } from '../ui/ProbablyTagline';
 
 interface BentoPromotionsProps {
   loading: boolean;
@@ -95,7 +96,13 @@ export function BentoPromotions({
     >
       <div className="mb-10 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
         <div>
-          <h2 className="font-display text-3xl font-extrabold tracking-tight text-ink sm:text-4xl xl:text-5xl">
+          <ProbablyTagline
+            subject="Happy Hour"
+            accent="magenta"
+            size="sm"
+            spanishHint={t('2x1 en Barra, Cocina & Pista', 'Daily 2x1 Bar & Music')}
+          />
+          <h2 className="mt-1.5 font-display text-3xl font-extrabold tracking-tight text-ink sm:text-4xl xl:text-5xl">
             {t('Ritmo Joy Ride en Sucre', 'Joy Ride Rhythm in Sucre')}
           </h2>
           <p className="mt-2.5 max-w-2xl text-base text-muted sm:text-lg">
@@ -375,6 +382,7 @@ export function BentoPromotions({
         badge={promoHappy?.badgeText || 'HAPPY HOUR 2x1'}
         accent="magenta"
         images={[
+          '/images/joyride-friends-night.webp',
           '/images/experiencia-bar.webp',
           '/images/venue-bar-cocktails.webp',
           '/images/dish-chuflay.webp',
@@ -445,8 +453,10 @@ export function BentoPromotions({
         accent="cyan"
         images={[
           '/images/salsa-bachata.webp',
+          '/images/joyride-official-portada.webp',
           '/images/venue-lounge-lights.webp',
           '/images/fiesta-amigos.webp',
+          '/images/joyride-evento-2.webp',
         ]}
       >
         <p className="text-sm leading-relaxed text-muted sm:text-base">

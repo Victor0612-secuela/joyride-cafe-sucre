@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Diagramas de Arquitectura, UML 2.5 &amp; BD — Joy Ride Café® Sucre</title>
+  <style>
+    :root {
+      color-scheme: light;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Arial, Helvetica, sans-serif;
+      background: #f8fafc;
+      color: #0f172a;
+      line-height: 1.55;
+    }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: #ffffff;
+      border-bottom: 1px solid #cbd5e1;
+      padding: 14px 24px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .topbar h1 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 800;
+    }
+    .topbar p {
+      margin: 2px 0 0;
+      font-size: 12.5px;
+      color: #475569;
+    }
+    .btn {
+      background: #0369a1;
+      color: #ffffff;
+      border: 0;
+      border-radius: 6px;
+      padding: 9px 16px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .btn:hover {
+      background: #075985;
+    }
+    main {
+      max-width: 1440px;
+      margin: 24px auto 60px;
+      padding: 0 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+    .summary-box {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 20px 24px;
+    }
+    .summary-box h2 {
+      margin: 0 0 8px;
+      font-size: 16px;
+    }
+    .sources-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .source-pill {
+      border: 1px solid #cbd5e1;
+      background: #f8fafc;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-family: Consolas, monospace;
+      font-size: 12px;
+      color: #0369a1;
+      text-decoration: none;
+    }
+    .source-pill:hover {
+      border-color: #0369a1;
+      background: #eff6ff;
+    }
+    .plate {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 20px 24px;
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+    .plate-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 10px;
+      margin-bottom: 14px;
+    }
+    .plate-header h2 {
+      margin: 0;
+      font-size: 17px;
+      color: #0f172a;
+    }
+    .plate-meta {
+      font-family: Consolas, monospace;
+      font-size: 12px;
+      color: #0369a1;
+      font-weight: 700;
+    }
+    .plate p {
+      margin: 0 0 14px;
+      font-size: 13.5px;
+      color: #334155;
+    }
+    .plate img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border: 1px solid #e2e8f0;
+      background: #ffffff;
+    }
+    @media print {
+      body {
+        background: #ffffff;
+      }
+      .topbar,
+      .no-print {
+        display: none !important;
+      }
+      main {
+        margin: 0;
+        padding: 0;
+        max-width: none;
+      }
+      .plate {
+        border: 0;
+        padding: 0;
+        margin: 0 0 16px;
+        page-break-after: always;
+        break-after: page;
+      }
+      .plate:last-child {
+        page-break-after: auto;
+        break-after: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <h1>Joy Ride Café® Sucre — Láminas de Ingeniería de Software (UML 2.5 / StarUML / PostgreSQL ERD)</h1>
+      <p>Generadas directamente desde <code>server/prisma/schema.prisma</code>, <code>order-state.service.ts</code> y los controladores RESTful de Express.</p>
+    </div>
+    <button type="button" class="btn" onclick="window.print()">Imprimir / Guardar como PDF</button>
+  </header>
+
+  <main>
+    <section class="summary-box no-print">
+      <h2>Fuentes Editables Estándar (Listas para Abrir en StarUML, dbdiagram.io, pgAdmin / DBeaver o PlantUML)</h2>
+      <div class="sources-grid">
+        <a class="source-pill" href="fuentes/joyride-staruml.mdj">fuentes/joyride-staruml.mdj (StarUML 5/6)</a>
+        <a class="source-pill" href="fuentes/joyride-bd.dbml">fuentes/joyride-bd.dbml (dbdiagram.io)</a>
+        <a class="source-pill" href="fuentes/joyride-schema.sql">fuentes/joyride-schema.sql (DDL PostgreSQL)</a>
+        <a class="source-pill" href="fuentes/01-casos-de-uso.puml">fuentes/01-casos-de-uso.puml</a>
+        <a class="source-pill" href="fuentes/02-clases-dominio.puml">fuentes/02-clases-dominio.puml</a>
+        <a class="source-pill" href="fuentes/03-erd-base-datos.puml">fuentes/03-erd-base-datos.puml</a>
+        <a class="source-pill" href="fuentes/04-secuencia-pedido-pago.puml">fuentes/04-secuencia-pedido-pago.puml</a>
+        <a class="source-pill" href="fuentes/05-maquina-estados-pedido.puml">fuentes/05-maquina-estados-pedido.puml</a>
+        <a class="source-pill" href="fuentes/06-componentes-despliegue.puml">fuentes/06-componentes-despliegue.puml</a>
+      </div>
+    </section>
+
+    <article class="plate">
+      <div class="plate-header">
+        <h2>1. Diagrama de Casos de Uso (UML 2.5)</h2>
+        <span class="plate-meta">uc · 5 Actores Internos + 3 Sistemas Externos</span>
+      </div>
+      <p>Muestra todos los actores humanos del negocio (<strong>Cliente, Cajero, Empaquetador, Repartidor, Administrador</strong>) y los sistemas externos (PayPal/Stripe, OSM/OSRM, Gmail SMTP), delimitando las dependencias <code>«include»</code> de reserva de stock ACID y <code>«extend»</code> de notificación en tiempo real.</p>
+      <img src="imagenes/01-casos-de-uso.svg" alt="Diagrama de Casos de Uso UML 2.5" />
+    </article>
+
+    <article class="plate">
+      <div class="plate-header">
+        <h2>2. Diagrama de Clases de Dominio (UML 2.5)</h2>
+        <span class="plate-meta">class · Atributos Tipados, Operaciones y Multiplicidades</span>
+      </div>
+      <p>Representa las clases núcleo del dominio, enumeraciones compartidas (<code>Role</code>, <code>OrderStatus</code>, <code>PaymentMethod</code>, <code>ReservationZone</code>), visibilidad de miembros, operaciones de negocio y relaciones de composición (<code>Order *-- OrderItem</code>) y asociación.</p>
+      <img src="imagenes/02-clases-dominio.svg" alt="Diagrama de Clases de Dominio UML 2.5" />
+    </article>
+
+    <article class="plate">
+      <div class="plate-header">
+        <h2>3. Diagrama Entidad–Relación Físico Crow's Foot (Base de Datos PostgreSQL)</h2>
+        <span class="plate-meta">erd · 17 Tablas + 9 Enums</span>
+      </div>
+      <p>Modelo físico completo en notación Crow's Foot (pata de gallo) con llaves primarias (<code>PK</code>), llaves foráneas (<code>FK</code>), índices únicos (<code>UK</code>) y cardinalidades exactas de todas las tablas definidas en <code>server/prisma/schema.prisma</code>.</p>
+      <img src="imagenes/03-erd-base-datos.svg" alt="Diagrama ERD Físico PostgreSQL" />
+    </article>
+
+    <article class="plate">
+      <div class="plate-header">
+        <h2>4. Diagrama de Secuencia E2E: Checkout, 4 Pasarelas, Empaque y Entrega con PIN</h2>
+        <span class="plate-meta">sd · 8 Líneas de Vida + Fragmento alt ACID</span>
+      </div>
+      <p>Describe paso a paso la ejecución en tiempo real desde que el cliente confirma su pedido (sin enviar precios desde el navegador), pasa por el bloque transaccional <code>alt</code> de concurrencia de stock, procesa cualquiera de las 4 pasarelas y recorre SSE hasta validar el PIN de 4 dígitos en destino.</p>
+      <img src="imagenes/04-secuencia-pedido-pago.svg" alt="Diagrama de Secuencia UML 2.5" />
+    </article>
+
+    <article class="plate">
+      <div class="plate-header">
+        <h2>5. Máquina de Estados del Pedido (OrderStatus)</h2>
+        <span class="plate-meta">stm · order-state.service.ts (ALLOWED_TRANSITIONS)</span>
+      </div>
+      <p>Autómata finito estricto validado en servidor: cualquier intento de saltar etapas (por ejemplo pasar de <code>PENDIENTE_PAGO</code> a <code>ENTREGADO</code> o cerrar entrega sin PIN válido) es rechazado con HTTP <code>409 Conflict</code>.</p>
+      <img src="imagenes/05-maquina-estados-pedido.svg" alt="Diagrama de Máquina de Estados" />
+    </article>
+
+    <article class="plate">
+      <div class="plate-header">
+        <h2>6. Diagrama de Componentes y Despliegue (Render Cloud + PostgreSQL 16 + PWA)</h2>
+        <span class="plate-meta">cmp / deploy · Arquitectura Física de Producción</span>
+      </div>
+      <p>Detalla los nodos físicos de ejecución: navegador/PWA con Service Worker e Indexed/LocalStorage, nodo Web Service en Render (Node.js 22 LTS + Express 4 + SSE + <code>client/dist</code>), base de datos PostgreSQL 16 administrada y nubes externas (PayPal, Stripe, Gmail SMTP y Esri/OSRM sin costo de API Key).</p>
+      <img src="imagenes/06-componentes-despliegue.svg" alt="Diagrama de Componentes y Despliegue" />
+    </article>
+  </main>
+</body>
+</html>

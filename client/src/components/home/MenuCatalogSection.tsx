@@ -23,6 +23,7 @@ import { Category, Product } from '../../types';
 import { ProductCardSkeleton } from '../ui/Skeleton';
 import { AnimatedPrice } from '../ui/AnimatedPrice';
 import { BrandWatermarkBg } from '../ui/BrandWatermarkBg';
+import { ProbablyTagline } from '../ui/ProbablyTagline';
 
 export type MenuSortOption = 'carta' | 'featured' | 'price_asc' | 'price_desc' | 'fast' | 'stock';
 
@@ -406,9 +407,12 @@ export function MenuCatalogSection({
       <div className="relative z-10 mx-auto max-w-[1640px] px-5 sm:px-8 lg:px-12 xl:px-14">
         <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
           <div>
-            <p className="font-mono text-xs font-bold uppercase tracking-[0.22em] text-joycyan">
-              {t('Calle Nicolás Ortiz N° 14 · Cocina & Barra Continua', 'Nicolás Ortiz N° 14 · Kitchen & Bar')}
-            </p>
+            <ProbablyTagline
+              subject="Menu"
+              accent="magenta"
+              size="md"
+              spanishHint={t('Calle Nicolás Ortiz N° 14 · Cocina & Barra Continua', 'Nicolás Ortiz N° 14 · Kitchen & Bar')}
+            />
             <h1 className="mt-1.5 font-display text-4xl font-extrabold tracking-tight text-ink sm:text-5xl xl:text-6xl">
               {t('Carta de Platos, Barra & Café', 'Full Menu, Cocktails & Coffee')}
             </h1>

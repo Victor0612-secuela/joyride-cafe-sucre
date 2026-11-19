@@ -1,0 +1,27 @@
+@startuml
+title Máquina de Estados del Pedido (OrderStatus) — server/src/services/order-state.service.ts
+skinparam shadowing false
+skinparam backgroundColor #FFFFFF
+
+[*] --> PENDIENTE_PAGO : POST /payments/qr/initiate\no create-order / create-intent
+
+PENDIENTE_PAGO --> PAGO_EN_REVISION : submitDeposit()\n[Depósito Bancario con captura]
+PENDIENTE_PAGO --> PAGO_CONFIRMADO : confirmQr() / confirmStripe()\ncapturePayPal()
+PENDIENTE_PAGO --> CANCELADO : cancelOrder()\n[Libera stockReservado -> stockDisponible]
+
+PAGO_EN_REVISION --> PAGO_CONFIRMADO : reviewDeposit(APPROVE)\n[Rol: CAJERO | ADMIN]
+PAGO_EN_REVISION --> RECHAZADO : reviewDeposit(REJECT)\n[Rol: CAJERO | ADMIN + Libera stock]
+
+PAGO_CONFIRMADO --> EN_PREPARACION : startPacking()\n[Rol: EMPAQUETADOR | ADMIN]
+PAGO_CONFIRMADO --> CANCELADO : cancelOrder()\n[Devolución y liberación de stock]
+
+EN_PREPARACION --> EMPACADO : finishPacking()\n[Checklist 100% + SealCode -> PIN generado]
+
+EMPACADO --> EN_CAMINO : pickupOrder()\n[Rol: REPARTIDOR | ADMIN + Notifica PIN]
+
+EN_CAMINO --> ENTREGADO : deliverOrder(pin)\n[Validación estricta PIN 4 dígitos]
+
+ENTREGADO --> [*]
+CANCELADO --> [*]
+RECHAZADO --> [*]
+@enduml

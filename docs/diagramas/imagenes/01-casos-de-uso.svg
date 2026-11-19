@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1640" height="1040" viewBox="0 0 1640 1040">
+  <rect x="0" y="0" width="1640" height="1040" fill="#FFFFFF"/>
+  <rect x="12" y="12" width="1616" height="1016" fill="#FFFFFF" stroke="#475569" stroke-width="1.5"/>
+  <!-- StarUML Diagram Frame Pentagon Header -->
+  <polygon points="12,12 453.5,12 453.5,36 439.5,50 12,50" fill="#F8FAFC" stroke="#475569" stroke-width="1.4"/>
+  <text x="24" y="35" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="14" font-weight="700" fill="#0F172A">
+    <tspan font-weight="800" fill="#0369A1">uc</tspan>
+    <tspan dx="6">Diagrama de Casos de Uso — Joy Ride Café® Sucre</tspan>
+  </text>
+  <text x="1614" y="35" text-anchor="end" font-family="Consolas, Courier New, monospace" font-size="11.5" fill="#475569">UML 2.5 · 5 Actores Internos + 3 Sistemas Externos</text>
+  <defs>
+    <marker id="arrowOpen" viewBox="0 0 12 10" refX="11" refY="5" markerWidth="10" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 1 1 L 11 5 L 1 9" fill="none" stroke="#1E293B" stroke-width="1.5"/>
+    </marker>
+    <marker id="arrowFilled" viewBox="0 0 12 10" refX="11" refY="5" markerWidth="9" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 1 L 11 5 L 0 9 z" fill="#1E293B"/>
+    </marker>
+    <marker id="arrowBlue" viewBox="0 0 12 10" refX="11" refY="5" markerWidth="9" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 1 L 11 5 L 0 9 z" fill="#0369A1"/>
+    </marker>
+    <marker id="arrowPurple" viewBox="0 0 12 10" refX="11" refY="5" markerWidth="9" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 1 L 11 5 L 0 9 z" fill="#9333EA"/>
+    </marker>
+  </defs>
+  
+  <!-- System Boundary -->
+  <rect x="275" y="82" width="1085" height="900" rx="6" fill="#FAFAFA" stroke="#334155" stroke-width="1.6"/>
+  <rect x="275" y="82" width="1085" height="34" rx="4" fill="#E2E8F0" stroke="#334155" stroke-width="1.4"/>
+  <text x="817" y="104" text-anchor="middle" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="14" font-weight="800" fill="#0F172A">Sistema Web Joy Ride Café® Sucre (E-Commerce, Reservas y Logística 5 Roles)</text>
+  <line x1="133" y1="205" x2="365" y2="155" stroke="#475569" stroke-width="1.35"/><line x1="133" y1="205" x2="365" y2="245" stroke="#475569" stroke-width="1.35"/><line x1="133" y1="205" x2="365" y2="335" stroke="#475569" stroke-width="1.35"/><line x1="133" y1="205" x2="365" y2="425" stroke="#475569" stroke-width="1.35"/><line x1="133" y1="205" x2="365" y2="515" stroke="#475569" stroke-width="1.35"/><line x1="133" y1="205" x2="365" y2="605" stroke="#475569" stroke-width="1.35"/><line x1="133" y1="205" x2="365" y2="695" stroke="#475569" stroke-width="1.35"/><line x1="133" y1="400" x2="365" y2="245" stroke="#475569" stroke-width="1.35"/><line x1="133" y1="400" x2="895" y2="425" stroke="#475569" stroke-width="1.35"/><line x1="133" y1="570" x2="365" y2="245" stroke="#475569" stroke-width="1.35"/><line x1="133" y1="570" x2="895" y2="530" stroke="#475569" stroke-width="1.35"/><line x1="133" y1="735" x2="365" y2="245" stroke="#475569" stroke-width="1.35"/><line x1="133" y1="735" x2="895" y2="635" stroke="#475569" stroke-width="1.35"/><line x1="133" y1="905" x2="365" y2="245" stroke="#475569" stroke-width="1.35"/><line x1="133" y1="905" x2="895" y2="745" stroke="#475569" stroke-width="1.35"/><line x1="133" y1="905" x2="895" y2="855" stroke="#475569" stroke-width="1.35"/><line x1="685" y1="425" x2="1478" y2="290" stroke="#64748B" stroke-width="1.3"/><line x1="685" y1="155" x2="1478" y2="545" stroke="#64748B" stroke-width="1.3"/><line x1="685" y1="335" x2="1478" y2="545" stroke="#64748B" stroke-width="1.3"/><line x1="1225" y1="635" x2="1478" y2="545" stroke="#64748B" stroke-width="1.3"/><line x1="1225" y1="315" x2="1478" y2="800" stroke="#64748B" stroke-width="1.3"/><line x1="1225" y1="855" x2="1478" y2="800" stroke="#64748B" stroke-width="1.3"/><path d="M 685 425 L 780 425 L 780 215 L 895 215" fill="none" stroke="#0369A1" stroke-width="1.35" stroke-dasharray="6,4" marker-end="url(#arrowOpen)"/><path d="M 685 435 L 795 435 L 795 315 L 895 315" fill="none" stroke="#0369A1" stroke-width="1.35" stroke-dasharray="6,4" marker-end="url(#arrowOpen)"/><path d="M 685 515 L 820 515 L 820 330 L 895 330" fill="none" stroke="#0369A1" stroke-width="1.35" stroke-dasharray="6,4" marker-end="url(#arrowOpen)"/><path d="M 1060 394 L 1060 346" fill="none" stroke="#0369A1" stroke-width="1.35" stroke-dasharray="6,4" marker-end="url(#arrowOpen)"/><path d="M 1225 530 L 1275 530 L 1275 330 L 1225 330" fill="none" stroke="#0369A1" stroke-width="1.35" stroke-dasharray="6,4" marker-end="url(#arrowOpen)"/><path d="M 1225 635 L 1305 635 L 1305 315 L 1225 315" fill="none" stroke="#0369A1" stroke-width="1.35" stroke-dasharray="6,4" marker-end="url(#arrowOpen)"/>
+    <ellipse cx="525" cy="155" rx="160" ry="31" fill="#FFFBEB" stroke="#1E293B" stroke-width="1.5"/>
+    <text x="525" y="152" text-anchor="middle" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12" font-weight="700" fill="#0F172A">UC-01 Explorar Inicio,</text>
+    <text x="525" y="168" text-anchor="middle" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="11.5" fill="#334155">Carta (/carta) y Mapa</text>
+    <ellipse cx="525" cy="245" rx="160" ry="31" fill="#FFFBEB" stroke="#1E293B" stroke-width="1.5"/>
+    <text x="525" y="242" text-anchor="middle" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12" font-weight="700" fill="#0F172A">UC-02 Autenticarse</text>
+    <text x="525" y="258" text-anchor="middle" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="11.5" fill="#334155">(JWT + Refresh Token)</text>
+    <ellipse cx="525" cy="335" rx="160" ry="31" fill="#FFFBEB" stroke="#1E293B" stroke-width="1.5"/>
+    <text x="525" y="332" text-anchor="middle" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12" font-weight="700" fill="#0F172A">UC-03 Armar Carrito y</text>
+    <text x="525" y="348" text-anchor="middle" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="11.5" fill="#334155">Marcar Ubicación GPS</text>
+    <ellipse cx="525" cy="425" rx="160" ry="31" fill="#FFFBEB" stroke="#1E293B" stroke-width="1.5"/>
+    <text x="525" y="422" text-anchor="middle" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12" font-weight="700" fill="#0F172A">UC-04 Pagar Pedido</text>
+    <text x="525" y="438" text-anchor="middle" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="11.5" fill="#334155">(QR, Tarjeta, Depósito, PayPal)</text>
+    <ellipse cx="525" cy="515" rx="160" ry="31" fill="#FFFBEB" stroke="#1E293B" stroke-width="1.5"/>
+    <text x="525" y="512" text-anchor="middle" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12" font-weight="700" fill="#0F172A">UC-05 Reservar Mesa /</text>
+    <text x="525" y="528" text-anchor="middle" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="11.5" fill="#334155">Salsa &amp; Pase QR</text>
+    <ellipse cx="525" cy="605" rx="160" ry="31" fill="#FFFBEB" stroke="#1E293B" stroke-width="1.5"/>
+    <text x="525" y="602" text-anchor="middle" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12" font-weight="700" fill="#0F172A">UC-06 Seguir Pedido en</text>
+    <text x="525" y="618" text-anchor="middle" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="11.5" fill="#334155">Vivo (SSE + Chat Rider)</text>
+    <ellipse cx="525" cy="695" rx="160" ry="31" fill="#FFFBEB" stroke="#1E293B" stroke-width="1.5"/>
+    <text x="525" y="692" text-anchor="middle" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12" font-weight="700" fill="#0F172A">UC-07 Publicar Reseña</text>
+    <text x="525" y="708" text-anchor="middle" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="11.5" fill="#334155">Autenticada</text>
+    <ellipse cx="1060" cy="215" rx="165" ry="31" fill="#EFF6FF" stroke="#1E293B" stroke-width="1.5"/>
+    <text x="1060" y="212" text-anchor="middle" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12" font-weight="700" fill="#0F172A">Reservar Stock ACID</text>
+    <text x="1060" y="228" text-anchor="middle" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="11.5" fill="#334155">en PostgreSQL</text>
+    <ellipse cx="1060" cy="315" rx="165" ry="31" fill="#EFF6FF" stroke="#1E293B" stroke-width="1.5"/>
+    <text x="1060" y="312" text-anchor="middle" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12" font-weight="700" fill="#0F172A">Emitir Alerta Email</text>
+    <text x="1060" y="328" text-anchor="middle" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="11.5" fill="#334155">HTML y Evento SSE</text>
+    <ellipse cx="1060" cy="425" rx="165" ry="31" fill="#FFFBEB" stroke="#1E293B" stroke-width="1.5"/>
+    <text x="1060" y="422" text-anchor="middle" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12" font-weight="700" fill="#0F172A">UC-08 Aprobar / Rechazar</text>
+    <text x="1060" y="438" text-anchor="middle" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="11.5" fill="#334155">Depósitos en Caja</text>
+    <ellipse cx="1060" cy="530" rx="165" ry="31" fill="#FFFBEB" stroke="#1E293B" stroke-width="1.5"/>
+    <text x="1060" y="527" text-anchor="middle" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12" font-weight="700" fill="#0F172A">UC-09 Checklist 100%,</text>
+    <text x="1060" y="543" text-anchor="middle" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="11.5" fill="#334155">Sello y Generar PIN</text>
+    <ellipse cx="1060" cy="635" rx="165" ry="31" fill="#FFFBEB" stroke="#1E293B" stroke-width="1.5"/>
+    <text x="1060" y="632" text-anchor="middle" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12" font-weight="700" fill="#0F172A">UC-10 Retirar, Reportar</text>
+    <text x="1060" y="648" text-anchor="middle" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="11.5" fill="#334155">GPS y Validar PIN</text>
+    <ellipse cx="1060" cy="745" rx="165" ry="31" fill="#FFFBEB" stroke="#1E293B" stroke-width="1.5"/>
+    <text x="1060" y="742" text-anchor="middle" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12" font-weight="700" fill="#0F172A">UC-11 CRUD Carta, Kardex,</text>
+    <text x="1060" y="758" text-anchor="middle" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="11.5" fill="#334155">Eventos, Bento y KPIs</text>
+    <ellipse cx="1060" cy="855" rx="165" ry="31" fill="#FFFBEB" stroke="#1E293B" stroke-width="1.5"/>
+    <text x="1060" y="852" text-anchor="middle" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12" font-weight="700" fill="#0F172A">UC-12 Gestionar Roles,</text>
+    <text x="1060" y="868" text-anchor="middle" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="11.5" fill="#334155">Auditoría y Campañas</text>
+  <g>
+    <rect x="749.2" y="286" width="71.6" height="18" rx="3" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="0.8"/>
+    <text x="785" y="299" text-anchor="middle" font-family="Consolas, Courier New, monospace" font-size="10.5" font-weight="600" fill="#0369A1">«include»</text>
+  </g>
+  <g>
+    <rect x="764.2" y="363" width="71.6" height="18" rx="3" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="0.8"/>
+    <text x="800" y="376" text-anchor="middle" font-family="Consolas, Courier New, monospace" font-size="10.5" font-weight="600" fill="#0369A1">«include»</text>
+  </g>
+  <g>
+    <rect x="784.2" y="439" width="71.6" height="18" rx="3" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="0.8"/>
+    <text x="820" y="452" text-anchor="middle" font-family="Consolas, Courier New, monospace" font-size="10.5" font-weight="600" fill="#0369A1">«include»</text>
+  </g>
+  <g>
+    <rect x="957.4" y="360" width="65.2" height="18" rx="3" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="0.8"/>
+    <text x="990" y="373" text-anchor="middle" font-family="Consolas, Courier New, monospace" font-size="10.5" font-weight="600" fill="#0369A1">«extend»</text>
+  </g>
+  <g>
+    <rect x="1242.4" y="421" width="65.2" height="18" rx="3" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="0.8"/>
+    <text x="1275" y="434" text-anchor="middle" font-family="Consolas, Courier New, monospace" font-size="10.5" font-weight="600" fill="#0369A1">«extend»</text>
+  </g>
+  <g>
+    <rect x="1272.4" y="486" width="65.2" height="18" rx="3" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="0.8"/>
+    <text x="1305" y="499" text-anchor="middle" font-family="Consolas, Courier New, monospace" font-size="10.5" font-weight="600" fill="#0369A1">«extend»</text>
+  </g>
+  <g>
+    <circle cx="105" cy="185" r="8" fill="#EFF6FF" stroke="#1E293B" stroke-width="1.6"/>
+    <line x1="105" y1="193" x2="105" y2="215" stroke="#1E293B" stroke-width="1.6"/>
+    <line x1="91" y1="201" x2="119" y2="201" stroke="#1E293B" stroke-width="1.6"/>
+    <line x1="105" y1="215" x2="94" y2="231" stroke="#1E293B" stroke-width="1.6"/>
+    <line x1="105" y1="215" x2="116" y2="231" stroke="#1E293B" stroke-width="1.6"/>
+    
+    <text x="105" y="247" text-anchor="middle" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12.5" font-weight="700" fill="#0F172A">Cliente</text>
+  </g>
+  <g>
+    <circle cx="105" cy="380" r="8" fill="#EFF6FF" stroke="#1E293B" stroke-width="1.6"/>
+    <line x1="105" y1="388" x2="105" y2="410" stroke="#1E293B" stroke-width="1.6"/>
+    <line x1="91" y1="396" x2="119" y2="396" stroke="#1E293B" stroke-width="1.6"/>
+    <line x1="105" y1="410" x2="94" y2="426" stroke="#1E293B" stroke-width="1.6"/>
+    <line x1="105" y1="410" x2="116" y2="426" stroke="#1E293B" stroke-width="1.6"/>
+    
+    <text x="105" y="442" text-anchor="middle" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12.5" font-weight="700" fill="#0F172A">Cajero</text>
+  </g>
+  <g>
+    <circle cx="105" cy="550" r="8" fill="#EFF6FF" stroke="#1E293B" stroke-width="1.6"/>
+    <line x1="105" y1="558" x2="105" y2="580" stroke="#1E293B" stroke-width="1.6"/>
+    <line x1="91" y1="566" x2="119" y2="566" stroke="#1E293B" stroke-width="1.6"/>
+    <line x1="105" y1="580" x2="94" y2="596" stroke="#1E293B" stroke-width="1.6"/>
+    <line x1="105" y1="580" x2="116" y2="596" stroke="#1E293B" stroke-width="1.6"/>
+    
+    <text x="105" y="612" text-anchor="middle" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12.5" font-weight="700" fill="#0F172A">Empaquetador</text>
+  </g>
+  <g>
+    <circle cx="105" cy="715" r="8" fill="#EFF6FF" stroke="#1E293B" stroke-width="1.6"/>
+    <line x1="105" y1="723" x2="105" y2="745" stroke="#1E293B" stroke-width="1.6"/>
+    <line x1="91" y1="731" x2="119" y2="731" stroke="#1E293B" stroke-width="1.6"/>
+    <line x1="105" y1="745" x2="94" y2="761" stroke="#1E293B" stroke-width="1.6"/>
+    <line x1="105" y1="745" x2="116" y2="761" stroke="#1E293B" stroke-width="1.6"/>
+    
+    <text x="105" y="777" text-anchor="middle" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12.5" font-weight="700" fill="#0F172A">Repartidor</text>
+  </g>
+  <g>
+    <circle cx="105" cy="885" r="8" fill="#EFF6FF" stroke="#1E293B" stroke-width="1.6"/>
+    <line x1="105" y1="893" x2="105" y2="915" stroke="#1E293B" stroke-width="1.6"/>
+    <line x1="91" y1="901" x2="119" y2="901" stroke="#1E293B" stroke-width="1.6"/>
+    <line x1="105" y1="915" x2="94" y2="931" stroke="#1E293B" stroke-width="1.6"/>
+    <line x1="105" y1="915" x2="116" y2="931" stroke="#1E293B" stroke-width="1.6"/>
+    
+    <text x="105" y="947" text-anchor="middle" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12.5" font-weight="700" fill="#0F172A">Administrador</text>
+  </g>
+  <g>
+    <circle cx="1510" cy="270" r="8" fill="#EFF6FF" stroke="#1E293B" stroke-width="1.6"/>
+    <line x1="1510" y1="278" x2="1510" y2="300" stroke="#1E293B" stroke-width="1.6"/>
+    <line x1="1496" y1="286" x2="1524" y2="286" stroke="#1E293B" stroke-width="1.6"/>
+    <line x1="1510" y1="300" x2="1499" y2="316" stroke="#1E293B" stroke-width="1.6"/>
+    <line x1="1510" y1="300" x2="1521" y2="316" stroke="#1E293B" stroke-width="1.6"/>
+    <text x="1510" y="257" text-anchor="middle" font-family="Consolas, Courier New, monospace" font-size="10.5" fill="#475569">«system»</text>
+    <text x="1510" y="332" text-anchor="middle" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12.5" font-weight="700" fill="#0F172A">PayPal / Stripe</text>
+  </g>
+  <g>
+    <circle cx="1510" cy="525" r="8" fill="#EFF6FF" stroke="#1E293B" stroke-width="1.6"/>
+    <line x1="1510" y1="533" x2="1510" y2="555" stroke="#1E293B" stroke-width="1.6"/>
+    <line x1="1496" y1="541" x2="1524" y2="541" stroke="#1E293B" stroke-width="1.6"/>
+    <line x1="1510" y1="555" x2="1499" y2="571" stroke="#1E293B" stroke-width="1.6"/>
+    <line x1="1510" y1="555" x2="1521" y2="571" stroke="#1E293B" stroke-width="1.6"/>
+    <text x="1510" y="512" text-anchor="middle" font-family="Consolas, Courier New, monospace" font-size="10.5" fill="#475569">«system»</text>
+    <text x="1510" y="587" text-anchor="middle" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12.5" font-weight="700" fill="#0F172A">OSM / OSRM</text>
+  </g>
+  <g>
+    <circle cx="1510" cy="780" r="8" fill="#EFF6FF" stroke="#1E293B" stroke-width="1.6"/>
+    <line x1="1510" y1="788" x2="1510" y2="810" stroke="#1E293B" stroke-width="1.6"/>
+    <line x1="1496" y1="796" x2="1524" y2="796" stroke="#1E293B" stroke-width="1.6"/>
+    <line x1="1510" y1="810" x2="1499" y2="826" stroke="#1E293B" stroke-width="1.6"/>
+    <line x1="1510" y1="810" x2="1521" y2="826" stroke="#1E293B" stroke-width="1.6"/>
+    <text x="1510" y="767" text-anchor="middle" font-family="Consolas, Courier New, monospace" font-size="10.5" fill="#475569">«system»</text>
+    <text x="1510" y="842" text-anchor="middle" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="12.5" font-weight="700" fill="#0F172A">Gmail SMTP</text>
+  </g>
+</svg>

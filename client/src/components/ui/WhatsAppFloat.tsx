@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowUpRight, MessageCircle, Send, Sparkles, X } from 'lucide-react';
 import { JOYRIDE_LOCATION } from '../../lib/constants';
+import { joySound } from '../../lib/sound';
 
 const CONCIERGE_PROMPTS = [
   '¿Quieres agendar una reserva o clase de Salsa?',
   '¿Armamos tu pedido 2x1 de Happy Hour hoy?',
+  'Probably the best mesa en Sucre te espera — ¿reservamos?',
   '¿Necesitas ayuda con tu entrega o pago QR?',
   '¿Buscas qué visitar hoy en Sucre?',
   '¿Celebras cumple o grupo en Nicolás Ortiz 14?',
@@ -91,7 +93,10 @@ export function WhatsAppFloat() {
               </div>
               <button
                 type="button"
-                onClick={() => setChatOpen(false)}
+                onClick={() => {
+                  joySound.modalClose();
+                  setChatOpen(false);
+                }}
                 aria-label="Cerrar asistente WhatsApp"
                 className="rounded-lg border border-hairline bg-obsidian/70 p-1.5 text-muted hover:text-ink"
               >
@@ -159,7 +164,10 @@ export function WhatsAppFloat() {
           >
             <button
               type="button"
-              onClick={() => setChatOpen(true)}
+              onClick={() => {
+                joySound.modalOpen();
+                setChatOpen(true);
+              }}
               className="flex-1 text-left text-xs font-semibold leading-snug text-ink hover:text-emerald-300 sm:text-sm"
             >
               <span className="block font-mono text-[10px] font-bold uppercase tracking-wider text-emerald-400">
@@ -185,7 +193,14 @@ export function WhatsAppFloat() {
         initial={{ opacity: 0, scale: 0.85, y: 14 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ type: 'spring', duration: 0.5, bounce: 0 }}
-        onClick={() => setChatOpen((v) => !v)}
+        onClick={() =>
+          setChatOpen((v) => {
+            const next = !v;
+            if (next) joySound.modalOpen();
+            else joySound.modalClose();
+            return next;
+          })
+        }
         aria-label="Abrir asistente WhatsApp de Joy Ride Café (+591 76116875)"
         className="group relative flex items-center gap-2.5 rounded-full border border-emerald-300/60 bg-emerald-500 px-4 py-3.5 text-obsidian shadow-[0_12px_34px_rgba(16,185,129,0.45)] transition-transform hover:scale-[1.04] hover:bg-emerald-400 active:scale-[0.96]"
       >

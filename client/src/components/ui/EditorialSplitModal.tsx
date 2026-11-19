@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { joySound } from '../../lib/sound';
@@ -37,14 +37,23 @@ export function EditorialSplitModal({
 }: EditorialSplitModalProps) {
   const [imgIdx, setImgIdx] = useState(0);
   const [shimmering, setShimmering] = useState(false);
+  const wasOpenRef = useRef(false);
 
   const safeImages = images.length > 0 ? images : ['/images/venue-patio-night.webp'];
+
+  useEffect(() => {
+    if (open && !wasOpenRef.current) {
+      joySound.modalOpen();
+    } else if (!open && wasOpenRef.current) {
+      joySound.modalClose();
+    }
+    wasOpenRef.current = open;
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
     setImgIdx(0);
     setShimmering(true);
-    joySound.modalOpen();
     const t = setTimeout(() => setShimmering(false), 240);
 
     const prevOverflow = document.body.style.overflow;
@@ -151,7 +160,10 @@ export function EditorialSplitModal({
                 <>
                   <button
                     type="button"
-                    onClick={() => setImgIdx((i) => (i - 1 + safeImages.length) % safeImages.length)}
+                    onClick={() => {
+                      joySound.slide();
+                      setImgIdx((i) => (i - 1 + safeImages.length) % safeImages.length);
+                    }}
                     aria-label="Foto anterior"
                     className="photo-overlay absolute left-3 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-black/60 text-white backdrop-blur-md hover:border-joycyan"
                   >
@@ -159,7 +171,10 @@ export function EditorialSplitModal({
                   </button>
                   <button
                     type="button"
-                    onClick={() => setImgIdx((i) => (i + 1) % safeImages.length)}
+                    onClick={() => {
+                      joySound.slide();
+                      setImgIdx((i) => (i + 1) % safeImages.length);
+                    }}
                     aria-label="Siguiente foto"
                     className="photo-overlay absolute right-3 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-black/60 text-white backdrop-blur-md hover:border-joycyan"
                   >
@@ -171,7 +186,10 @@ export function EditorialSplitModal({
                       <button
                         key={`${img}-${i}`}
                         type="button"
-                        onClick={() => setImgIdx(i)}
+                        onClick={() => {
+                          joySound.slide();
+                          setImgIdx(i);
+                        }}
                         className={`h-12 w-16 overflow-hidden rounded-lg border transition-all ${
                           imgIdx % safeImages.length === i
                             ? 'border-joycyan ring-2 ring-joycyan/50'

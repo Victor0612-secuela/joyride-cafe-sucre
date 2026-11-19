@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="920" viewBox="0 0 1600 920">
+  <rect x="0" y="0" width="1600" height="920" fill="#FFFFFF"/>
+  <rect x="12" y="12" width="1576" height="896" fill="#FFFFFF" stroke="#475569" stroke-width="1.5"/>
+  <!-- StarUML Diagram Frame Pentagon Header -->
+  <polygon points="12,12 513.5,12 513.5,36 499.5,50 12,50" fill="#F8FAFC" stroke="#475569" stroke-width="1.4"/>
+  <text x="24" y="35" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="14" font-weight="700" fill="#0F172A">
+    <tspan font-weight="800" fill="#0369A1">stm</tspan>
+    <tspan dx="6">Máquina de Estados OrderStatus — Joy Ride Café® Sucre</tspan>
+  </text>
+  <text x="1574" y="35" text-anchor="end" font-family="Consolas, Courier New, monospace" font-size="11.5" fill="#475569">order-state.service.ts · ALLOWED_TRANSITIONS Estricto (409 si salta)</text>
+  <defs>
+    <marker id="arrowOpen" viewBox="0 0 12 10" refX="11" refY="5" markerWidth="10" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 1 1 L 11 5 L 1 9" fill="none" stroke="#1E293B" stroke-width="1.5"/>
+    </marker>
+    <marker id="arrowFilled" viewBox="0 0 12 10" refX="11" refY="5" markerWidth="9" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 1 L 11 5 L 0 9 z" fill="#1E293B"/>
+    </marker>
+    <marker id="arrowBlue" viewBox="0 0 12 10" refX="11" refY="5" markerWidth="9" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 1 L 11 5 L 0 9 z" fill="#0369A1"/>
+    </marker>
+    <marker id="arrowPurple" viewBox="0 0 12 10" refX="11" refY="5" markerWidth="9" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 1 L 11 5 L 0 9 z" fill="#9333EA"/>
+    </marker>
+  </defs>
+  <circle cx="62" cy="435" r="12" fill="#0F172A"/><line x1="74" y1="435" x2="180" y2="435" stroke="#1E293B" stroke-width="1.6" marker-end="url(#arrowFilled)"/>
+  <g>
+    <rect x="73.4" y="401" width="97.2" height="18" rx="3" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="0.8"/>
+    <text x="122" y="414" text-anchor="middle" font-family="Consolas, Courier New, monospace" font-size="10.5" font-weight="600" fill="#0369A1">POST checkout</text>
+  </g>
+    <rect x="182" y="398" width="220" height="74" rx="12" fill="#FFFBEB" stroke="#1E293B" stroke-width="1.6"/>
+    <text x="292" y="420" text-anchor="middle" font-family="Consolas, Courier New, monospace" font-size="12.5" font-weight="800" fill="#0F172A">PENDIENTE_PAGO</text>
+    <line x1="182" y1="428" x2="402" y2="428" stroke="#1E293B" stroke-width="1.1"/>
+    <text x="292" y="447" text-anchor="middle" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="11.5" fill="#334155">Stock reservado temporalmente</text>
+    <rect x="182" y="145" width="240" height="74" rx="12" fill="#EFF6FF" stroke="#1E293B" stroke-width="1.6"/>
+    <text x="302" y="167" text-anchor="middle" font-family="Consolas, Courier New, monospace" font-size="12.5" font-weight="800" fill="#0F172A">PAGO_EN_REVISION</text>
+    <line x1="182" y1="175" x2="422" y2="175" stroke="#1E293B" stroke-width="1.1"/>
+    <text x="302" y="194" text-anchor="middle" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="11.5" fill="#334155">Depósito esperando a Caja</text>
+    <rect x="605" y="145" width="220" height="74" rx="12" fill="#FEE2E2" stroke="#1E293B" stroke-width="1.6"/>
+    <text x="715" y="167" text-anchor="middle" font-family="Consolas, Courier New, monospace" font-size="12.5" font-weight="800" fill="#0F172A">RECHAZADO</text>
+    <line x1="605" y1="175" x2="825" y2="175" stroke="#1E293B" stroke-width="1.1"/>
+    <text x="715" y="194" text-anchor="middle" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="11.5" fill="#334155">Stock devuelto al catálogo</text>
+    <rect x="580" y="398" width="235" height="74" rx="12" fill="#DCFCE7" stroke="#1E293B" stroke-width="1.6"/>
+    <text x="697.5" y="420" text-anchor="middle" font-family="Consolas, Courier New, monospace" font-size="12.5" font-weight="800" fill="#0F172A">PAGO_CONFIRMADO</text>
+    <line x1="580" y1="428" x2="815" y2="428" stroke="#1E293B" stroke-width="1.1"/>
+    <text x="697.5" y="447" text-anchor="middle" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="11.5" fill="#334155">Venta confirmada · Cola Empaque</text>
+    <rect x="580" y="680" width="235" height="74" rx="12" fill="#FEE2E2" stroke="#1E293B" stroke-width="1.6"/>
+    <text x="697.5" y="702" text-anchor="middle" font-family="Consolas, Courier New, monospace" font-size="12.5" font-weight="800" fill="#0F172A">CANCELADO</text>
+    <line x1="580" y1="710" x2="815" y2="710" stroke="#1E293B" stroke-width="1.1"/>
+    <text x="697.5" y="729" text-anchor="middle" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="11.5" fill="#334155">Libera stockReservado</text>
+    <rect x="945" y="398" width="225" height="74" rx="12" fill="#FFFBEB" stroke="#1E293B" stroke-width="1.6"/>
+    <text x="1057.5" y="420" text-anchor="middle" font-family="Consolas, Courier New, monospace" font-size="12.5" font-weight="800" fill="#0F172A">EN_PREPARACION</text>
+    <line x1="945" y1="428" x2="1170" y2="428" stroke="#1E293B" stroke-width="1.1"/>
+    <text x="1057.5" y="447" text-anchor="middle" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="11.5" fill="#334155">Empaquetador arma checklist</text>
+    <rect x="945" y="680" width="225" height="74" rx="12" fill="#FFFBEB" stroke="#1E293B" stroke-width="1.6"/>
+    <text x="1057.5" y="702" text-anchor="middle" font-family="Consolas, Courier New, monospace" font-size="12.5" font-weight="800" fill="#0F172A">EMPACADO</text>
+    <line x1="945" y1="710" x2="1170" y2="710" stroke="#1E293B" stroke-width="1.1"/>
+    <text x="1057.5" y="729" text-anchor="middle" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="11.5" fill="#334155">Sello + PIN 4 dígitos creado</text>
+    <rect x="1300" y="680" width="245" height="74" rx="12" fill="#EFF6FF" stroke="#1E293B" stroke-width="1.6"/>
+    <text x="1422.5" y="702" text-anchor="middle" font-family="Consolas, Courier New, monospace" font-size="12.5" font-weight="800" fill="#0F172A">EN_CAMINO</text>
+    <line x1="1300" y1="710" x2="1545" y2="710" stroke="#1E293B" stroke-width="1.1"/>
+    <text x="1422.5" y="729" text-anchor="middle" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="11.5" fill="#334155">Repartidor GPS activo + Email PIN</text>
+    <rect x="1300" y="398" width="245" height="74" rx="12" fill="#DCFCE7" stroke="#1E293B" stroke-width="1.6"/>
+    <text x="1422.5" y="420" text-anchor="middle" font-family="Consolas, Courier New, monospace" font-size="12.5" font-weight="800" fill="#0F172A">ENTREGADO</text>
+    <line x1="1300" y1="428" x2="1545" y2="428" stroke="#1E293B" stroke-width="1.1"/>
+    <text x="1422.5" y="447" text-anchor="middle" font-family="Segoe UI, Arial, Helvetica, sans-serif" font-size="11.5" fill="#334155">PIN verificado · Cierre definitivo</text><circle cx="925" cy="182" r="13" fill="#FFFFFF" stroke="#0F172A" stroke-width="1.6"/><circle cx="925" cy="182" r="7.5" fill="#0F172A"/><circle cx="900" cy="717" r="13" fill="#FFFFFF" stroke="#0F172A" stroke-width="1.6"/><circle cx="900" cy="717" r="7.5" fill="#0F172A"/><circle cx="1422" cy="270" r="13" fill="#FFFFFF" stroke="#0F172A" stroke-width="1.6"/><circle cx="1422" cy="270" r="7.5" fill="#0F172A"/><path d="M 292 398 L 292 219" fill="none" stroke="#1E293B" stroke-width="1.5" marker-end="url(#arrowFilled)"/><path d="M 422 182 L 605 182" fill="none" stroke="#1E293B" stroke-width="1.5" marker-end="url(#arrowFilled)"/><path d="M 825 182 L 911 182" fill="none" stroke="#1E293B" stroke-width="1.5" marker-end="url(#arrowFilled)"/><path d="M 365 219 L 365 315 L 640 315 L 640 398" fill="none" stroke="#1E293B" stroke-width="1.5" marker-end="url(#arrowFilled)"/><path d="M 402 435 L 580 435" fill="none" stroke="#1E293B" stroke-width="1.5" marker-end="url(#arrowFilled)"/><path d="M 292 472 L 292 717 L 580 717" fill="none" stroke="#1E293B" stroke-width="1.5" marker-end="url(#arrowFilled)"/><path d="M 697 472 L 697 680" fill="none" stroke="#1E293B" stroke-width="1.5" marker-end="url(#arrowFilled)"/><path d="M 815 717 L 886 717" fill="none" stroke="#1E293B" stroke-width="1.5" marker-end="url(#arrowFilled)"/><path d="M 815 435 L 945 435" fill="none" stroke="#1E293B" stroke-width="1.5" marker-end="url(#arrowFilled)"/><path d="M 1057 472 L 1057 680" fill="none" stroke="#1E293B" stroke-width="1.5" marker-end="url(#arrowFilled)"/><path d="M 1170 717 L 1300 717" fill="none" stroke="#1E293B" stroke-width="1.5" marker-end="url(#arrowFilled)"/><path d="M 1422 680 L 1422 472" fill="none" stroke="#1E293B" stroke-width="1.5" marker-end="url(#arrowFilled)"/><path d="M 1422 398 L 1422 284" fill="none" stroke="#1E293B" stroke-width="1.5" marker-end="url(#arrowFilled)"/>
+  <g>
+    <rect x="237" y="296" width="110" height="18" rx="3" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="0.8"/>
+    <text x="292" y="309" text-anchor="middle" font-family="Consolas, Courier New, monospace" font-size="10.5" font-weight="600" fill="#0369A1">submitDeposit()</text>
+  </g>
+  <g>
+    <rect x="432.4" y="153" width="161.20000000000002" height="18" rx="3" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="0.8"/>
+    <text x="513" y="166" text-anchor="middle" font-family="Consolas, Courier New, monospace" font-size="10.5" font-weight="600" fill="#B91C1C">review(REJECT) [CAJERO]</text>
+  </g>
+  <g>
+    <rect x="426.2" y="306" width="167.60000000000002" height="18" rx="3" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="0.8"/>
+    <text x="510" y="319" text-anchor="middle" font-family="Consolas, Courier New, monospace" font-size="10.5" font-weight="600" fill="#047857">review(APPROVE) [CAJERO]</text>
+  </g>
+  <g>
+    <rect x="397.6" y="403" width="186.8" height="18" rx="3" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="0.8"/>
+    <text x="491" y="416" text-anchor="middle" font-family="Consolas, Courier New, monospace" font-size="10.5" font-weight="600" fill="#047857">confirmQr / Stripe / PayPal</text>
+  </g>
+  <g>
+    <rect x="386.4" y="691" width="97.2" height="18" rx="3" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="0.8"/>
+    <text x="435" y="704" text-anchor="middle" font-family="Consolas, Courier New, monospace" font-size="10.5" font-weight="600" fill="#B91C1C">cancelOrder()</text>
+  </g>
+  <g>
+    <rect x="648.4" y="566" width="97.2" height="18" rx="3" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="0.8"/>
+    <text x="697" y="579" text-anchor="middle" font-family="Consolas, Courier New, monospace" font-size="10.5" font-weight="600" fill="#B91C1C">cancelOrder()</text>
+  </g>
+  <g>
+    <rect x="802.6" y="403" width="154.8" height="18" rx="3" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="0.8"/>
+    <text x="880" y="416" text-anchor="middle" font-family="Consolas, Courier New, monospace" font-size="10.5" font-weight="600" fill="#0369A1">startPacking() [EMPAQ]</text>
+  </g>
+  <g>
+    <rect x="947.6" y="566" width="218.8" height="18" rx="3" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="0.8"/>
+    <text x="1057" y="579" text-anchor="middle" font-family="Consolas, Courier New, monospace" font-size="10.5" font-weight="600" fill="#0369A1">finishPacking() [Checklist 100%]</text>
+  </g>
+  <g>
+    <rect x="1176.8" y="691" width="116.4" height="18" rx="3" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="0.8"/>
+    <text x="1235" y="704" text-anchor="middle" font-family="Consolas, Courier New, monospace" font-size="10.5" font-weight="600" fill="#0369A1">pickup() [RIDER]</text>
+  </g>
+  <g>
+    <rect x="1338.2" y="566" width="167.60000000000002" height="18" rx="3" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="0.8"/>
+    <text x="1422" y="579" text-anchor="middle" font-family="Consolas, Courier New, monospace" font-size="10.5" font-weight="600" fill="#047857">deliver(pin) [PIN == BD]</text>
+  </g>
+</svg>

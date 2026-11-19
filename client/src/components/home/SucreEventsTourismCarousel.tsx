@@ -19,6 +19,7 @@ import { useI18n } from '../../context/I18nContext';
 import { joySound } from '../../lib/sound';
 import { JoyRideEvent } from '../../types';
 import { EditorialSplitModal } from '../ui/EditorialSplitModal';
+import { ProbablyTagline } from '../ui/ProbablyTagline';
 
 function normalizeAccent(accent: string): 'cyan' | 'magenta' | 'amber' | 'emerald' {
   if (accent === 'magenta' || accent === 'amber' || accent === 'emerald') return accent;
@@ -87,7 +88,7 @@ export function SucreEventsTourismCarousel({
 
   const handleStep = (delta: number) => {
     if (events.length === 0) return;
-    joySound.click();
+    joySound.slide();
     setActiveIndex((prev) => (prev + delta + events.length) % events.length);
   };
 
@@ -117,9 +118,12 @@ export function SucreEventsTourismCarousel({
     >
       <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
         <div>
-          <p className="font-mono text-xs font-bold uppercase tracking-[0.22em] text-joycyan">
-            {t('Agenda Activa & Ruta Ciudad Blanca', 'Live Agenda & White City Route')}
-          </p>
+          <ProbablyTagline
+            subject="Events"
+            accent="cyan"
+            size="sm"
+            spanishHint={t('Probablemente los mejores eventos en Sucre', 'Live Agenda & White City Route')}
+          />
           <h2 className="mt-1.5 font-display text-3xl font-extrabold tracking-tight text-ink sm:text-4xl xl:text-5xl">
             {t('Eventos del Local & Ruta Turística Sucre', 'Venue Events & Sucre Tourist Route')}
           </h2>
@@ -137,7 +141,7 @@ export function SucreEventsTourismCarousel({
           className="inline-flex min-h-[44px] shrink-0 items-center gap-2 rounded-xl border border-joycyan/50 bg-joycyan/10 px-5 py-2.5 text-sm font-bold text-joycyan transition-colors hover:bg-joycyan/20"
         >
           <Compass className="h-4 w-4" />
-          <span>{t('Probably the Best Map in Town', 'Probably the Best Map in Town')}</span>
+          <span>{t('Probably the Best Map in Town®', 'Probably the Best Map in Town®')}</span>
           <ExternalLink className="h-4 w-4" />
         </Link>
       </div>
@@ -271,7 +275,7 @@ export function SucreEventsTourismCarousel({
                   key={ev.id}
                   type="button"
                   onClick={() => {
-                    joySound.click();
+                    joySound.slide();
                     setActiveIndex(idx);
                   }}
                   className={`flex shrink-0 items-center gap-2.5 rounded-xl border px-3 py-2 text-left transition-all ${

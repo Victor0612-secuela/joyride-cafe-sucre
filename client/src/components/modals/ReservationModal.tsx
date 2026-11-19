@@ -17,10 +17,26 @@ interface ReservationModalProps {
 }
 
 const ZONE_IMAGES: Record<ReservationZone, string[]> = {
-  PATIO_COLONIAL: ['/images/venue-patio-night.webp', '/images/evento-tours.webp'],
-  MEZZANINE_TERRAZA: ['/images/sucre-rooftop-terraza.webp', '/images/venue-bar-cocktails.webp'],
-  PANTALLA_GIGANTE: ['/images/musica-vivo.webp', '/images/fiesta-amigos.webp'],
-  PISTA_SALSA_BACHATA: ['/images/salsa-bachata.webp', '/images/venue-lounge-lights.webp'],
+  PATIO_COLONIAL: [
+    '/images/joyride-official-portada.webp',
+    '/images/venue-patio-night.webp',
+    '/images/evento-tours.webp',
+  ],
+  MEZZANINE_TERRAZA: [
+    '/images/sucre-rooftop-terraza.webp',
+    '/images/venue-bar-cocktails.webp',
+    '/images/joyride-friends-night.webp',
+  ],
+  PANTALLA_GIGANTE: [
+    '/images/musica-vivo.webp',
+    '/images/fiesta-amigos.webp',
+    '/images/joyride-evento-3.webp',
+  ],
+  PISTA_SALSA_BACHATA: [
+    '/images/salsa-bachata.webp',
+    '/images/venue-lounge-lights.webp',
+    '/images/joyride-evento-2.webp',
+  ],
 };
 
 export function ReservationModal({ open, defaultSalsa = false, onClose }: ReservationModalProps) {
@@ -106,7 +122,7 @@ export function ReservationModal({ open, defaultSalsa = false, onClose }: Reserv
       open={open}
       onClose={handleClose}
       title={createdReservation ? `Pase Confirmado · ${createdReservation.code}` : 'Reservar Mesa & Clases de Salsa'}
-      subtitle={`Calle Nicolás Ortiz N° 14 · ${ZONE_META[zone].label}`}
+      subtitle={`Probably the Best Table in Town® · ${ZONE_META[zone].label}`}
       badge={includeSalsaClass ? 'INCLUYE SALSA & BACHATA' : 'RESERVA EN VIVO'}
       accent={includeSalsaClass ? 'magenta' : 'cyan'}
       images={ZONE_IMAGES[zone]}

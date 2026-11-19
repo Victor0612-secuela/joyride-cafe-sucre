@@ -1,0 +1,169 @@
+@startuml
+title Diagrama de Clases de Dominio UML 2.5 — Joy Ride Café® Sucre
+skinparam shadowing false
+skinparam backgroundColor #FFFFFF
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+enum Role {
+  CLIENTE
+  CAJERO
+  EMPAQUETADOR
+  REPARTIDOR
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDIENTE_PAGO
+  PAGO_EN_REVISION
+  PAGO_CONFIRMADO
+  EN_PREPARACION
+  EMPACADO
+  EN_CAMINO
+  ENTREGADO
+  CANCELADO
+  RECHAZADO
+}
+
+enum PaymentMethod {
+  QR
+  DEPOSITO_BANCARIO
+  PAYPAL
+  STRIPE
+}
+
+class User {
+  - id: String
+  - name: String
+  - email: String
+  - role: Role
+  - active: Boolean
+  + authenticate(password: String): Boolean
+  + issueTokenPair(): TokenPair
+}
+
+class Category {
+  - id: String
+  - slug: String
+  - name: String
+  - sortOrder: Int
+}
+
+class Product {
+  - id: String
+  - slug: String
+  - name: String
+  - precioBs: Decimal
+  - precioUsd: Decimal
+  - stockDisponible: Int
+  - stockReservado: Int
+  - stockMinimoAlerta: Int
+  + reserve(qty: Int): void
+  + confirmSale(qty: Int): void
+  + release(qty: Int): void
+}
+
+class StockMovement {
+  - id: String
+  - type: StockMovementType
+  - quantity: Int
+  - previousStock: Int
+  - newStock: Int
+  - reason: String
+}
+
+class Order {
+  - id: String
+  - orderCode: String
+  - status: OrderStatus
+  - deliveryType: DeliveryType
+  - subtotalBs: Decimal
+  - totalBs: Decimal
+  - totalUsd: Decimal
+  - destLat: Float
+  - destLng: Float
+  + calculateTotalsFromDb(): MoneyPair
+  + transitionTo(next: OrderStatus, actor: User): void
+}
+
+class OrderItem {
+  - id: String
+  - productName: String
+  - unitPriceBs: Decimal
+  - quantity: Int
+  - subtotalBs: Decimal
+}
+
+class Payment {
+  - id: String
+  - method: PaymentMethod
+  - status: PaymentStatus
+  - amountBs: Decimal
+  - qrToken: String
+  - stripePaymentIntentId: String
+  - paypalOrderId: String
+  + initiateQrHmac(): QrSession
+  + approveByCashier(cashier: User): void
+  + confirmGatewayIntent(txId: String): void
+}
+
+class PackagingChecklist {
+  - id: String
+  - items: Json
+  - sealCode: String
+  - allVerified: Boolean
+  + finishPacking(sealCode: String): String
+}
+
+class DeliveryTracking {
+  - id: String
+  - riderLat: Float
+  - riderLng: Float
+  - etaMinutes: Int
+  - deliveryPin: String
+  - packageLabelCode: String
+  + validatePinAndDeliver(pin: String): void
+}
+
+class OrderStatusHistory {
+  - id: String
+  - fromStatus: OrderStatus
+  - toStatus: OrderStatus
+  - actorName: String
+  - actorRole: String
+  - reason: String
+}
+
+class Reservation {
+  - id: String
+  - code: String
+  - zone: ReservationZone
+  - date: String
+  - partySize: Int
+  - qrPassToken: String
+  + checkAvailability(): Int
+}
+
+class ChatMessage {
+  - id: String
+  - channelType: ChatChannelType
+  - content: String
+  - createdAt: DateTime
+}
+
+User "1" --> "0..*" Order : realiza >
+User "1" --> "0..*" Reservation : agenda >
+User "1" --> "0..*" ChatMessage : envía >
+Category "1" *-- "1..*" Product : clasifica >
+Product "1" --> "0..*" OrderItem : integra >
+Product "1" --> "0..*" StockMovement : audita >
+Order "1" *-- "1..*" OrderItem : contiene >
+Order "1" *-- "0..1" Payment : cobra_vía >
+Order "1" *-- "0..1" PackagingChecklist : verifica >
+Order "1" *-- "0..1" DeliveryTracking : rastrea >
+Order "1" *-- "1..*" OrderStatusHistory : registra >
+Order "1" o-- "0..*" ChatMessage : canal_entrega >
+Order ..> OrderStatus
+Payment ..> PaymentMethod
+User ..> Role
+@enduml

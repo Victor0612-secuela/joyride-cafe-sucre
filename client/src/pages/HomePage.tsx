@@ -21,6 +21,7 @@ import { QrLivePaymentModal, QrSessionData } from '../components/modals/QrLivePa
 import { OrderTimelineModal } from '../components/modals/OrderTimelineModal';
 import { ReservationModal } from '../components/modals/ReservationModal';
 import { BrandWatermarkBg } from '../components/ui/BrandWatermarkBg';
+import { JoyRideHeritageLockup } from '../components/ui/JoyRideHeritageLockup';
 import { PwaInstallButton } from '../components/ui/PwaInstallButton';
 import { WhatsAppFloat } from '../components/ui/WhatsAppFloat';
 import { useCart } from '../context/CartContext';
@@ -161,12 +162,13 @@ export function HomePage() {
           <div className="grid grid-cols-1 gap-12 border-b border-hairline pb-12 lg:grid-cols-12">
             {/* Editorial Brand Statement */}
             <div className="space-y-5 lg:col-span-5">
-              <div className="flex items-center gap-4">
+              <div className="flex flex-wrap items-center gap-4">
                 <img
                   src="/logo-joyride.png"
                   alt="Joy Ride Café"
                   className="h-20 w-20 rounded-full object-contain ring-2 ring-joycyan/30 sm:h-24 sm:w-24"
                 />
+                <JoyRideHeritageLockup className="h-16 w-auto opacity-90 sm:h-20" />
                 <div>
                   <p className="font-display text-2xl font-extrabold tracking-tight text-ink sm:text-3xl">
                     JOY RIDE CAFÉ® <span className="text-joycyan">SUCRE</span>

@@ -1,0 +1,2585 @@
+{
+  "_type": "Project",
+  "_id": "PROJ_0001",
+  "name": "JoyRideCafeSucre",
+  "ownedElements": [
+    {
+      "_type": "UMLModel",
+      "_id": "UML_0002",
+      "_parent": {
+        "$ref": "PROJ_0001"
+      },
+      "name": "Modelo UML 2.5 - Joy Ride Café Sucre",
+      "ownedElements": [
+        {
+          "_type": "UMLActor",
+          "_id": "ACT_0004",
+          "_parent": {
+            "$ref": "UML_0002"
+          },
+          "name": "Cliente"
+        },
+        {
+          "_type": "UMLActor",
+          "_id": "ACT_0005",
+          "_parent": {
+            "$ref": "UML_0002"
+          },
+          "name": "Cajero"
+        },
+        {
+          "_type": "UMLActor",
+          "_id": "ACT_0006",
+          "_parent": {
+            "$ref": "UML_0002"
+          },
+          "name": "Empaquetador"
+        },
+        {
+          "_type": "UMLActor",
+          "_id": "ACT_0007",
+          "_parent": {
+            "$ref": "UML_0002"
+          },
+          "name": "Repartidor"
+        },
+        {
+          "_type": "UMLActor",
+          "_id": "ACT_0008",
+          "_parent": {
+            "$ref": "UML_0002"
+          },
+          "name": "Administrador"
+        },
+        {
+          "_type": "UMLUseCase",
+          "_id": "UC_0009",
+          "_parent": {
+            "$ref": "UML_0002"
+          },
+          "name": "UC-01 Explorar Inicio, Carta (/carta) y Mapa"
+        },
+        {
+          "_type": "UMLUseCase",
+          "_id": "UC_0010",
+          "_parent": {
+            "$ref": "UML_0002"
+          },
+          "name": "UC-02 Autenticarse (JWT + Refresh Token)"
+        },
+        {
+          "_type": "UMLUseCase",
+          "_id": "UC_0011",
+          "_parent": {
+            "$ref": "UML_0002"
+          },
+          "name": "UC-03 Armar Carrito y Ubicación GPS"
+        },
+        {
+          "_type": "UMLUseCase",
+          "_id": "UC_0012",
+          "_parent": {
+            "$ref": "UML_0002"
+          },
+          "name": "UC-04 Pagar Pedido (QR / Tarjeta / PayPal / Depósito)"
+        },
+        {
+          "_type": "UMLUseCase",
+          "_id": "UC_0013",
+          "_parent": {
+            "$ref": "UML_0002"
+          },
+          "name": "UC-05 Reservar Zona / Salsa & Pase QR"
+        },
+        {
+          "_type": "UMLUseCase",
+          "_id": "UC_0014",
+          "_parent": {
+            "$ref": "UML_0002"
+          },
+          "name": "UC-06 Seguir Pedido en Vivo (SSE + Chat)"
+        },
+        {
+          "_type": "UMLUseCase",
+          "_id": "UC_0015",
+          "_parent": {
+            "$ref": "UML_0002"
+          },
+          "name": "UC-07 Publicar Reseña Autenticada"
+        },
+        {
+          "_type": "UMLUseCase",
+          "_id": "UC_0016",
+          "_parent": {
+            "$ref": "UML_0002"
+          },
+          "name": "UC-08 Aprobar / Rechazar Depósitos"
+        },
+        {
+          "_type": "UMLUseCase",
+          "_id": "UC_0017",
+          "_parent": {
+            "$ref": "UML_0002"
+          },
+          "name": "UC-09 Checklist 100%, Sello y PIN"
+        },
+        {
+          "_type": "UMLUseCase",
+          "_id": "UC_0018",
+          "_parent": {
+            "$ref": "UML_0002"
+          },
+          "name": "UC-10 Retirar, GPS y Validar PIN"
+        },
+        {
+          "_type": "UMLUseCase",
+          "_id": "UC_0019",
+          "_parent": {
+            "$ref": "UML_0002"
+          },
+          "name": "UC-11 Gestionar Catálogo, Kardex, Eventos y KPIs"
+        },
+        {
+          "_type": "UMLUseCase",
+          "_id": "UC_0020",
+          "_parent": {
+            "$ref": "UML_0002"
+          },
+          "name": "UC-12 Gestionar Roles, Auditoría y Campañas HTML"
+        },
+        {
+          "_type": "UMLClass",
+          "_id": "CLS_0021",
+          "_parent": {
+            "$ref": "UML_0002"
+          },
+          "name": "User",
+          "attributes": [
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0022",
+              "_parent": {
+                "$ref": "CLS_0021"
+              },
+              "name": "id",
+              "type": "String"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0023",
+              "_parent": {
+                "$ref": "CLS_0021"
+              },
+              "name": "name",
+              "type": "String"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0024",
+              "_parent": {
+                "$ref": "CLS_0021"
+              },
+              "name": "email",
+              "type": "String"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0025",
+              "_parent": {
+                "$ref": "CLS_0021"
+              },
+              "name": "role",
+              "type": "Role"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0026",
+              "_parent": {
+                "$ref": "CLS_0021"
+              },
+              "name": "active",
+              "type": "Boolean"
+            }
+          ],
+          "operations": [
+            {
+              "_type": "UMLOperation",
+              "_id": "OP_0027",
+              "_parent": {
+                "$ref": "CLS_0021"
+              },
+              "name": "verifyPassword"
+            },
+            {
+              "_type": "UMLOperation",
+              "_id": "OP_0028",
+              "_parent": {
+                "$ref": "CLS_0021"
+              },
+              "name": "issueTokenPair"
+            }
+          ]
+        },
+        {
+          "_type": "UMLClass",
+          "_id": "CLS_0029",
+          "_parent": {
+            "$ref": "UML_0002"
+          },
+          "name": "Category",
+          "attributes": [
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0030",
+              "_parent": {
+                "$ref": "CLS_0029"
+              },
+              "name": "id",
+              "type": "String"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0031",
+              "_parent": {
+                "$ref": "CLS_0029"
+              },
+              "name": "slug",
+              "type": "String"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0032",
+              "_parent": {
+                "$ref": "CLS_0029"
+              },
+              "name": "name",
+              "type": "String"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0033",
+              "_parent": {
+                "$ref": "CLS_0029"
+              },
+              "name": "sortOrder",
+              "type": "Int"
+            }
+          ],
+          "operations": [
+            {
+              "_type": "UMLOperation",
+              "_id": "OP_0034",
+              "_parent": {
+                "$ref": "CLS_0029"
+              },
+              "name": "listProducts"
+            }
+          ]
+        },
+        {
+          "_type": "UMLClass",
+          "_id": "CLS_0035",
+          "_parent": {
+            "$ref": "UML_0002"
+          },
+          "name": "Product",
+          "attributes": [
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0036",
+              "_parent": {
+                "$ref": "CLS_0035"
+              },
+              "name": "id",
+              "type": "String"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0037",
+              "_parent": {
+                "$ref": "CLS_0035"
+              },
+              "name": "slug",
+              "type": "String"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0038",
+              "_parent": {
+                "$ref": "CLS_0035"
+              },
+              "name": "name",
+              "type": "String"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0039",
+              "_parent": {
+                "$ref": "CLS_0035"
+              },
+              "name": "precioBs",
+              "type": "Decimal"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0040",
+              "_parent": {
+                "$ref": "CLS_0035"
+              },
+              "name": "stockDisponible",
+              "type": "Int"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0041",
+              "_parent": {
+                "$ref": "CLS_0035"
+              },
+              "name": "stockReservado",
+              "type": "Int"
+            }
+          ],
+          "operations": [
+            {
+              "_type": "UMLOperation",
+              "_id": "OP_0042",
+              "_parent": {
+                "$ref": "CLS_0035"
+              },
+              "name": "reserve"
+            },
+            {
+              "_type": "UMLOperation",
+              "_id": "OP_0043",
+              "_parent": {
+                "$ref": "CLS_0035"
+              },
+              "name": "confirmSale"
+            },
+            {
+              "_type": "UMLOperation",
+              "_id": "OP_0044",
+              "_parent": {
+                "$ref": "CLS_0035"
+              },
+              "name": "release"
+            }
+          ]
+        },
+        {
+          "_type": "UMLClass",
+          "_id": "CLS_0045",
+          "_parent": {
+            "$ref": "UML_0002"
+          },
+          "name": "Order",
+          "attributes": [
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0046",
+              "_parent": {
+                "$ref": "CLS_0045"
+              },
+              "name": "id",
+              "type": "String"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0047",
+              "_parent": {
+                "$ref": "CLS_0045"
+              },
+              "name": "orderCode",
+              "type": "String"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0048",
+              "_parent": {
+                "$ref": "CLS_0045"
+              },
+              "name": "status",
+              "type": "OrderStatus"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0049",
+              "_parent": {
+                "$ref": "CLS_0045"
+              },
+              "name": "totalBs",
+              "type": "Decimal"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0050",
+              "_parent": {
+                "$ref": "CLS_0045"
+              },
+              "name": "totalUsd",
+              "type": "Decimal"
+            }
+          ],
+          "operations": [
+            {
+              "_type": "UMLOperation",
+              "_id": "OP_0051",
+              "_parent": {
+                "$ref": "CLS_0045"
+              },
+              "name": "computeTotalsFromDb"
+            },
+            {
+              "_type": "UMLOperation",
+              "_id": "OP_0052",
+              "_parent": {
+                "$ref": "CLS_0045"
+              },
+              "name": "transitionTo"
+            }
+          ]
+        },
+        {
+          "_type": "UMLClass",
+          "_id": "CLS_0053",
+          "_parent": {
+            "$ref": "UML_0002"
+          },
+          "name": "OrderItem",
+          "attributes": [
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0054",
+              "_parent": {
+                "$ref": "CLS_0053"
+              },
+              "name": "id",
+              "type": "String"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0055",
+              "_parent": {
+                "$ref": "CLS_0053"
+              },
+              "name": "productName",
+              "type": "String"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0056",
+              "_parent": {
+                "$ref": "CLS_0053"
+              },
+              "name": "unitPriceBs",
+              "type": "Decimal"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0057",
+              "_parent": {
+                "$ref": "CLS_0053"
+              },
+              "name": "quantity",
+              "type": "Int"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0058",
+              "_parent": {
+                "$ref": "CLS_0053"
+              },
+              "name": "subtotalBs",
+              "type": "Decimal"
+            }
+          ],
+          "operations": []
+        },
+        {
+          "_type": "UMLClass",
+          "_id": "CLS_0059",
+          "_parent": {
+            "$ref": "UML_0002"
+          },
+          "name": "Payment",
+          "attributes": [
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0060",
+              "_parent": {
+                "$ref": "CLS_0059"
+              },
+              "name": "id",
+              "type": "String"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0061",
+              "_parent": {
+                "$ref": "CLS_0059"
+              },
+              "name": "method",
+              "type": "PaymentMethod"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0062",
+              "_parent": {
+                "$ref": "CLS_0059"
+              },
+              "name": "status",
+              "type": "PaymentStatus"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0063",
+              "_parent": {
+                "$ref": "CLS_0059"
+              },
+              "name": "amountBs",
+              "type": "Decimal"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0064",
+              "_parent": {
+                "$ref": "CLS_0059"
+              },
+              "name": "qrToken",
+              "type": "String"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0065",
+              "_parent": {
+                "$ref": "CLS_0059"
+              },
+              "name": "stripePaymentIntentId",
+              "type": "String"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0066",
+              "_parent": {
+                "$ref": "CLS_0059"
+              },
+              "name": "paypalOrderId",
+              "type": "String"
+            }
+          ],
+          "operations": [
+            {
+              "_type": "UMLOperation",
+              "_id": "OP_0067",
+              "_parent": {
+                "$ref": "CLS_0059"
+              },
+              "name": "signQrHmac"
+            },
+            {
+              "_type": "UMLOperation",
+              "_id": "OP_0068",
+              "_parent": {
+                "$ref": "CLS_0059"
+              },
+              "name": "confirmGateway"
+            }
+          ]
+        },
+        {
+          "_type": "UMLClass",
+          "_id": "CLS_0069",
+          "_parent": {
+            "$ref": "UML_0002"
+          },
+          "name": "PackagingChecklist",
+          "attributes": [
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0070",
+              "_parent": {
+                "$ref": "CLS_0069"
+              },
+              "name": "id",
+              "type": "String"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0071",
+              "_parent": {
+                "$ref": "CLS_0069"
+              },
+              "name": "items",
+              "type": "Jsonb"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0072",
+              "_parent": {
+                "$ref": "CLS_0069"
+              },
+              "name": "sealCode",
+              "type": "String"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0073",
+              "_parent": {
+                "$ref": "CLS_0069"
+              },
+              "name": "allVerified",
+              "type": "Boolean"
+            }
+          ],
+          "operations": [
+            {
+              "_type": "UMLOperation",
+              "_id": "OP_0074",
+              "_parent": {
+                "$ref": "CLS_0069"
+              },
+              "name": "finishPacking"
+            }
+          ]
+        },
+        {
+          "_type": "UMLClass",
+          "_id": "CLS_0075",
+          "_parent": {
+            "$ref": "UML_0002"
+          },
+          "name": "DeliveryTracking",
+          "attributes": [
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0076",
+              "_parent": {
+                "$ref": "CLS_0075"
+              },
+              "name": "id",
+              "type": "String"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0077",
+              "_parent": {
+                "$ref": "CLS_0075"
+              },
+              "name": "riderLat",
+              "type": "Float"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0078",
+              "_parent": {
+                "$ref": "CLS_0075"
+              },
+              "name": "riderLng",
+              "type": "Float"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0079",
+              "_parent": {
+                "$ref": "CLS_0075"
+              },
+              "name": "etaMinutes",
+              "type": "Int"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0080",
+              "_parent": {
+                "$ref": "CLS_0075"
+              },
+              "name": "deliveryPin",
+              "type": "String"
+            }
+          ],
+          "operations": [
+            {
+              "_type": "UMLOperation",
+              "_id": "OP_0081",
+              "_parent": {
+                "$ref": "CLS_0075"
+              },
+              "name": "validatePinAndDeliver"
+            }
+          ]
+        },
+        {
+          "_type": "UMLClass",
+          "_id": "CLS_0082",
+          "_parent": {
+            "$ref": "UML_0002"
+          },
+          "name": "OrderStatusHistory",
+          "attributes": [
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0083",
+              "_parent": {
+                "$ref": "CLS_0082"
+              },
+              "name": "id",
+              "type": "String"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0084",
+              "_parent": {
+                "$ref": "CLS_0082"
+              },
+              "name": "fromStatus",
+              "type": "OrderStatus"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0085",
+              "_parent": {
+                "$ref": "CLS_0082"
+              },
+              "name": "toStatus",
+              "type": "OrderStatus"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0086",
+              "_parent": {
+                "$ref": "CLS_0082"
+              },
+              "name": "reason",
+              "type": "String"
+            }
+          ],
+          "operations": []
+        },
+        {
+          "_type": "UMLClass",
+          "_id": "CLS_0087",
+          "_parent": {
+            "$ref": "UML_0002"
+          },
+          "name": "StockMovement",
+          "attributes": [
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0088",
+              "_parent": {
+                "$ref": "CLS_0087"
+              },
+              "name": "id",
+              "type": "String"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0089",
+              "_parent": {
+                "$ref": "CLS_0087"
+              },
+              "name": "type",
+              "type": "StockMovementType"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0090",
+              "_parent": {
+                "$ref": "CLS_0087"
+              },
+              "name": "quantity",
+              "type": "Int"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0091",
+              "_parent": {
+                "$ref": "CLS_0087"
+              },
+              "name": "previousStock",
+              "type": "Int"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0092",
+              "_parent": {
+                "$ref": "CLS_0087"
+              },
+              "name": "newStock",
+              "type": "Int"
+            }
+          ],
+          "operations": []
+        },
+        {
+          "_type": "UMLClass",
+          "_id": "CLS_0093",
+          "_parent": {
+            "$ref": "UML_0002"
+          },
+          "name": "Reservation",
+          "attributes": [
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0094",
+              "_parent": {
+                "$ref": "CLS_0093"
+              },
+              "name": "id",
+              "type": "String"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0095",
+              "_parent": {
+                "$ref": "CLS_0093"
+              },
+              "name": "code",
+              "type": "String"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0096",
+              "_parent": {
+                "$ref": "CLS_0093"
+              },
+              "name": "zone",
+              "type": "ReservationZone"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0097",
+              "_parent": {
+                "$ref": "CLS_0093"
+              },
+              "name": "date",
+              "type": "String"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0098",
+              "_parent": {
+                "$ref": "CLS_0093"
+              },
+              "name": "partySize",
+              "type": "Int"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0099",
+              "_parent": {
+                "$ref": "CLS_0093"
+              },
+              "name": "qrPassToken",
+              "type": "String"
+            }
+          ],
+          "operations": [
+            {
+              "_type": "UMLOperation",
+              "_id": "OP_0100",
+              "_parent": {
+                "$ref": "CLS_0093"
+              },
+              "name": "checkAvailability"
+            }
+          ]
+        },
+        {
+          "_type": "UMLClass",
+          "_id": "CLS_0101",
+          "_parent": {
+            "$ref": "UML_0002"
+          },
+          "name": "ChatMessage",
+          "attributes": [
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0102",
+              "_parent": {
+                "$ref": "CLS_0101"
+              },
+              "name": "id",
+              "type": "String"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0103",
+              "_parent": {
+                "$ref": "CLS_0101"
+              },
+              "name": "channelType",
+              "type": "ChatChannelType"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "ATT_0104",
+              "_parent": {
+                "$ref": "CLS_0101"
+              },
+              "name": "content",
+              "type": "String"
+            }
+          ],
+          "operations": []
+        }
+      ]
+    },
+    {
+      "_type": "ERDDataModel",
+      "_id": "ERD_0003",
+      "_parent": {
+        "$ref": "PROJ_0001"
+      },
+      "name": "Modelo Físico PostgreSQL (Prisma Schema)",
+      "ownedElements": [
+        {
+          "_type": "ERDEntity",
+          "_id": "ENT_0105",
+          "_parent": {
+            "$ref": "ERD_0003"
+          },
+          "name": "User",
+          "columns": [
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0106",
+              "_parent": {
+                "$ref": "ENT_0105"
+              },
+              "name": "id",
+              "type": "TEXT",
+              "primaryKey": true,
+              "foreignKey": false,
+              "nullable": false
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0107",
+              "_parent": {
+                "$ref": "ENT_0105"
+              },
+              "name": "email",
+              "type": "TEXT",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0108",
+              "_parent": {
+                "$ref": "ENT_0105"
+              },
+              "name": "name",
+              "type": "TEXT",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0109",
+              "_parent": {
+                "$ref": "ENT_0105"
+              },
+              "name": "passwordHash",
+              "type": "TEXT",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0110",
+              "_parent": {
+                "$ref": "ENT_0105"
+              },
+              "name": "role",
+              "type": "Role",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0111",
+              "_parent": {
+                "$ref": "ENT_0105"
+              },
+              "name": "active",
+              "type": "BOOLEAN",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            }
+          ],
+          "ownedElements": [
+            {
+              "_type": "ERDRelationship",
+              "_id": "REL_0213",
+              "_parent": {
+                "$ref": "ENT_0105"
+              },
+              "end1": {
+                "_type": "ERDRelationshipEnd",
+                "_id": "END_0214",
+                "_parent": {
+                  "$ref": "REL_0213"
+                },
+                "reference": {
+                  "$ref": "ENT_0105"
+                },
+                "cardinality": "1"
+              },
+              "end2": {
+                "_type": "ERDRelationshipEnd",
+                "_id": "END_0215",
+                "_parent": {
+                  "$ref": "REL_0213"
+                },
+                "reference": {
+                  "$ref": "ENT_0125"
+                },
+                "cardinality": "0..*"
+              }
+            },
+            {
+              "_type": "ERDRelationship",
+              "_id": "REL_0216",
+              "_parent": {
+                "$ref": "ENT_0105"
+              },
+              "end1": {
+                "_type": "ERDRelationshipEnd",
+                "_id": "END_0217",
+                "_parent": {
+                  "$ref": "REL_0216"
+                },
+                "reference": {
+                  "$ref": "ENT_0105"
+                },
+                "cardinality": "1"
+              },
+              "end2": {
+                "_type": "ERDRelationshipEnd",
+                "_id": "END_0218",
+                "_parent": {
+                  "$ref": "REL_0216"
+                },
+                "reference": {
+                  "$ref": "ENT_0175"
+                },
+                "cardinality": "0..*"
+              }
+            },
+            {
+              "_type": "ERDRelationship",
+              "_id": "REL_0219",
+              "_parent": {
+                "$ref": "ENT_0105"
+              },
+              "end1": {
+                "_type": "ERDRelationshipEnd",
+                "_id": "END_0220",
+                "_parent": {
+                  "$ref": "REL_0219"
+                },
+                "reference": {
+                  "$ref": "ENT_0105"
+                },
+                "cardinality": "1"
+              },
+              "end2": {
+                "_type": "ERDRelationshipEnd",
+                "_id": "END_0221",
+                "_parent": {
+                  "$ref": "REL_0219"
+                },
+                "reference": {
+                  "$ref": "ENT_0183"
+                },
+                "cardinality": "0..*"
+              }
+            }
+          ]
+        },
+        {
+          "_type": "ERDEntity",
+          "_id": "ENT_0112",
+          "_parent": {
+            "$ref": "ERD_0003"
+          },
+          "name": "Category",
+          "columns": [
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0113",
+              "_parent": {
+                "$ref": "ENT_0112"
+              },
+              "name": "id",
+              "type": "TEXT",
+              "primaryKey": true,
+              "foreignKey": false,
+              "nullable": false
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0114",
+              "_parent": {
+                "$ref": "ENT_0112"
+              },
+              "name": "slug",
+              "type": "TEXT",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0115",
+              "_parent": {
+                "$ref": "ENT_0112"
+              },
+              "name": "name",
+              "type": "TEXT",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0116",
+              "_parent": {
+                "$ref": "ENT_0112"
+              },
+              "name": "sortOrder",
+              "type": "INTEGER",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            }
+          ],
+          "ownedElements": [
+            {
+              "_type": "ERDRelationship",
+              "_id": "REL_0222",
+              "_parent": {
+                "$ref": "ENT_0112"
+              },
+              "end1": {
+                "_type": "ERDRelationshipEnd",
+                "_id": "END_0223",
+                "_parent": {
+                  "$ref": "REL_0222"
+                },
+                "reference": {
+                  "$ref": "ENT_0112"
+                },
+                "cardinality": "1"
+              },
+              "end2": {
+                "_type": "ERDRelationshipEnd",
+                "_id": "END_0224",
+                "_parent": {
+                  "$ref": "REL_0222"
+                },
+                "reference": {
+                  "$ref": "ENT_0117"
+                },
+                "cardinality": "1..*"
+              }
+            }
+          ]
+        },
+        {
+          "_type": "ERDEntity",
+          "_id": "ENT_0117",
+          "_parent": {
+            "$ref": "ERD_0003"
+          },
+          "name": "Product",
+          "columns": [
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0118",
+              "_parent": {
+                "$ref": "ENT_0117"
+              },
+              "name": "id",
+              "type": "TEXT",
+              "primaryKey": true,
+              "foreignKey": false,
+              "nullable": false
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0119",
+              "_parent": {
+                "$ref": "ENT_0117"
+              },
+              "name": "categoryId",
+              "type": "TEXT",
+              "primaryKey": false,
+              "foreignKey": true,
+              "nullable": false
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0120",
+              "_parent": {
+                "$ref": "ENT_0117"
+              },
+              "name": "slug",
+              "type": "TEXT",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0121",
+              "_parent": {
+                "$ref": "ENT_0117"
+              },
+              "name": "name",
+              "type": "TEXT",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0122",
+              "_parent": {
+                "$ref": "ENT_0117"
+              },
+              "name": "precioBs",
+              "type": "DECIMAL(10,2)",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0123",
+              "_parent": {
+                "$ref": "ENT_0117"
+              },
+              "name": "stockDisponible",
+              "type": "INTEGER",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0124",
+              "_parent": {
+                "$ref": "ENT_0117"
+              },
+              "name": "stockReservado",
+              "type": "INTEGER",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            }
+          ],
+          "ownedElements": [
+            {
+              "_type": "ERDRelationship",
+              "_id": "REL_0225",
+              "_parent": {
+                "$ref": "ENT_0117"
+              },
+              "end1": {
+                "_type": "ERDRelationshipEnd",
+                "_id": "END_0226",
+                "_parent": {
+                  "$ref": "REL_0225"
+                },
+                "reference": {
+                  "$ref": "ENT_0117"
+                },
+                "cardinality": "1"
+              },
+              "end2": {
+                "_type": "ERDRelationshipEnd",
+                "_id": "END_0227",
+                "_parent": {
+                  "$ref": "REL_0225"
+                },
+                "reference": {
+                  "$ref": "ENT_0133"
+                },
+                "cardinality": "0..*"
+              }
+            },
+            {
+              "_type": "ERDRelationship",
+              "_id": "REL_0228",
+              "_parent": {
+                "$ref": "ENT_0117"
+              },
+              "end1": {
+                "_type": "ERDRelationshipEnd",
+                "_id": "END_0229",
+                "_parent": {
+                  "$ref": "REL_0228"
+                },
+                "reference": {
+                  "$ref": "ENT_0117"
+                },
+                "cardinality": "1"
+              },
+              "end2": {
+                "_type": "ERDRelationshipEnd",
+                "_id": "END_0230",
+                "_parent": {
+                  "$ref": "REL_0228"
+                },
+                "reference": {
+                  "$ref": "ENT_0168"
+                },
+                "cardinality": "0..*"
+              }
+            }
+          ]
+        },
+        {
+          "_type": "ERDEntity",
+          "_id": "ENT_0125",
+          "_parent": {
+            "$ref": "ERD_0003"
+          },
+          "name": "Order",
+          "columns": [
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0126",
+              "_parent": {
+                "$ref": "ENT_0125"
+              },
+              "name": "id",
+              "type": "TEXT",
+              "primaryKey": true,
+              "foreignKey": false,
+              "nullable": false
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0127",
+              "_parent": {
+                "$ref": "ENT_0125"
+              },
+              "name": "orderCode",
+              "type": "TEXT",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0128",
+              "_parent": {
+                "$ref": "ENT_0125"
+              },
+              "name": "userId",
+              "type": "TEXT",
+              "primaryKey": false,
+              "foreignKey": true,
+              "nullable": false
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0129",
+              "_parent": {
+                "$ref": "ENT_0125"
+              },
+              "name": "status",
+              "type": "OrderStatus",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0130",
+              "_parent": {
+                "$ref": "ENT_0125"
+              },
+              "name": "deliveryType",
+              "type": "DeliveryType",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0131",
+              "_parent": {
+                "$ref": "ENT_0125"
+              },
+              "name": "totalBs",
+              "type": "DECIMAL(10,2)",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0132",
+              "_parent": {
+                "$ref": "ENT_0125"
+              },
+              "name": "totalUsd",
+              "type": "DECIMAL(10,2)",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            }
+          ],
+          "ownedElements": [
+            {
+              "_type": "ERDRelationship",
+              "_id": "REL_0231",
+              "_parent": {
+                "$ref": "ENT_0125"
+              },
+              "end1": {
+                "_type": "ERDRelationshipEnd",
+                "_id": "END_0232",
+                "_parent": {
+                  "$ref": "REL_0231"
+                },
+                "reference": {
+                  "$ref": "ENT_0125"
+                },
+                "cardinality": "1"
+              },
+              "end2": {
+                "_type": "ERDRelationshipEnd",
+                "_id": "END_0233",
+                "_parent": {
+                  "$ref": "REL_0231"
+                },
+                "reference": {
+                  "$ref": "ENT_0133"
+                },
+                "cardinality": "1..*"
+              }
+            },
+            {
+              "_type": "ERDRelationship",
+              "_id": "REL_0234",
+              "_parent": {
+                "$ref": "ENT_0125"
+              },
+              "end1": {
+                "_type": "ERDRelationshipEnd",
+                "_id": "END_0235",
+                "_parent": {
+                  "$ref": "REL_0234"
+                },
+                "reference": {
+                  "$ref": "ENT_0125"
+                },
+                "cardinality": "1"
+              },
+              "end2": {
+                "_type": "ERDRelationshipEnd",
+                "_id": "END_0236",
+                "_parent": {
+                  "$ref": "REL_0234"
+                },
+                "reference": {
+                  "$ref": "ENT_0139"
+                },
+                "cardinality": "0..1"
+              }
+            },
+            {
+              "_type": "ERDRelationship",
+              "_id": "REL_0237",
+              "_parent": {
+                "$ref": "ENT_0125"
+              },
+              "end1": {
+                "_type": "ERDRelationshipEnd",
+                "_id": "END_0238",
+                "_parent": {
+                  "$ref": "REL_0237"
+                },
+                "reference": {
+                  "$ref": "ENT_0125"
+                },
+                "cardinality": "1"
+              },
+              "end2": {
+                "_type": "ERDRelationshipEnd",
+                "_id": "END_0239",
+                "_parent": {
+                  "$ref": "REL_0237"
+                },
+                "reference": {
+                  "$ref": "ENT_0147"
+                },
+                "cardinality": "0..1"
+              }
+            },
+            {
+              "_type": "ERDRelationship",
+              "_id": "REL_0240",
+              "_parent": {
+                "$ref": "ENT_0125"
+              },
+              "end1": {
+                "_type": "ERDRelationshipEnd",
+                "_id": "END_0241",
+                "_parent": {
+                  "$ref": "REL_0240"
+                },
+                "reference": {
+                  "$ref": "ENT_0125"
+                },
+                "cardinality": "1"
+              },
+              "end2": {
+                "_type": "ERDRelationshipEnd",
+                "_id": "END_0242",
+                "_parent": {
+                  "$ref": "REL_0240"
+                },
+                "reference": {
+                  "$ref": "ENT_0154"
+                },
+                "cardinality": "0..1"
+              }
+            },
+            {
+              "_type": "ERDRelationship",
+              "_id": "REL_0243",
+              "_parent": {
+                "$ref": "ENT_0125"
+              },
+              "end1": {
+                "_type": "ERDRelationshipEnd",
+                "_id": "END_0244",
+                "_parent": {
+                  "$ref": "REL_0243"
+                },
+                "reference": {
+                  "$ref": "ENT_0125"
+                },
+                "cardinality": "1"
+              },
+              "end2": {
+                "_type": "ERDRelationshipEnd",
+                "_id": "END_0245",
+                "_parent": {
+                  "$ref": "REL_0243"
+                },
+                "reference": {
+                  "$ref": "ENT_0161"
+                },
+                "cardinality": "1..*"
+              }
+            },
+            {
+              "_type": "ERDRelationship",
+              "_id": "REL_0246",
+              "_parent": {
+                "$ref": "ENT_0125"
+              },
+              "end1": {
+                "_type": "ERDRelationshipEnd",
+                "_id": "END_0247",
+                "_parent": {
+                  "$ref": "REL_0246"
+                },
+                "reference": {
+                  "$ref": "ENT_0125"
+                },
+                "cardinality": "1"
+              },
+              "end2": {
+                "_type": "ERDRelationshipEnd",
+                "_id": "END_0248",
+                "_parent": {
+                  "$ref": "REL_0246"
+                },
+                "reference": {
+                  "$ref": "ENT_0183"
+                },
+                "cardinality": "0..*"
+              }
+            },
+            {
+              "_type": "ERDRelationship",
+              "_id": "REL_0249",
+              "_parent": {
+                "$ref": "ENT_0125"
+              },
+              "end1": {
+                "_type": "ERDRelationshipEnd",
+                "_id": "END_0250",
+                "_parent": {
+                  "$ref": "REL_0249"
+                },
+                "reference": {
+                  "$ref": "ENT_0125"
+                },
+                "cardinality": "1"
+              },
+              "end2": {
+                "_type": "ERDRelationshipEnd",
+                "_id": "END_0251",
+                "_parent": {
+                  "$ref": "REL_0249"
+                },
+                "reference": {
+                  "$ref": "ENT_0168"
+                },
+                "cardinality": "0..*"
+              }
+            }
+          ]
+        },
+        {
+          "_type": "ERDEntity",
+          "_id": "ENT_0133",
+          "_parent": {
+            "$ref": "ERD_0003"
+          },
+          "name": "OrderItem",
+          "columns": [
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0134",
+              "_parent": {
+                "$ref": "ENT_0133"
+              },
+              "name": "id",
+              "type": "TEXT",
+              "primaryKey": true,
+              "foreignKey": false,
+              "nullable": false
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0135",
+              "_parent": {
+                "$ref": "ENT_0133"
+              },
+              "name": "orderId",
+              "type": "TEXT",
+              "primaryKey": false,
+              "foreignKey": true,
+              "nullable": false
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0136",
+              "_parent": {
+                "$ref": "ENT_0133"
+              },
+              "name": "productId",
+              "type": "TEXT",
+              "primaryKey": false,
+              "foreignKey": true,
+              "nullable": false
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0137",
+              "_parent": {
+                "$ref": "ENT_0133"
+              },
+              "name": "quantity",
+              "type": "INTEGER",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0138",
+              "_parent": {
+                "$ref": "ENT_0133"
+              },
+              "name": "subtotalBs",
+              "type": "DECIMAL(10,2)",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            }
+          ]
+        },
+        {
+          "_type": "ERDEntity",
+          "_id": "ENT_0139",
+          "_parent": {
+            "$ref": "ERD_0003"
+          },
+          "name": "Payment",
+          "columns": [
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0140",
+              "_parent": {
+                "$ref": "ENT_0139"
+              },
+              "name": "id",
+              "type": "TEXT",
+              "primaryKey": true,
+              "foreignKey": false,
+              "nullable": false
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0141",
+              "_parent": {
+                "$ref": "ENT_0139"
+              },
+              "name": "orderId",
+              "type": "TEXT",
+              "primaryKey": false,
+              "foreignKey": true,
+              "nullable": false
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0142",
+              "_parent": {
+                "$ref": "ENT_0139"
+              },
+              "name": "verificadoPorId",
+              "type": "TEXT",
+              "primaryKey": false,
+              "foreignKey": true,
+              "nullable": false
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0143",
+              "_parent": {
+                "$ref": "ENT_0139"
+              },
+              "name": "method",
+              "type": "PaymentMethod",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0144",
+              "_parent": {
+                "$ref": "ENT_0139"
+              },
+              "name": "status",
+              "type": "PaymentStatus",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0145",
+              "_parent": {
+                "$ref": "ENT_0139"
+              },
+              "name": "amountBs",
+              "type": "DECIMAL(10,2)",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0146",
+              "_parent": {
+                "$ref": "ENT_0139"
+              },
+              "name": "stripePaymentIntentId",
+              "type": "TEXT",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            }
+          ]
+        },
+        {
+          "_type": "ERDEntity",
+          "_id": "ENT_0147",
+          "_parent": {
+            "$ref": "ERD_0003"
+          },
+          "name": "PackagingChecklist",
+          "columns": [
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0148",
+              "_parent": {
+                "$ref": "ENT_0147"
+              },
+              "name": "id",
+              "type": "TEXT",
+              "primaryKey": true,
+              "foreignKey": false,
+              "nullable": false
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0149",
+              "_parent": {
+                "$ref": "ENT_0147"
+              },
+              "name": "orderId",
+              "type": "TEXT",
+              "primaryKey": false,
+              "foreignKey": true,
+              "nullable": false
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0150",
+              "_parent": {
+                "$ref": "ENT_0147"
+              },
+              "name": "empaquetadorId",
+              "type": "TEXT",
+              "primaryKey": false,
+              "foreignKey": true,
+              "nullable": false
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0151",
+              "_parent": {
+                "$ref": "ENT_0147"
+              },
+              "name": "items",
+              "type": "JSONB",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0152",
+              "_parent": {
+                "$ref": "ENT_0147"
+              },
+              "name": "sealCode",
+              "type": "TEXT",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0153",
+              "_parent": {
+                "$ref": "ENT_0147"
+              },
+              "name": "allVerified",
+              "type": "BOOLEAN",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            }
+          ]
+        },
+        {
+          "_type": "ERDEntity",
+          "_id": "ENT_0154",
+          "_parent": {
+            "$ref": "ERD_0003"
+          },
+          "name": "DeliveryTracking",
+          "columns": [
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0155",
+              "_parent": {
+                "$ref": "ENT_0154"
+              },
+              "name": "id",
+              "type": "TEXT",
+              "primaryKey": true,
+              "foreignKey": false,
+              "nullable": false
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0156",
+              "_parent": {
+                "$ref": "ENT_0154"
+              },
+              "name": "orderId",
+              "type": "TEXT",
+              "primaryKey": false,
+              "foreignKey": true,
+              "nullable": false
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0157",
+              "_parent": {
+                "$ref": "ENT_0154"
+              },
+              "name": "repartidorId",
+              "type": "TEXT",
+              "primaryKey": false,
+              "foreignKey": true,
+              "nullable": false
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0158",
+              "_parent": {
+                "$ref": "ENT_0154"
+              },
+              "name": "deliveryPin",
+              "type": "TEXT",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0159",
+              "_parent": {
+                "$ref": "ENT_0154"
+              },
+              "name": "riderLat",
+              "type": "FLOAT",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0160",
+              "_parent": {
+                "$ref": "ENT_0154"
+              },
+              "name": "riderLng",
+              "type": "FLOAT",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            }
+          ]
+        },
+        {
+          "_type": "ERDEntity",
+          "_id": "ENT_0161",
+          "_parent": {
+            "$ref": "ERD_0003"
+          },
+          "name": "OrderStatusHistory",
+          "columns": [
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0162",
+              "_parent": {
+                "$ref": "ENT_0161"
+              },
+              "name": "id",
+              "type": "TEXT",
+              "primaryKey": true,
+              "foreignKey": false,
+              "nullable": false
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0163",
+              "_parent": {
+                "$ref": "ENT_0161"
+              },
+              "name": "orderId",
+              "type": "TEXT",
+              "primaryKey": false,
+              "foreignKey": true,
+              "nullable": false
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0164",
+              "_parent": {
+                "$ref": "ENT_0161"
+              },
+              "name": "actorId",
+              "type": "TEXT",
+              "primaryKey": false,
+              "foreignKey": true,
+              "nullable": false
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0165",
+              "_parent": {
+                "$ref": "ENT_0161"
+              },
+              "name": "fromStatus",
+              "type": "OrderStatus",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0166",
+              "_parent": {
+                "$ref": "ENT_0161"
+              },
+              "name": "toStatus",
+              "type": "OrderStatus",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0167",
+              "_parent": {
+                "$ref": "ENT_0161"
+              },
+              "name": "reason",
+              "type": "TEXT",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            }
+          ]
+        },
+        {
+          "_type": "ERDEntity",
+          "_id": "ENT_0168",
+          "_parent": {
+            "$ref": "ERD_0003"
+          },
+          "name": "StockMovement",
+          "columns": [
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0169",
+              "_parent": {
+                "$ref": "ENT_0168"
+              },
+              "name": "id",
+              "type": "TEXT",
+              "primaryKey": true,
+              "foreignKey": false,
+              "nullable": false
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0170",
+              "_parent": {
+                "$ref": "ENT_0168"
+              },
+              "name": "productId",
+              "type": "TEXT",
+              "primaryKey": false,
+              "foreignKey": true,
+              "nullable": false
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0171",
+              "_parent": {
+                "$ref": "ENT_0168"
+              },
+              "name": "orderId",
+              "type": "TEXT",
+              "primaryKey": false,
+              "foreignKey": true,
+              "nullable": false
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0172",
+              "_parent": {
+                "$ref": "ENT_0168"
+              },
+              "name": "actorId",
+              "type": "TEXT",
+              "primaryKey": false,
+              "foreignKey": true,
+              "nullable": false
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0173",
+              "_parent": {
+                "$ref": "ENT_0168"
+              },
+              "name": "type",
+              "type": "StockMovementType",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0174",
+              "_parent": {
+                "$ref": "ENT_0168"
+              },
+              "name": "quantity",
+              "type": "INTEGER",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            }
+          ]
+        },
+        {
+          "_type": "ERDEntity",
+          "_id": "ENT_0175",
+          "_parent": {
+            "$ref": "ERD_0003"
+          },
+          "name": "Reservation",
+          "columns": [
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0176",
+              "_parent": {
+                "$ref": "ENT_0175"
+              },
+              "name": "id",
+              "type": "TEXT",
+              "primaryKey": true,
+              "foreignKey": false,
+              "nullable": false
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0177",
+              "_parent": {
+                "$ref": "ENT_0175"
+              },
+              "name": "code",
+              "type": "TEXT",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0178",
+              "_parent": {
+                "$ref": "ENT_0175"
+              },
+              "name": "userId",
+              "type": "TEXT",
+              "primaryKey": false,
+              "foreignKey": true,
+              "nullable": false
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0179",
+              "_parent": {
+                "$ref": "ENT_0175"
+              },
+              "name": "zone",
+              "type": "ReservationZone",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0180",
+              "_parent": {
+                "$ref": "ENT_0175"
+              },
+              "name": "date",
+              "type": "TEXT",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0181",
+              "_parent": {
+                "$ref": "ENT_0175"
+              },
+              "name": "partySize",
+              "type": "INTEGER",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0182",
+              "_parent": {
+                "$ref": "ENT_0175"
+              },
+              "name": "qrPassToken",
+              "type": "TEXT",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            }
+          ]
+        },
+        {
+          "_type": "ERDEntity",
+          "_id": "ENT_0183",
+          "_parent": {
+            "$ref": "ERD_0003"
+          },
+          "name": "ChatMessage",
+          "columns": [
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0184",
+              "_parent": {
+                "$ref": "ENT_0183"
+              },
+              "name": "id",
+              "type": "TEXT",
+              "primaryKey": true,
+              "foreignKey": false,
+              "nullable": false
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0185",
+              "_parent": {
+                "$ref": "ENT_0183"
+              },
+              "name": "orderId",
+              "type": "TEXT",
+              "primaryKey": false,
+              "foreignKey": true,
+              "nullable": false
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0186",
+              "_parent": {
+                "$ref": "ENT_0183"
+              },
+              "name": "senderId",
+              "type": "TEXT",
+              "primaryKey": false,
+              "foreignKey": true,
+              "nullable": false
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0187",
+              "_parent": {
+                "$ref": "ENT_0183"
+              },
+              "name": "channelType",
+              "type": "ChatChannelType",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0188",
+              "_parent": {
+                "$ref": "ENT_0183"
+              },
+              "name": "content",
+              "type": "TEXT",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            }
+          ]
+        },
+        {
+          "_type": "ERDEntity",
+          "_id": "ENT_0189",
+          "_parent": {
+            "$ref": "ERD_0003"
+          },
+          "name": "Promotion",
+          "columns": [
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0190",
+              "_parent": {
+                "$ref": "ENT_0189"
+              },
+              "name": "id",
+              "type": "TEXT",
+              "primaryKey": true,
+              "foreignKey": false,
+              "nullable": false
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0191",
+              "_parent": {
+                "$ref": "ENT_0189"
+              },
+              "name": "slug",
+              "type": "TEXT",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0192",
+              "_parent": {
+                "$ref": "ENT_0189"
+              },
+              "name": "title",
+              "type": "TEXT",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0193",
+              "_parent": {
+                "$ref": "ENT_0189"
+              },
+              "name": "discountPercent",
+              "type": "INTEGER",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            }
+          ]
+        },
+        {
+          "_type": "ERDEntity",
+          "_id": "ENT_0194",
+          "_parent": {
+            "$ref": "ERD_0003"
+          },
+          "name": "Event",
+          "columns": [
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0195",
+              "_parent": {
+                "$ref": "ENT_0194"
+              },
+              "name": "id",
+              "type": "TEXT",
+              "primaryKey": true,
+              "foreignKey": false,
+              "nullable": false
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0196",
+              "_parent": {
+                "$ref": "ENT_0194"
+              },
+              "name": "slug",
+              "type": "TEXT",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0197",
+              "_parent": {
+                "$ref": "ENT_0194"
+              },
+              "name": "title",
+              "type": "TEXT",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0198",
+              "_parent": {
+                "$ref": "ENT_0194"
+              },
+              "name": "spotId",
+              "type": "TEXT",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            }
+          ]
+        },
+        {
+          "_type": "ERDEntity",
+          "_id": "ENT_0199",
+          "_parent": {
+            "$ref": "ERD_0003"
+          },
+          "name": "Review",
+          "columns": [
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0200",
+              "_parent": {
+                "$ref": "ENT_0199"
+              },
+              "name": "id",
+              "type": "TEXT",
+              "primaryKey": true,
+              "foreignKey": false,
+              "nullable": false
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0201",
+              "_parent": {
+                "$ref": "ENT_0199"
+              },
+              "name": "userId",
+              "type": "TEXT",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0202",
+              "_parent": {
+                "$ref": "ENT_0199"
+              },
+              "name": "authorName",
+              "type": "TEXT",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0203",
+              "_parent": {
+                "$ref": "ENT_0199"
+              },
+              "name": "rating",
+              "type": "INTEGER",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            }
+          ]
+        },
+        {
+          "_type": "ERDEntity",
+          "_id": "ENT_0204",
+          "_parent": {
+            "$ref": "ERD_0003"
+          },
+          "name": "NewsletterSubscriber",
+          "columns": [
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0205",
+              "_parent": {
+                "$ref": "ENT_0204"
+              },
+              "name": "id",
+              "type": "TEXT",
+              "primaryKey": true,
+              "foreignKey": false,
+              "nullable": false
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0206",
+              "_parent": {
+                "$ref": "ENT_0204"
+              },
+              "name": "email",
+              "type": "TEXT",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0207",
+              "_parent": {
+                "$ref": "ENT_0204"
+              },
+              "name": "active",
+              "type": "BOOLEAN",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            }
+          ]
+        },
+        {
+          "_type": "ERDEntity",
+          "_id": "ENT_0208",
+          "_parent": {
+            "$ref": "ERD_0003"
+          },
+          "name": "EmailLog",
+          "columns": [
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0209",
+              "_parent": {
+                "$ref": "ENT_0208"
+              },
+              "name": "id",
+              "type": "TEXT",
+              "primaryKey": true,
+              "foreignKey": false,
+              "nullable": false
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0210",
+              "_parent": {
+                "$ref": "ENT_0208"
+              },
+              "name": "toEmail",
+              "type": "TEXT",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0211",
+              "_parent": {
+                "$ref": "ENT_0208"
+              },
+              "name": "templateType",
+              "type": "TEXT",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            },
+            {
+              "_type": "ERDColumn",
+              "_id": "COL_0212",
+              "_parent": {
+                "$ref": "ENT_0208"
+              },
+              "name": "status",
+              "type": "TEXT",
+              "primaryKey": false,
+              "foreignKey": false,
+              "nullable": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

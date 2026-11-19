@@ -5,6 +5,7 @@ import { useAuth } from './context/AuthContext';
 import { ROLE_META } from './lib/format';
 import { Role } from './types';
 import { HomePage } from './pages/HomePage';
+import { installGlobalUiSoundDelegate } from './lib/sound';
 import { MenuPage } from './pages/MenuPage';
 import { AuthSplitPage } from './pages/AuthSplitPage';
 import { QrMobileGatewayPage } from './pages/QrMobileGatewayPage';
@@ -143,6 +144,8 @@ function ProtectedRoute({
 }
 
 export function App() {
+  useEffect(() => installGlobalUiSoundDelegate(), []);
+
   return (
     <MotionConfig reducedMotion="user">
       <BrowserRouter>

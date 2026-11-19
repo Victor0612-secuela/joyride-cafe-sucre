@@ -23,6 +23,8 @@ import { Product } from '../../types';
 import { AnimatedPrice } from '../ui/AnimatedPrice';
 import { BrandWatermarkBg } from '../ui/BrandWatermarkBg';
 import { EditorialSplitModal } from '../ui/EditorialSplitModal';
+import { JoyRideHeritageLockup } from '../ui/JoyRideHeritageLockup';
+import { ProbablyTagline } from '../ui/ProbablyTagline';
 
 interface VenuePhotoSlide {
   src: string;
@@ -33,6 +35,13 @@ interface VenuePhotoSlide {
 
 const VENUE_REEL: VenuePhotoSlide[] = [
   {
+    src: '/images/joyride-official-portada.webp',
+    tag: 'SALÓN & CHIMENEA',
+    title: 'La casona histórica frente a la Catedral Metropolitana',
+    caption:
+      'Más de 25 años de mesas cálidas, cuadros históricos y nuestro icónico letrero de bicicleta en Nicolás Ortiz N° 14.',
+  },
+  {
     src: '/images/venue-patio-night.webp',
     tag: 'PATIO COLONIAL',
     title: 'Noches cálidas frente a la Catedral Metropolitana',
@@ -40,7 +49,7 @@ const VENUE_REEL: VenuePhotoSlide[] = [
       'Faroles coloniales, casona de dos niveles y barra de patio abierta hasta las 02:30 AM.',
   },
   {
-    src: '/images/venue-bar-cocktails.webp',
+    src: '/images/joyride-friends-night.webp',
     tag: 'COCTELERÍA & BAR',
     title: 'Singani Chuflay, The Hulk, Cucarachas y Chopps bien fríos',
     caption:
@@ -61,25 +70,18 @@ const VENUE_REEL: VenuePhotoSlide[] = [
       'Martes, jueves y sábados desde las 18:00: ven a aprender desde cero y quédate a la fiesta.',
   },
   {
-    src: '/images/fiesta-amigos.webp',
+    src: '/images/joyride-evento-3.webp',
     tag: 'BRINDIS & AMIGOS',
     title: 'Tu punto de encuentro en el centro histórico',
     caption:
-      'Pantallas gigantes, tablas para compartir y la mejor energía de la Ciudad Blanca.',
+      'Tablas para compartir, pizzas artesanales, picadas de bar y la mejor energía de la Ciudad Blanca.',
   },
   {
-    src: '/images/experiencia-bar.webp',
-    tag: 'SABORES JOY RIDE',
-    title: 'De desayunos de Cha’ki al Super Pique a lo Macho',
+    src: '/images/joyride-evento-2.webp',
+    tag: 'CELEBRACIONES',
+    title: 'Cumpleaños, postres flambeados y noches memorables',
     caption:
-      'Cocina continua boliviana e internacional desde las 07:00 AM hasta la madrugada.',
-  },
-  {
-    src: '/images/carousel-1.webp',
-    tag: 'AMBIENTE DEL LOCAL',
-    title: 'Rincones con historia, madera y buena compañía',
-    caption:
-      'Mesas junto a la chimenea para conversar con un buen café de altura boliviano o una jarra.',
+      'Arma tu reserva para grupos y celebra en nuestro patio colonial o mezzanine.',
   },
   {
     src: '/images/evento-tours.webp',
@@ -181,6 +183,18 @@ export function VenueShowcaseSection({
                 </div>
               </div>
             </div>
+
+            <div className="mt-6 flex items-center gap-4 rounded-2xl border border-hairline bg-obsidian/55 p-4">
+              <JoyRideHeritageLockup className="h-16 w-auto shrink-0 sm:h-20" />
+              <div className="text-xs leading-relaxed text-muted">
+                <p className="font-display text-sm font-bold text-ink">
+                  Sello Original Desde 2001
+                </p>
+                <p className="mt-0.5">
+                  &ldquo;No solo para gringos — Probably the Best Bar in Town®&rdquo; en el corazón de Sucre.
+                </p>
+              </div>
+            </div>
           </motion.div>
 
           <motion.div
@@ -229,9 +243,12 @@ export function VenueShowcaseSection({
         <div className="mt-14 rounded-3xl border border-hairline bg-surface p-5 shadow-elevated sm:p-7">
           <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
             <div>
-              <p className="font-mono text-xs font-bold uppercase tracking-[0.2em] text-joymagenta">
-                {t('Recorrido Visual por la Casona', 'Visual Tour Inside the Venue')}
-              </p>
+              <ProbablyTagline
+                subject="Patio"
+                accent="cyan"
+                size="sm"
+                spanishHint={t('Recorrido visual por la casona', 'Visual tour inside the venue')}
+              />
               <h3 className="mt-1 font-display text-2xl font-extrabold text-ink sm:text-3xl">
                 {t('Así se vive Joy Ride por dentro', 'Life Inside Joy Ride Café®')}
               </h3>
@@ -285,7 +302,7 @@ export function VenueShowcaseSection({
               </AnimatePresence>
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-transparent" />
 
-              <div className="absolute inset-x-0 bottom-0 p-5 sm:p-7">
+              <div className="absolute inset-x-0 bottom-0 px-14 pb-5 pt-5 sm:px-16 sm:pb-7">
                 <span className="inline-block rounded-full bg-joymagenta px-3 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-white">
                   {currentSlide.tag}
                 </span>
@@ -302,10 +319,10 @@ export function VenueShowcaseSection({
                 aria-label="Foto anterior"
                 onClick={(e) => {
                   e.stopPropagation();
-                  joySound.click();
+                  joySound.slide();
                   setReelIndex((i) => (i - 1 + VENUE_REEL.length) % VENUE_REEL.length);
                 }}
-                className="absolute left-3 top-1/2 -translate-y-1/2 rounded-full border border-white/25 bg-black/65 p-2 text-white backdrop-blur-md hover:border-joycyan"
+                className="absolute left-3 top-[38%] -translate-y-1/2 rounded-full border border-white/25 bg-black/65 p-2 text-white backdrop-blur-md hover:border-joycyan"
               >
                 <ChevronLeft className="h-4 w-4" />
               </button>
@@ -314,10 +331,10 @@ export function VenueShowcaseSection({
                 aria-label="Siguiente foto"
                 onClick={(e) => {
                   e.stopPropagation();
-                  joySound.click();
+                  joySound.slide();
                   setReelIndex((i) => (i + 1) % VENUE_REEL.length);
                 }}
-                className="absolute right-3 top-1/2 -translate-y-1/2 rounded-full border border-white/25 bg-black/65 p-2 text-white backdrop-blur-md hover:border-joycyan"
+                className="absolute right-3 top-[38%] -translate-y-1/2 rounded-full border border-white/25 bg-black/65 p-2 text-white backdrop-blur-md hover:border-joycyan"
               >
                 <ChevronRight className="h-4 w-4" />
               </button>
@@ -332,7 +349,7 @@ export function VenueShowcaseSection({
                     key={slide.src}
                     type="button"
                     onClick={() => {
-                      joySound.click();
+                      joySound.slide();
                       setReelIndex(idx);
                     }}
                     className={`photo-overlay group relative h-24 overflow-hidden rounded-xl border text-left transition-all sm:h-28 ${

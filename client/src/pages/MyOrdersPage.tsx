@@ -27,6 +27,7 @@ import { OrderTimelineModal } from '../components/modals/OrderTimelineModal';
 import { ReceiptPrintModal } from '../components/modals/ReceiptPrintModal';
 import { QrLivePaymentModal, QrSessionData } from '../components/modals/QrLivePaymentModal';
 import { BANK_INFO_FALLBACK } from '../lib/constants';
+import { ProbablyTagline } from '../components/ui/ProbablyTagline';
 
 export function MyOrdersPage() {
   useDocumentTitle('Mis Pedidos y Reservas — Joy Ride Café® Sucre');
@@ -98,9 +99,12 @@ export function MyOrdersPage() {
               className="inline-flex items-center gap-1.5 text-xs font-semibold text-joycyan hover:underline"
             >
               <ArrowLeft className="h-3.5 w-3.5" />
-              <span>Volver a la Carta</span>
+              <span>Volver al Inicio</span>
             </Link>
-            <h1 className="mt-2 font-display text-3xl font-extrabold text-ink">
+            <div className="mt-2">
+              <ProbablyTagline subject="Delivery" accent="cyan" size="sm" spanishHint="Seguimiento en vivo con PIN" />
+            </div>
+            <h1 className="mt-1 font-display text-3xl font-extrabold text-ink">
               Mis Pedidos &amp; Reservas
             </h1>
             <p className="mt-1 text-sm text-muted">

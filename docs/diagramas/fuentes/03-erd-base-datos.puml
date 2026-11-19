@@ -1,0 +1,198 @@
+@startuml
+title Diagrama Entidad-Relación Físico (Crow's Foot) — Joy Ride Café® Sucre
+skinparam shadowing false
+skinparam backgroundColor #FFFFFF
+skinparam linetype ortho
+
+entity "User" {
+  * id : text <<PK>>
+  --
+  * email : text <<UK>>
+  name : text
+  passwordHash : text
+  role : Role
+  phone : text
+  active : boolean
+}
+
+entity "Category" {
+  * id : text <<PK>>
+  --
+  * slug : text <<UK>>
+  name : text
+  sortOrder : int
+}
+
+entity "Product" {
+  * id : text <<PK>>
+  --
+  * categoryId : text <<FK>>
+  * slug : text <<UK>>
+  name : text
+  precioBs : decimal(10,2)
+  precioUsd : decimal(10,2)
+  stockDisponible : int
+  stockReservado : int
+  stockMinimoAlerta : int
+  active : boolean
+}
+
+entity "Order" {
+  * id : text <<PK>>
+  --
+  * orderCode : text <<UK>>
+  * userId : text <<FK>>
+  status : OrderStatus
+  deliveryType : DeliveryType
+  subtotalBs : decimal(10,2)
+  totalBs : decimal(10,2)
+  totalUsd : decimal(10,2)
+  destLat : float
+  destLng : float
+}
+
+entity "OrderItem" {
+  * id : text <<PK>>
+  --
+  * orderId : text <<FK>>
+  * productId : text <<FK>>
+  productName : text
+  unitPriceBs : decimal(10,2)
+  quantity : int
+  subtotalBs : decimal(10,2)
+}
+
+entity "Payment" {
+  * id : text <<PK>>
+  --
+  * orderId : text <<FK,UK>>
+  verificadoPorId : text <<FK>>
+  method : PaymentMethod
+  status : PaymentStatus
+  amountBs : decimal(10,2)
+  qrToken : text <<UK>>
+  paypalOrderId : text <<UK>>
+  stripePaymentIntentId : text <<UK>>
+}
+
+entity "PackagingChecklist" {
+  * id : text <<PK>>
+  --
+  * orderId : text <<FK,UK>>
+  empaquetadorId : text <<FK>>
+  items : jsonb
+  sealCode : text
+  allVerified : boolean
+}
+
+entity "DeliveryTracking" {
+  * id : text <<PK>>
+  --
+  * orderId : text <<FK,UK>>
+  repartidorId : text <<FK>>
+  riderLat : float
+  riderLng : float
+  deliveryPin : text
+  packageLabelCode : text
+}
+
+entity "OrderStatusHistory" {
+  * id : text <<PK>>
+  --
+  * orderId : text <<FK>>
+  actorId : text <<FK>>
+  fromStatus : OrderStatus
+  toStatus : OrderStatus
+  reason : text
+}
+
+entity "StockMovement" {
+  * id : text <<PK>>
+  --
+  * productId : text <<FK>>
+  orderId : text <<FK>>
+  actorId : text <<FK>>
+  type : StockMovementType
+  quantity : int
+  previousStock : int
+  newStock : int
+}
+
+entity "Reservation" {
+  * id : text <<PK>>
+  --
+  * code : text <<UK>>
+  userId : text <<FK>>
+  zone : ReservationZone
+  date : text
+  partySize : int
+  qrPassToken : text <<UK>>
+}
+
+entity "ChatMessage" {
+  * id : text <<PK>>
+  --
+  * senderId : text <<FK>>
+  orderId : text <<FK>>
+  channelType : ChatChannelType
+  content : text
+}
+
+entity "Promotion" {
+  * id : text <<PK>>
+  --
+  * slug : text <<UK>>
+  title : text
+  discountPercent : int
+}
+
+entity "Event" {
+  * id : text <<PK>>
+  --
+  * slug : text <<UK>>
+  title : text
+  spotId : text
+  imagesJson : jsonb
+}
+
+entity "Review" {
+  * id : text <<PK>>
+  --
+  userId : text
+  authorName : text
+  rating : int
+}
+
+entity "NewsletterSubscriber" {
+  * id : text <<PK>>
+  --
+  * email : text <<UK>>
+  active : boolean
+}
+
+entity "EmailLog" {
+  * id : text <<PK>>
+  --
+  toEmail : text
+  templateType : text
+  status : text
+}
+
+User ||--o{ Order
+User ||--o{ Reservation
+User ||--o{ ChatMessage
+User ||--o{ StockMovement
+User ||--o{ Payment : verifica
+User ||--o{ PackagingChecklist : empaca
+User ||--o{ DeliveryTracking : reparte
+Category ||--|{ Product
+Product ||--o{ OrderItem
+Product ||--o{ StockMovement
+Order ||--|{ OrderItem
+Order ||--|| Payment
+Order ||--o| PackagingChecklist
+Order ||--o| DeliveryTracking
+Order ||--|{ OrderStatusHistory
+Order ||--o{ ChatMessage
+Order ||--o{ StockMovement
+@enduml

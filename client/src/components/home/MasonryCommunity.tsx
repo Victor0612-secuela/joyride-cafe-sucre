@@ -8,7 +8,9 @@ import { useCart } from '../../context/CartContext';
 import { useToast } from '../../context/ToastContext';
 import { api, getErrorMessage } from '../../lib/api';
 import { formatPrice } from '../../lib/format';
+import { joySound } from '../../lib/sound';
 import { Product, Review } from '../../types';
+import { ProbablyTagline } from '../ui/ProbablyTagline';
 
 interface MasonryCommunityProps {
   products: Product[];
@@ -85,9 +87,11 @@ export function MasonryCommunity({ products, onOpenReservation }: MasonryCommuni
     if (!prod) return;
     const res = addItem(prod, 1);
     if (!res.ok) {
+      joySound.error();
       pushToast('Stock insuficiente', 'error', res.reason);
       return;
     }
+    joySound.add();
     pushToast('Añadido a tu pedido', 'success', prod.name);
   };
 
@@ -102,11 +106,13 @@ export function MasonryCommunity({ products, onOpenReservation }: MasonryCommuni
         rating,
         comment: comment.trim(),
       });
+      joySound.success();
       pushToast('Reseña publicada en Joy Ride', 'success', '¡Gracias por compartir tu experiencia!');
       setComment('');
       setReviewModalOpen(false);
       queryClient.invalidateQueries({ queryKey: ['reviews'] });
     } catch (err) {
+      joySound.error();
       pushToast('No se pudo publicar reseña', 'error', getErrorMessage(err));
     } finally {
       setSubmitting(false);
@@ -120,9 +126,12 @@ export function MasonryCommunity({ products, onOpenReservation }: MasonryCommuni
       <div className="mx-auto max-w-[1640px] px-5 sm:px-8 lg:px-12 xl:px-14">
         <div className="mb-12 flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
           <div>
-            <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-joymagenta/35 bg-joymagenta/10 px-3.5 py-1 text-xs font-bold text-pink-200">
-              <Sparkles className="h-3.5 w-3.5 text-joymagenta" />
-              <span>4.3 ★ EN GOOGLE · COMUNIDAD JOY RIDE</span>
+            <div className="mb-2 flex flex-wrap items-center gap-3">
+              <div className="inline-flex items-center gap-2 rounded-full border border-joymagenta/35 bg-joymagenta/10 px-3.5 py-1 text-xs font-bold text-pink-200">
+                <Sparkles className="h-3.5 w-3.5 text-joymagenta" />
+                <span>4.3 ★ EN GOOGLE · COMUNIDAD JOY RIDE</span>
+              </div>
+              <ProbablyTagline subject="Nights" accent="magenta" size="sm" spanishHint="Voces reales de Sucre" />
             </div>
             <h2 className="font-display text-3xl font-extrabold tracking-tight text-ink sm:text-4xl xl:text-5xl">
               Reseñas Reales &amp; Memorias en la Casona
