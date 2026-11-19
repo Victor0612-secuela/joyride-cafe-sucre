@@ -1,0 +1,411 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  CLIENTE
+  CAJERO
+  EMPAQUETADOR
+  REPARTIDOR
+  ADMIN
+}
+
+enum OrderStatus {
+  PENDIENTE_PAGO
+  PAGO_EN_REVISION
+  PAGO_CONFIRMADO
+  EN_PREPARACION
+  EMPACADO
+  EN_CAMINO
+  ENTREGADO
+  CANCELADO
+  RECHAZADO
+}
+
+enum PaymentMethod {
+  QR
+  DEPOSITO_BANCARIO
+  PAYPAL
+}
+
+enum PaymentStatus {
+  PENDIENTE
+  EN_REVISION
+  COMPLETADO
+  RECHAZADO
+  EXPIRADO
+}
+
+enum DeliveryType {
+  DELIVERY
+  RECOGER_LOCAL
+}
+
+enum StockMovementType {
+  ENTRADA_INICIAL
+  RESERVA_PEDIDO
+  VENTA_CONFIRMADA
+  LIBERACION_STOCK
+  AJUSTE_ADMIN
+}
+
+enum ReservationZone {
+  PATIO_COLONIAL
+  MEZZANINE_TERRAZA
+  PANTALLA_GIGANTE
+  PISTA_SALSA_BACHATA
+}
+
+enum ReservationStatus {
+  CONFIRMADA
+  CHECK_IN
+  CANCELADA
+}
+
+enum ChatChannelType {
+  ORDER_DELIVERY
+  STAFF_OPS
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         Role     @default(CLIENTE)
+  phone        String?
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  orders           Order[]              @relation("CustomerOrders")
+  verifiedPayments Payment[]            @relation("VerifiedByCashier")
+  packedOrders     PackagingChecklist[] @relation("PackerUser")
+  deliveries       DeliveryTracking[]   @relation("RiderUser")
+  statusChanges    OrderStatusHistory[] @relation("ActorHistory")
+  stockMovements   StockMovement[]      @relation("StockActor")
+  reservations     Reservation[]
+  chatMessages     ChatMessage[]        @relation("ChatSender")
+
+  @@index([role, active])
+}
+
+model Category {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  description String
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  products Product[]
+}
+
+model Product {
+  id                   String   @id @default(cuid())
+  categoryId           String
+  slug                 String   @unique
+  name                 String
+  description          String
+  precioBs             Decimal  @db.Decimal(10, 2)
+  precioUsd            Decimal  @db.Decimal(10, 2)
+  stockDisponible      Int      @default(0)
+  stockReservado       Int      @default(0)
+  stockMinimoAlerta    Int      @default(5)
+  esVegano             Boolean  @default(false)
+  esPicante            Boolean  @default(false)
+  esDestacado          Boolean  @default(false)
+  enHappyHour          Boolean  @default(false)
+  tiempoPreparacionMin Int      @default(15)
+  imageUrl             String
+  maridajeSlug         String?
+  active               Boolean  @default(true)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  category       Category        @relation(fields: [categoryId], references: [id])
+  orderItems     OrderItem[]
+  stockMovements StockMovement[]
+
+  @@index([categoryId, active])
+  @@index([enHappyHour, active])
+  @@index([esDestacado, active])
+}
+
+model StockMovement {
+  id            String            @id @default(cuid())
+  productId     String
+  orderId       String?
+  actorId       String?
+  type          StockMovementType
+  quantity      Int
+  previousStock Int
+  newStock      Int
+  reason        String
+  createdAt     DateTime          @default(now())
+
+  product Product @relation(fields: [productId], references: [id])
+  order   Order?  @relation(fields: [orderId], references: [id])
+  actor   User?   @relation("StockActor", fields: [actorId], references: [id])
+
+  @@index([productId, createdAt])
+  @@index([orderId])
+}
+
+model Promotion {
+  id              String   @id @default(cuid())
+  slug            String   @unique
+  title           String
+  subtitle        String
+  description     String
+  badgeText       String
+  scheduleText    String
+  discountPercent Int      @default(0)
+  imageUrl        String
+  active          Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model Order {
+  id                String       @id @default(cuid())
+  orderCode         String       @unique
+  userId            String
+  status            OrderStatus  @default(PENDIENTE_PAGO)
+  deliveryType      DeliveryType @default(DELIVERY)
+  subtotalBs        Decimal      @db.Decimal(10, 2)
+  discountBs        Decimal      @default(0) @db.Decimal(10, 2)
+  totalBs           Decimal      @db.Decimal(10, 2)
+  totalUsd          Decimal      @db.Decimal(10, 2)
+  deliveryAddress   String?
+  deliveryReference String?
+  destLat           Float?       @default(-19.0442)
+  destLng           Float?       @default(-65.2618)
+  phoneContact      String
+  notes             String?
+  splitCount        Int          @default(1)
+  expiresAt         DateTime?
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+
+  user           User                 @relation("CustomerOrders", fields: [userId], references: [id])
+  items          OrderItem[]
+  payment        Payment?
+  packaging      PackagingChecklist?
+  delivery       DeliveryTracking?
+  history        OrderStatusHistory[]
+  stockMovements StockMovement[]
+  chatMessages   ChatMessage[]
+
+  @@index([status, createdAt])
+  @@index([userId, createdAt])
+}
+
+model OrderItem {
+  id          String  @id @default(cuid())
+  orderId     String
+  productId   String
+  productName String
+  unitPriceBs Decimal @db.Decimal(10, 2)
+  quantity    Int
+  subtotalBs  Decimal @db.Decimal(10, 2)
+
+  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id])
+
+  @@index([orderId])
+  @@index([productId])
+}
+
+model Payment {
+  id              String        @id @default(cuid())
+  orderId         String        @unique
+  method          PaymentMethod
+  status          PaymentStatus @default(PENDIENTE)
+  amountBs        Decimal       @db.Decimal(10, 2)
+  amountUsd       Decimal       @db.Decimal(10, 2)
+  qrToken         String?       @unique
+  qrSignature     String?
+  bankName        String?
+  referenceNumber String?
+  comprobanteUrl  String?
+  paypalOrderId   String?       @unique
+  paypalCaptureId String?
+  paypalPayerEmail String?
+  reviewNotes     String?
+  verificadoPorId String?
+  verifiedAt      DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  order         Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  verificadoPor User? @relation("VerifiedByCashier", fields: [verificadoPorId], references: [id])
+
+  @@index([status, method])
+}
+
+model PackagingChecklist {
+  id             String    @id @default(cuid())
+  orderId        String    @unique
+  empaquetadorId String?
+  items          Json
+  sealCode       String?
+  allVerified    Boolean   @default(false)
+  notes          String?
+  startedAt      DateTime  @default(now())
+  completedAt    DateTime?
+
+  order        Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  empaquetador User? @relation("PackerUser", fields: [empaquetadorId], references: [id])
+}
+
+model DeliveryTracking {
+  id                String    @id @default(cuid())
+  orderId           String    @unique
+  repartidorId      String?
+  deliveryAddress   String
+  deliveryReference String?
+  destLat           Float?    @default(-19.0442)
+  destLng           Float?    @default(-65.2618)
+  riderLat          Float?    @default(-19.04804)
+  riderLng          Float?    @default(-65.25973)
+  etaMinutes        Int?      @default(14)
+  deliveryPin       String
+  packageLabelCode  String
+  pickedUpAt        DateTime?
+  deliveredAt       DateTime?
+  receiverName      String?
+  deliveryNotes     String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  order      Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  repartidor User? @relation("RiderUser", fields: [repartidorId], references: [id])
+
+  @@index([repartidorId])
+}
+
+model OrderStatusHistory {
+  id         String       @id @default(cuid())
+  orderId    String
+  actorId    String?
+  actorName  String
+  actorRole  String
+  fromStatus OrderStatus?
+  toStatus   OrderStatus
+  reason     String
+  createdAt  DateTime     @default(now())
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  actor User? @relation("ActorHistory", fields: [actorId], references: [id])
+
+  @@index([orderId, createdAt])
+}
+
+model Reservation {
+  id                String            @id @default(cuid())
+  code              String            @unique
+  userId            String?
+  guestName         String
+  guestEmail        String
+  guestPhone        String
+  zone              ReservationZone
+  date              String
+  timeSlot          String
+  partySize         Int
+  includeSalsaClass Boolean           @default(false)
+  specialNotes      String?
+  status            ReservationStatus @default(CONFIRMADA)
+  qrPassToken       String            @unique
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+
+  user User? @relation(fields: [userId], references: [id])
+
+  @@index([date, zone, status])
+  @@index([userId])
+}
+
+model ChatMessage {
+  id          String          @id @default(cuid())
+  channelType ChatChannelType
+  orderId     String?
+  senderId    String
+  senderName  String
+  senderRole  String
+  content     String
+  createdAt   DateTime        @default(now())
+
+  order  Order? @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  sender User   @relation("ChatSender", fields: [senderId], references: [id])
+
+  @@index([channelType, orderId, createdAt])
+}
+
+model EmailLog {
+  id             String   @id @default(cuid())
+  toEmail        String
+  recipientRole  String
+  templateType   String
+  subject        String
+  htmlBody       String
+  status         String   @default("STORED_PREVIEW")
+  previewUrl     String?
+  relatedOrderId String?
+  createdAt      DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([templateType])
+}
+
+model NewsletterSubscriber {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+model Review {
+  id           String   @id @default(cuid())
+  userId       String?
+  authorName   String
+  authorOrigin String   @default("Sucre, Bolivia")
+  verifiedVia  String   @default("CUENTA_JOYRIDE")
+  rating       Int      @default(5)
+  comment      String
+  photoUrl     String?
+  createdAt    DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+model Event {
+  id            String   @id @default(cuid())
+  slug          String   @unique
+  title         String
+  subtitle      String
+  description   String
+  badge         String   @default("EVENTO JOY RIDE")
+  accent        String   @default("magenta")
+  locationLabel String   @default("Calle Nicolas Ortiz N 14")
+  scheduleLabel String   @default("18:00 - 02:30")
+  imageUrl      String
+  imagesJson    Json?
+  videoUrl      String?
+  spotId        String   @default("joyride-hq")
+  isActive      Boolean  @default(true)
+  isFeatured    Boolean  @default(true)
+  sortOrder     Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([isActive, sortOrder])
+}
+

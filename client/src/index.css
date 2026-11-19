@@ -1,0 +1,254 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --c-obsidian: 11 13 18;
+  --c-surface: 20 24 33;
+  --c-elevated: 27 33 48;
+  --c-hairline: 38 44 58;
+  --c-ink: 248 250 252;
+  --c-muted: 148 163 184;
+
+  --bg-obsidian: #0B0D12;
+  --bg-surface: #141821;
+  --bg-elevated: #1B2130;
+  --border-hairline: #262C3A;
+  --text-ink: #F8FAFC;
+  --text-muted: #94A3B8;
+  --brand-cyan: #00A0DF;
+  --brand-cyan-deep: #0082B8;
+  --brand-magenta: #F20574;
+
+  --shadow-elevated: 0 20px 50px -12px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.06);
+  --shadow-card: 0 10px 30px -10px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+
+:root[data-theme='light'] {
+  --c-obsidian: 245 242 235;
+  --c-surface: 255 255 255;
+  --c-elevated: 235 231 222;
+  --c-hairline: 214 209 199;
+  --c-ink: 15 23 42;
+  --c-muted: 71 85 105;
+
+  --bg-obsidian: #F5F2EB;
+  --bg-surface: #FFFFFF;
+  --bg-elevated: #EBE7DE;
+  --border-hairline: #D6D1C7;
+  --text-ink: #0F172A;
+  --text-muted: #475569;
+
+  --shadow-elevated: 0 20px 44px -16px rgba(15, 23, 42, 0.16), 0 0 0 1px rgba(15, 23, 42, 0.06);
+  --shadow-card: 0 8px 24px -10px rgba(15, 23, 42, 0.1), 0 0 0 1px rgba(15, 23, 42, 0.05);
+}
+
+@layer base {
+  html {
+    background-color: var(--bg-obsidian);
+    color: var(--text-ink);
+    scroll-behavior: smooth;
+    color-scheme: dark;
+  }
+
+  :root[data-theme='light'] html {
+    color-scheme: light;
+  }
+
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    background-color: var(--bg-obsidian);
+    color: var(--text-ink);
+    overflow-x: hidden;
+    transition: background-color 0.22s ease, color 0.22s ease;
+  }
+
+  ::selection {
+    background-color: rgba(0, 160, 223, 0.28);
+    color: #F8FAFC;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--brand-cyan);
+    outline-offset: 2px;
+  }
+}
+
+/* Light theme readability guards on legacy slate-200/300 text utilities outside dark photo scrims */
+:root[data-theme='light'] .text-slate-300:not(.photo-overlay *),
+:root[data-theme='light'] .text-slate-200:not(.photo-overlay *) {
+  color: #334155;
+}
+:root[data-theme='light'] .text-pink-200:not(.photo-overlay *),
+:root[data-theme='light'] .text-pink-300:not(.photo-overlay *) {
+  color: #BE185D;
+}
+:root[data-theme='light'] .text-sky-300:not(.photo-overlay *) {
+  color: #0369A1;
+}
+:root[data-theme='light'] .text-emerald-300:not(.photo-overlay *),
+:root[data-theme='light'] .text-emerald-200:not(.photo-overlay *) {
+  color: #047857;
+}
+:root[data-theme='light'] .text-amber-300:not(.photo-overlay *) {
+  color: #B45309;
+}
+
+/* Custom subtle scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-obsidian);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-hairline);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Skeleton Shimmer Animation (Replaces all generic spinners) */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.skeleton-shimmer {
+  position: relative;
+  overflow: hidden;
+  background-color: rgba(148, 163, 184, 0.14);
+}
+
+.skeleton-shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.12) 50%,
+    transparent 100%
+  );
+  animation: shimmer 1.65s cubic-bezier(0.2, 0, 0, 1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-shimmer::after {
+    animation: none;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+.photo-frame {
+  outline: 1px solid rgba(255, 255, 255, 0.12);
+  outline-offset: -1px;
+}
+
+:root[data-theme='light'] .photo-frame {
+  outline: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+.overscroll-contain {
+  overscroll-behavior: contain;
+}
+
+@media (hover: hover) {
+  .hover-lift:hover {
+    transform: translateY(-2px);
+  }
+}
+
+/* Terrain Relief Map Filter (Dark & Light Themes, Zero API Keys) */
+.joyride-leaflet-dark,
+.joyride-leaflet-relief {
+  background-color: var(--bg-obsidian) !important;
+}
+.joyride-leaflet-dark .leaflet-tile-pane,
+.joyride-leaflet-relief .leaflet-tile-pane {
+  filter: invert(93%) hue-rotate(180deg) brightness(95%) contrast(94%) saturate(88%);
+}
+:root[data-theme='light'] .joyride-leaflet-dark .leaflet-tile-pane,
+:root[data-theme='light'] .joyride-leaflet-relief .leaflet-tile-pane {
+  filter: contrast(103%) saturate(106%);
+}
+.joyride-leaflet-dark .leaflet-control-zoom a,
+.joyride-leaflet-relief .leaflet-control-zoom a {
+  background-color: var(--bg-surface) !important;
+  color: var(--text-ink) !important;
+  border-color: var(--border-hairline) !important;
+}
+
+/* 3D Menu-Booklet Card Flip Utilities */
+.perspective-1200 {
+  perspective: 1200px;
+}
+.preserve-3d {
+  transform-style: preserve-3d;
+}
+.backface-hidden {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+/* Refined Architectural Card Depth & Palette Hairline Accents (No flashy AI neon glare) */
+.card-glow-cyan,
+.card-glow-magenta,
+.card-glow-emerald,
+.card-glow-amber {
+  transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.24s ease, box-shadow 0.24s ease;
+}
+.card-glow-cyan:hover {
+  border-color: rgba(0, 160, 223, 0.6);
+  box-shadow: 0 14px 28px -18px rgba(0, 160, 223, 0.28), var(--shadow-card);
+}
+.card-glow-magenta:hover {
+  border-color: rgba(242, 5, 116, 0.6);
+  box-shadow: 0 14px 28px -18px rgba(242, 5, 116, 0.28), var(--shadow-card);
+}
+.card-glow-emerald:hover {
+  border-color: rgba(16, 185, 129, 0.58);
+  box-shadow: 0 14px 28px -18px rgba(16, 185, 129, 0.24), var(--shadow-card);
+}
+.card-glow-amber:hover {
+  border-color: rgba(245, 158, 11, 0.58);
+  box-shadow: 0 14px 28px -18px rgba(245, 158, 11, 0.24), var(--shadow-card);
+}
+
+/* Clean Print CSS for Official Joy Ride Receipts */
+@media print {
+  body * {
+    visibility: hidden !important;
+  }
+  #printable-joyride-receipt,
+  #printable-joyride-receipt * {
+    visibility: visible !important;
+  }
+  #printable-joyride-receipt {
+    position: fixed !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    max-width: 420px !important;
+    box-shadow: none !important;
+    border: 1px solid #cbd5e1 !important;
+  }
+}

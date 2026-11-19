@@ -1,0 +1,57 @@
+services:
+  - type: web
+    name: joyride-cafe-sucre
+    runtime: node
+    plan: free
+    region: ohio
+    buildCommand: npm install --prefix server && npm install --prefix client && npm run build:client && npm run build:server
+    startCommand: npm run render:start --prefix server
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: DATABASE_URL
+        fromDatabase:
+          name: joyride-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: HMAC_SECRET
+        generateValue: true
+      - key: APP_URL
+        value: https://joyride-cafe-sucre.onrender.com
+      - key: USD_EXCHANGE_RATE
+        value: "6.96"
+      - key: PAYPAL_MODE
+        value: sandbox
+      - key: PAYPAL_CLIENT_ID
+        sync: false
+      - key: PAYPAL_CLIENT_SECRET
+        sync: false
+      - key: MANAGER_EMAIL
+        value: victor2004612@gmail.com
+      - key: RESEND_API_KEY
+        sync: false
+      - key: SMTP_HOST
+        value: smtp.gmail.com
+      - key: SMTP_PORT
+        value: "587"
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      - key: SMTP_FROM
+        value: Joy Ride Café Sucre <no-reply@joyridebol.com>
+      - key: CORS_ORIGINS
+        sync: false
+
+databases:
+  - name: joyride-db
+    plan: free
+    region: ohio
+    databaseName: joyride
+    user: joyride_user

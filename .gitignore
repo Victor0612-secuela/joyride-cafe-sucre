@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.env
+.env.local
+.pgdata/
+uploads/
+_tmp_skills/
+_tmp_gen_imgs/
+*.log
+.DS_Store
+Thumbs.db

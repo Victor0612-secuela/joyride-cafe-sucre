@@ -1,0 +1,18 @@
+{
+  "name": "Joy Ride Café® — Sucre, Bolivia",
+  "short_name": "Joy Ride",
+  "description": "No solo para gringos — Probably the best bar in town. Pedidos con QR/PayPal, reservas de mesa y guía turística de Sucre.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0B0D12",
+  "theme_color": "#0B0D12",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/logo-joyride.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

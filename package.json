@@ -1,0 +1,30 @@
+{
+  "name": "joyride-cafe-sucre-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sistema E-Commerce, Reservas y Logistica End-to-End — Joy Ride Cafe Sucre (SIS324)",
+  "scripts": {
+    "install:all": "npm install --prefix server && npm install --prefix client",
+    "assets:fetch": "node scripts/fetch-brand-assets.mjs",
+    "db:local": "node scripts/dev-db.mjs",
+    "db:push": "npm run db:push --prefix server",
+    "db:seed": "npm run db:seed --prefix server",
+    "dev:server": "npm run dev --prefix server",
+    "dev:client": "npm run dev --prefix client",
+    "dev": "concurrently -k -n DB,API,WEB -c cyan,magenta,green \"npm run db:local\" \"npm run dev:server\" \"npm run dev:client\"",
+    "build:client": "npm run build --prefix client",
+    "build:server": "npm run build --prefix server",
+    "build": "npm run build:client && npm run build:server",
+    "start": "npm run start --prefix server",
+    "dns:setup": "powershell -ExecutionPolicy Bypass -File scripts/setup-local-dns.ps1",
+    "dns:remove": "powershell -ExecutionPolicy Bypass -File scripts/remove-local-dns.ps1",
+    "expose:live": "npx localtunnel --port 4000",
+    "test:e2e": "npm run test:e2e --prefix server"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "embedded-postgres": "18.6.0-beta.19",
+    "pg": "^8.13.3",
+    "sharp": "^0.33.5"
+  }
+}
