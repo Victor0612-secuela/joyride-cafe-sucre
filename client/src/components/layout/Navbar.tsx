@@ -41,6 +41,7 @@ export function Navbar({ categories = [], onSelectCategory, onOpenReservation }:
   const { totalItems, setDrawerOpen, currency, setCurrency } = useCart();
   const { theme, toggleTheme } = useTheme();
   const { lang, setLang, t } = useI18n();
+  const location = useLocation();
   const navigate = useNavigate();
 
   const [catOpen, setCatOpen] = useState(false);
@@ -90,34 +91,38 @@ export function Navbar({ categories = [], onSelectCategory, onOpenReservation }:
 
   return (
     <header className="fixed inset-x-0 top-0 z-40 border-b border-white/10 bg-obsidian/85 backdrop-blur-xl">
-      <div className="mx-auto flex h-[78px] max-w-[1640px] items-center justify-between gap-3 px-4 sm:px-6 lg:px-10 xl:px-12">
+      <div className="mx-auto flex h-[78px] max-w-[1720px] items-center justify-between gap-2 px-4 sm:px-6 xl:gap-3 xl:px-6 2xl:px-10">
         {/* Brand */}
-        <Link to="/" className="flex min-w-0 shrink-0 items-center gap-3 focus-visible:rounded-lg">
+        <Link to="/" className="flex shrink-0 items-center gap-2.5 focus-visible:rounded-lg 2xl:gap-3">
           <img
             src="/logo-joyride.png"
             alt="Joy Ride Café Sucre"
-            className="h-12 w-12 shrink-0 rounded-full object-contain ring-1 ring-joycyan/35 sm:h-14 sm:w-14"
+            className="h-11 w-11 shrink-0 rounded-full object-contain ring-1 ring-joycyan/35 sm:h-12 sm:w-12 2xl:h-14 2xl:w-14"
           />
-          <div className="min-w-0 leading-tight">
-            <span className="block whitespace-nowrap font-display text-sm font-extrabold tracking-tight text-ink sm:text-base xl:text-lg">
+          <div className="leading-tight">
+            <span className="block whitespace-nowrap font-display text-sm font-extrabold tracking-tight text-ink sm:text-base 2xl:text-lg">
               JOY RIDE<span className="hidden sm:inline"> CAFÉ</span>
               <span className="text-joycyan">®</span>
             </span>
-            <span className="hidden whitespace-nowrap text-xs font-medium text-muted xl:block">
+            <span className="hidden whitespace-nowrap text-xs font-medium text-muted 2xl:block">
               Nicolás Ortiz N° 14 · Sucre
             </span>
           </div>
         </Link>
 
-        {/* Desktop Nav */}
+        {/* Desktop Nav (Mathematically guaranteed non-overlapping at >=1280px even when signed in) */}
         <nav
-          className="hidden min-w-0 flex-1 items-center justify-center gap-1 whitespace-nowrap xl:flex 2xl:gap-2"
+          className="hidden shrink-0 items-center justify-center gap-0.5 whitespace-nowrap xl:flex 2xl:gap-1.5"
           aria-label="Navegación principal"
         >
           <Link
             to="/"
             onClick={() => joySound.click()}
-            className="whitespace-nowrap rounded-lg px-2.5 py-2 text-sm font-medium text-ink/90 transition-colors hover:bg-surface hover:text-joycyan xl:px-3 xl:text-[15px]"
+            className={`whitespace-nowrap rounded-lg px-2.5 py-2 text-[13.5px] font-medium transition-colors 2xl:px-3.5 2xl:text-[15px] ${
+              location.pathname === '/'
+                ? 'bg-joycyan/15 font-semibold text-joycyan'
+                : 'text-ink/90 hover:bg-surface hover:text-joycyan'
+            }`}
           >
             {t('Inicio', 'Home')}
           </Link>
@@ -126,10 +131,14 @@ export function Navbar({ categories = [], onSelectCategory, onOpenReservation }:
             <button
               type="button"
               onClick={() => setCatOpen((v) => !v)}
-              className="flex items-center gap-1 whitespace-nowrap rounded-lg px-2.5 py-2 text-sm font-medium text-ink/90 transition-colors hover:bg-surface hover:text-joycyan xl:px-3 xl:text-[15px]"
+              className={`flex items-center gap-1 whitespace-nowrap rounded-lg px-2.5 py-2 text-[13.5px] font-medium transition-colors 2xl:px-3.5 2xl:text-[15px] ${
+                location.pathname.startsWith('/carta')
+                  ? 'bg-joycyan/15 font-semibold text-joycyan'
+                  : 'text-ink/90 hover:bg-surface hover:text-joycyan'
+              }`}
             >
               <span>{t('Carta', 'Menu')}</span>
-              <ChevronDown className={`h-4 w-4 transition-transform ${catOpen ? 'rotate-180' : ''}`} />
+              <ChevronDown className={`h-3.5 w-3.5 transition-transform ${catOpen ? 'rotate-180' : ''}`} />
             </button>
 
             {catOpen && (
@@ -164,7 +173,7 @@ export function Navbar({ categories = [], onSelectCategory, onOpenReservation }:
 
           <a
             href="/#happy-hour-bento"
-            className="whitespace-nowrap rounded-lg px-2.5 py-2 text-sm font-medium text-ink/90 transition-colors hover:bg-surface hover:text-joycyan xl:px-3 xl:text-[15px]"
+            className="whitespace-nowrap rounded-lg px-2.5 py-2 text-[13.5px] font-medium text-ink/90 transition-colors hover:bg-surface hover:text-joycyan 2xl:px-3.5 2xl:text-[15px]"
           >
             {t('Promos', 'Promos')}
           </a>
@@ -172,35 +181,43 @@ export function Navbar({ categories = [], onSelectCategory, onOpenReservation }:
           <button
             type="button"
             onClick={() => (onOpenReservation ? onOpenReservation() : navigate('/?reservar=1'))}
-            className="flex items-center gap-1.5 whitespace-nowrap rounded-lg px-2.5 py-2 text-sm font-medium text-ink/90 transition-colors hover:bg-surface hover:text-joycyan xl:px-3 xl:text-[15px]"
+            className="flex items-center gap-1.5 whitespace-nowrap rounded-lg px-2.5 py-2 text-[13.5px] font-medium text-ink/90 transition-colors hover:bg-surface hover:text-joycyan 2xl:px-3.5 2xl:text-[15px]"
           >
-            <Calendar className="h-4 w-4 text-joycyan" />
+            <Calendar className="hidden h-4 w-4 text-joycyan 2xl:inline-block" />
             <span>{t('Reservas', 'Book')}</span>
           </button>
 
           <Link
             to="/mapa-sucre"
-            className="flex items-center gap-1.5 whitespace-nowrap rounded-lg px-2.5 py-2 text-sm font-medium text-ink/90 transition-colors hover:bg-surface hover:text-joycyan xl:px-3 xl:text-[15px]"
+            className={`flex items-center gap-1.5 whitespace-nowrap rounded-lg px-2.5 py-2 text-[13.5px] font-medium transition-colors 2xl:px-3.5 2xl:text-[15px] ${
+              location.pathname.startsWith('/mapa-sucre')
+                ? 'bg-joycyan/15 font-semibold text-joycyan'
+                : 'text-ink/90 hover:bg-surface hover:text-joycyan'
+            }`}
           >
-            <Compass className="h-4 w-4 text-joymagenta" />
+            <Compass className="hidden h-4 w-4 text-joymagenta 2xl:inline-block" />
             <span>{t('Mapa Sucre', 'Sucre Map')}</span>
           </Link>
 
           {user && (
             <Link
               to="/mis-pedidos"
-              className="flex items-center gap-1.5 whitespace-nowrap rounded-lg px-2.5 py-2 text-sm font-medium text-ink/90 transition-colors hover:bg-surface hover:text-joycyan xl:px-3 xl:text-[15px]"
+              className={`flex items-center gap-1.5 whitespace-nowrap rounded-lg px-2.5 py-2 text-[13.5px] font-medium transition-colors 2xl:px-3.5 2xl:text-[15px] ${
+                location.pathname.startsWith('/mis-pedidos')
+                  ? 'bg-joycyan/15 font-semibold text-joycyan'
+                  : 'text-ink/90 hover:bg-surface hover:text-joycyan'
+              }`}
             >
-              <Package className="h-4 w-4 text-joycyan" />
+              <Package className="hidden h-4 w-4 text-joycyan 2xl:inline-block" />
               <span>{t('Mis Pedidos', 'Orders')}</span>
             </Link>
           )}
         </nav>
 
         {/* Right Controls */}
-        <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
-          {/* Sucre Live Status Pill */}
-          <div className="hidden items-center gap-1.5 whitespace-nowrap rounded-full border border-hairline bg-surface/90 px-3 py-1.5 text-xs 2xl:flex">
+        <div className="flex shrink-0 items-center gap-1.5 2xl:gap-2">
+          {/* Sucre Live Status Pill (Wide desktop >=1680px so 1280–1536px has ample room) */}
+          <div className="hidden items-center gap-1.5 whitespace-nowrap rounded-full border border-hairline bg-surface/90 px-3 py-1.5 text-xs min-[1680px]:flex">
             <span
               className={`h-2 w-2 rounded-full ${
                 sucreClock.isHappyHour
@@ -357,7 +374,7 @@ export function Navbar({ categories = [], onSelectCategory, onOpenReservation }:
                 <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-joycyan/20 text-joycyan">
                   <UserIcon className="h-4 w-4" />
                 </span>
-                <span className="hidden max-w-[110px] truncate text-left text-xs font-semibold text-ink md:block">
+                <span className="hidden max-w-[82px] truncate text-left text-xs font-semibold text-ink md:block 2xl:max-w-[110px]">
                   {user.name.split(' ')[0]}
                 </span>
                 <ChevronDown className="h-3.5 w-3.5 text-muted" />
@@ -437,6 +454,25 @@ export function Navbar({ categories = [], onSelectCategory, onOpenReservation }:
         <div className="border-t border-hairline bg-obsidian px-4 py-4 xl:hidden">
           <div className="flex flex-col gap-1.5">
             <div className="mb-2 flex flex-col gap-2 rounded-xl border border-hairline bg-surface px-3 py-2.5">
+              <div className="flex items-center justify-between gap-2 border-b border-hairline pb-2 text-xs">
+                <span className="inline-flex items-center gap-1.5 font-mono text-ink">
+                  <span
+                    className={`h-2 w-2 rounded-full ${
+                      sucreClock.isHappyHour
+                        ? 'bg-joymagenta'
+                        : sucreClock.isOpen
+                        ? 'bg-emerald-400'
+                        : 'bg-amber-400'
+                    }`}
+                  />
+                  {sucreClock.sucreTimeStr} Sucre
+                </span>
+                {sucreClock.isHappyHour && (
+                  <span className="rounded bg-joymagenta/20 px-2 py-0.5 font-mono text-[10px] font-bold text-pink-300">
+                    {t('2x1 ACTIVO', '2x1 ACTIVE')}
+                  </span>
+                )}
+              </div>
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <button
                   type="button"

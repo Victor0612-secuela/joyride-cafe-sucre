@@ -59,6 +59,7 @@ export function BentoPromotions({
   const { t } = useI18n();
   const [clock, setClock] = useState(() => getSucreStatusInfo());
   const [expandedTile, setExpandedTile] = useState<SpotlightTileId | null>(null);
+  const [selectedExtraPromo, setSelectedExtraPromo] = useState<Promotion | null>(null);
 
   useEffect(() => {
     const id = setInterval(() => setClock(getSucreStatusInfo()), 1000);
@@ -79,6 +80,9 @@ export function BentoPromotions({
 
   const promoHappy = promotions.find((p) => p.slug.includes('happy') || p.discountPercent >= 40);
   const promoSalsa = promotions.find((p) => p.slug.includes('salsa'));
+  const extraPromotions = promotions.filter(
+    (p) => p.active !== false && p.id !== promoHappy?.id && p.id !== promoSalsa?.id
+  );
 
   const handleQuickAdd = (prod: Product) => {
     const res = addItem(prod, 1);
@@ -379,7 +383,89 @@ export function BentoPromotions({
           </div>
         </motion.div>
       )}
+
+      {/* Extra Dynamic Promos Added by Admin */}
+      {!loading && extraPromotions.length > 0 && (
+        <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {extraPromotions.map((promo) => (
+            <div
+              key={promo.id}
+              role="button"
+              tabIndex={0}
+              onClick={() => {
+                joySound.click();
+                setSelectedExtraPromo(promo);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  joySound.click();
+                  setSelectedExtraPromo(promo);
+                }
+              }}
+              className="card-glow-magenta group flex cursor-pointer items-center gap-4 rounded-2xl border border-hairline bg-surface/95 p-4 shadow-card hover:-translate-y-0.5"
+            >
+              <img
+                src={promo.imageUrl}
+                alt={promo.title}
+                className="photo-frame h-24 w-24 shrink-0 rounded-xl object-cover transition-transform duration-300 group-hover:scale-[1.04]"
+              />
+              <div className="min-w-0 flex-1">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <span className="rounded-full bg-joymagenta/15 px-2.5 py-0.5 font-mono text-[10px] font-bold text-joymagenta">
+                    {promo.badgeText}
+                  </span>
+                  {promo.discountPercent > 0 && (
+                    <span className="rounded-full bg-joycyan/15 px-2 py-0.5 font-mono text-[10px] font-bold text-joycyan">
+                      -{promo.discountPercent}%
+                    </span>
+                  )}
+                </div>
+                <h3 className="mt-1.5 truncate font-display text-base font-extrabold text-ink">
+                  {promo.title}
+                </h3>
+                <p className="mt-0.5 line-clamp-2 text-xs text-muted">{promo.subtitle}</p>
+                <p className="mt-1.5 font-mono text-[11px] text-joycyan">{promo.scheduleText}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
       </div>
+
+      {/* Extra Dynamic Promo Split Modal */}
+      <EditorialSplitModal
+        open={Boolean(selectedExtraPromo)}
+        onClose={() => setSelectedExtraPromo(null)}
+        title={selectedExtraPromo?.title || ''}
+        subtitle={selectedExtraPromo?.scheduleText || ''}
+        badge={selectedExtraPromo?.badgeText}
+        accent="magenta"
+        images={selectedExtraPromo ? [selectedExtraPromo.imageUrl] : []}
+      >
+        {selectedExtraPromo && (
+          <div className="space-y-4">
+            <p className="font-display text-base font-bold text-joycyan">
+              {selectedExtraPromo.subtitle}
+            </p>
+            <p className="text-sm leading-relaxed text-muted sm:text-base">
+              {selectedExtraPromo.description}
+            </p>
+            {selectedExtraPromo.discountPercent > 0 && (
+              <div className="rounded-xl border border-joymagenta/40 bg-joymagenta/10 px-4 py-3 font-mono text-sm font-bold text-joymagenta">
+                Beneficio Activo: {selectedExtraPromo.discountPercent}% OFF · {selectedExtraPromo.scheduleText}
+              </div>
+            )}
+            <Link
+              to="/carta"
+              onClick={() => setSelectedExtraPromo(null)}
+              className="flex min-h-[44px] w-full items-center justify-center gap-2 rounded-xl bg-joymagenta px-5 py-3 text-sm font-bold text-white hover:bg-joymagenta-deep"
+            >
+              <span>{t('Ir a la Carta & Pedir', 'Open Menu & Order')}</span>
+              <ArrowUpRight className="h-4 w-4" />
+            </Link>
+          </div>
+        )}
+      </EditorialSplitModal>
 
       {/* Wide 2-Column Editorial Split Modal fed directly by DB products & promotions */}
       <EditorialSplitModal

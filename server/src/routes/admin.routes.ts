@@ -1,7 +1,5 @@
 import { Router } from 'express';
 import crypto from 'node:crypto';
-import fs from 'node:fs/promises';
-import path from 'node:path';
 import { OrderStatus, Role } from '@prisma/client';
 import { z } from 'zod';
 import { AuthRequest, requireAuth, requireRoles } from '../middleware/auth.middleware';
@@ -66,6 +64,17 @@ router.get('/kardex', async (req, res, next) => {
   }
 });
 
+function makeUniqueSlug(input: string, maxLen = 48): string {
+  const base = input
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+    .slice(0, maxLen) || 'item';
+  return `${base}-${crypto.randomUUID().slice(0, 5)}`;
+}
+
 const uploadImageSchema = z.object({
   imageBase64: z.string().min(20, 'Imagen inválida'),
   fileName: z.string().optional(),
@@ -74,20 +83,23 @@ const uploadImageSchema = z.object({
 router.post('/products/upload-image', async (req, res, next) => {
   try {
     const body = uploadImageSchema.parse(req.body);
-    const match = body.imageBase64.match(/^data:image\/(png|jpeg|jpg|webp);base64,(.+)$/);
+    const match = body.imageBase64.match(/^data:(image\/(?:png|jpeg|jpg|webp));base64,(.+)$/);
     if (!match) {
       throw new AppError(400, 'Formato inválido. Usa PNG, JPG o WEBP en base64.');
     }
-    const ext = match[1] === 'jpeg' ? 'jpg' : match[1];
+    const mimeType = match[1].toLowerCase() === 'image/jpg' ? 'image/jpeg' : match[1].toLowerCase();
     const buf = Buffer.from(match[2], 'base64');
     if (buf.length > 5 * 1024 * 1024) {
       throw new AppError(400, 'La imagen no debe superar 5 MB.');
     }
-    const productsDir = path.resolve(process.cwd(), 'uploads', 'products');
-    await fs.mkdir(productsDir, { recursive: true });
-    const outName = `prod-${crypto.randomUUID()}.${ext}`;
-    await fs.writeFile(path.join(productsDir, outName), buf);
-    res.status(201).json({ imageUrl: `/uploads/products/${outName}` });
+    const asset = await prisma.mediaAsset.create({
+      data: {
+        mimeType,
+        fileName: body.fileName?.slice(0, 120) || 'product-image',
+        data: buf,
+      },
+    });
+    res.status(201).json({ imageUrl: `/api/media/${asset.id}` });
   } catch (err) {
     next(err);
   }
@@ -108,6 +120,49 @@ router.put('/products/:id', async (req: AuthRequest, res, next) => {
     const body = upsertProductSchema.parse(req.body);
     const product = await upsertProduct(String(req.params.id), body, req.user!.userId);
     res.json({ product });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.patch('/products/:id/toggle', async (req, res, next) => {
+  try {
+    const id = String(req.params.id);
+    const existing = await prisma.product.findUnique({ where: { id } });
+    if (!existing) throw new AppError(404, 'Producto no encontrado');
+    const updated = await prisma.product.update({
+      where: { id },
+      data: { active: !existing.active },
+      include: { category: { select: { id: true, slug: true, name: true } } },
+    });
+    res.json({ product: updated });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.delete('/products/:id', async (req, res, next) => {
+  try {
+    const id = String(req.params.id);
+    const existing = await prisma.product.findUnique({ where: { id } });
+    if (!existing) throw new AppError(404, 'Producto no encontrado');
+
+    const orderItemCount = await prisma.orderItem.count({ where: { productId: id } });
+    if (orderItemCount > 0) {
+      await prisma.product.update({ where: { id }, data: { active: false } });
+      res.json({
+        deleted: false,
+        archived: true,
+        message: 'El producto tiene pedidos históricos; se ocultó de la carta pública.',
+      });
+      return;
+    }
+
+    await prisma.$transaction(async (tx) => {
+      await tx.stockMovement.deleteMany({ where: { productId: id } });
+      await tx.product.delete({ where: { id } });
+    });
+    res.json({ deleted: true, archived: false });
   } catch (err) {
     next(err);
   }
@@ -197,25 +252,28 @@ const uploadMediaSchema = z.object({
 router.post('/media/upload', async (req, res, next) => {
   try {
     const body = uploadMediaSchema.parse(req.body);
-    const imgMatch = body.mediaBase64.match(/^data:image\/(png|jpeg|jpg|webp);base64,(.+)$/);
-    const vidMatch = body.mediaBase64.match(/^data:video\/(mp4|webm);base64,(.+)$/);
+    const imgMatch = body.mediaBase64.match(/^data:(image\/(?:png|jpeg|jpg|webp));base64,(.+)$/);
+    const vidMatch = body.mediaBase64.match(/^data:(video\/(?:mp4|webm));base64,(.+)$/);
     if (!imgMatch && !vidMatch) {
       throw new AppError(400, 'Formato no soportado. Usa PNG, JPG, WEBP, MP4 o WEBM.');
     }
     const isVideo = Boolean(vidMatch);
-    const rawExt = (imgMatch ? imgMatch[1] : vidMatch![1]).toLowerCase();
-    const ext = rawExt === 'jpeg' ? 'jpg' : rawExt;
+    const rawMime = (imgMatch ? imgMatch[1] : vidMatch![1]).toLowerCase();
+    const mimeType = rawMime === 'image/jpg' ? 'image/jpeg' : rawMime;
     const buf = Buffer.from(imgMatch ? imgMatch[2] : vidMatch![2], 'base64');
-    const maxSize = isVideo ? 15 * 1024 * 1024 : 5 * 1024 * 1024;
+    const maxSize = isVideo ? 12 * 1024 * 1024 : 5 * 1024 * 1024;
     if (buf.length > maxSize) {
-      throw new AppError(400, isVideo ? 'El video no debe superar 15 MB.' : 'La imagen no debe superar 5 MB.');
+      throw new AppError(400, isVideo ? 'El video no debe superar 12 MB.' : 'La imagen no debe superar 5 MB.');
     }
-    const mediaDir = path.resolve(process.cwd(), 'uploads', 'media');
-    await fs.mkdir(mediaDir, { recursive: true });
-    const outName = `media-${crypto.randomUUID()}.${ext}`;
-    await fs.writeFile(path.join(mediaDir, outName), buf);
+    const asset = await prisma.mediaAsset.create({
+      data: {
+        mimeType,
+        fileName: body.fileName?.slice(0, 120) || (isVideo ? 'video-media' : 'image-media'),
+        data: buf,
+      },
+    });
     res.status(201).json({
-      mediaUrl: `/uploads/media/${outName}`,
+      mediaUrl: `/api/media/${asset.id}`,
       mediaType: isVideo ? 'video' : 'image',
     });
   } catch (err) {
@@ -256,12 +314,7 @@ router.get('/events', async (_req, res, next) => {
 router.post('/events', async (req, res, next) => {
   try {
     const body = eventSchema.parse(req.body);
-    const baseSlug = body.title
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-|-$/g, '')
-      .slice(0, 48);
-    const slug = `${baseSlug}-${crypto.randomUUID().slice(0, 5)}`;
+    const slug = makeUniqueSlug(body.title);
 
     const created = await prisma.event.create({
       data: {
@@ -363,7 +416,7 @@ router.delete('/events/:id', async (req, res, next) => {
 });
 
 // --- Dynamic Bento Promotions ("Ritmo Joy Ride en Sucre") CRUD ---
-const promotionUpdateSchema = z.object({
+const promotionSchema = z.object({
   title: z.string().min(3).max(140),
   subtitle: z.string().min(3).max(200),
   description: z.string().min(8).max(1200),
@@ -385,9 +438,32 @@ router.get('/promotions', async (_req, res, next) => {
   }
 });
 
+router.post('/promotions', async (req, res, next) => {
+  try {
+    const body = promotionSchema.parse(req.body);
+    const slug = makeUniqueSlug(body.title);
+    const created = await prisma.promotion.create({
+      data: {
+        slug,
+        title: body.title.trim(),
+        subtitle: body.subtitle.trim(),
+        description: body.description.trim(),
+        badgeText: body.badgeText.trim(),
+        scheduleText: body.scheduleText.trim(),
+        discountPercent: body.discountPercent,
+        imageUrl: body.imageUrl.trim(),
+        active: body.active,
+      },
+    });
+    res.status(201).json({ promotion: created });
+  } catch (err) {
+    next(err);
+  }
+});
+
 router.put('/promotions/:id', async (req, res, next) => {
   try {
-    const body = promotionUpdateSchema.parse(req.body);
+    const body = promotionSchema.parse(req.body);
     const existing = await prisma.promotion.findUnique({ where: { id: String(req.params.id) } });
     if (!existing) throw new AppError(404, 'Promoción no encontrada');
 
@@ -420,6 +496,129 @@ router.patch('/promotions/:id/toggle', async (req, res, next) => {
       data: { active: !existing.active },
     });
     res.json({ promotion: updated });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.delete('/promotions/:id', async (req, res, next) => {
+  try {
+    await prisma.promotion.delete({ where: { id: String(req.params.id) } });
+    res.json({ deleted: true });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// --- Dynamic Sucre Tourist Map Spots CRUD ---
+const mapSpotSchema = z.object({
+  name: z.string().min(2).max(120),
+  category: z.enum(['JOYRIDE', 'BARES_NOCHE', 'CHOCOLATE_GASTRO', 'CULTURA', 'MIRADOR', 'AVENTURA']).default('CULTURA'),
+  lat: z.number().min(-90).max(90),
+  lng: z.number().min(-180).max(180),
+  address: z.string().min(3).max(200),
+  hours: z.string().min(2).max(120).default('09:00 – 20:00'),
+  walkTimeFromJoyRide: z.string().min(2).max(80).default('5 min a pie'),
+  summary: z.string().min(8).max(1200),
+  tip: z.string().max(300).default(''),
+  highlightsJson: z.array(z.string()).optional(),
+  imageUrl: z.string().min(3).max(400),
+  imagesJson: z.array(z.string()).optional(),
+  isActive: z.boolean().default(true),
+  sortOrder: z.number().int().default(0),
+});
+
+router.get('/map-spots', async (_req, res, next) => {
+  try {
+    const spots = await prisma.mapSpot.findMany({
+      orderBy: [{ sortOrder: 'asc' }, { createdAt: 'asc' }],
+    });
+    res.json({ spots });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.post('/map-spots', async (req, res, next) => {
+  try {
+    const body = mapSpotSchema.parse(req.body);
+    const slug = makeUniqueSlug(body.name);
+    const images = body.imagesJson && body.imagesJson.length > 0 ? body.imagesJson : [body.imageUrl];
+    const spot = await prisma.mapSpot.create({
+      data: {
+        slug,
+        name: body.name.trim(),
+        category: body.category,
+        lat: body.lat,
+        lng: body.lng,
+        address: body.address.trim(),
+        hours: body.hours.trim(),
+        walkTimeFromJoyRide: body.walkTimeFromJoyRide.trim(),
+        summary: body.summary.trim(),
+        tip: body.tip.trim(),
+        highlightsJson: body.highlightsJson && body.highlightsJson.length > 0 ? body.highlightsJson : ['Sucre · Bolivia'],
+        imageUrl: body.imageUrl.trim(),
+        imagesJson: images,
+        isActive: body.isActive,
+        sortOrder: body.sortOrder,
+      },
+    });
+    res.status(201).json({ spot });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.put('/map-spots/:id', async (req, res, next) => {
+  try {
+    const body = mapSpotSchema.parse(req.body);
+    const existing = await prisma.mapSpot.findUnique({ where: { id: String(req.params.id) } });
+    if (!existing) throw new AppError(404, 'Punto de mapa no encontrado');
+
+    const images = body.imagesJson && body.imagesJson.length > 0 ? body.imagesJson : [body.imageUrl];
+    const spot = await prisma.mapSpot.update({
+      where: { id: existing.id },
+      data: {
+        name: body.name.trim(),
+        category: body.category,
+        lat: body.lat,
+        lng: body.lng,
+        address: body.address.trim(),
+        hours: body.hours.trim(),
+        walkTimeFromJoyRide: body.walkTimeFromJoyRide.trim(),
+        summary: body.summary.trim(),
+        tip: body.tip.trim(),
+        highlightsJson: body.highlightsJson && body.highlightsJson.length > 0 ? body.highlightsJson : ['Sucre · Bolivia'],
+        imageUrl: body.imageUrl.trim(),
+        imagesJson: images,
+        isActive: body.isActive,
+        sortOrder: body.sortOrder,
+      },
+    });
+    res.json({ spot });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.patch('/map-spots/:id/toggle', async (req, res, next) => {
+  try {
+    const existing = await prisma.mapSpot.findUnique({ where: { id: String(req.params.id) } });
+    if (!existing) throw new AppError(404, 'Punto de mapa no encontrado');
+    const spot = await prisma.mapSpot.update({
+      where: { id: existing.id },
+      data: { isActive: !existing.isActive },
+    });
+    res.json({ spot });
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.delete('/map-spots/:id', async (req, res, next) => {
+  try {
+    await prisma.mapSpot.delete({ where: { id: String(req.params.id) } });
+    res.json({ deleted: true });
   } catch (err) {
     next(err);
   }

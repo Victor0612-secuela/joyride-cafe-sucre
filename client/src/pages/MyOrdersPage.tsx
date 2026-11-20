@@ -28,6 +28,7 @@ import { OrderTimelineModal } from '../components/modals/OrderTimelineModal';
 import { ReceiptPrintModal } from '../components/modals/ReceiptPrintModal';
 import { QrLivePaymentModal, QrSessionData } from '../components/modals/QrLivePaymentModal';
 import { BANK_INFO_FALLBACK } from '../lib/constants';
+import { BrandWatermarkBg } from '../components/ui/BrandWatermarkBg';
 import { ProbablyTagline } from '../components/ui/ProbablyTagline';
 
 export function MyOrdersPage() {
@@ -90,10 +91,15 @@ export function MyOrdersPage() {
   };
 
   return (
-    <div className="min-h-screen bg-obsidian text-ink">
+    <div className="relative min-h-screen overflow-x-clip bg-obsidian text-ink">
+      <BrandWatermarkBg
+        variant="orders"
+        bgImage="/images/venue-patio-night.webp"
+        emblemSide="right"
+      />
       <Navbar />
 
-      <main className="mx-auto max-w-[1600px] px-4 pb-20 pt-28 sm:px-8 lg:px-12">
+      <main className="relative z-10 mx-auto max-w-[1600px] px-4 pb-20 pt-28 sm:px-8 lg:px-12">
         <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
           <div>
             <Link

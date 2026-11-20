@@ -79,6 +79,26 @@ export interface Promotion {
   active?: boolean;
 }
 
+export interface MapSpotRecord {
+  id: string;
+  slug: string;
+  name: string;
+  category: 'JOYRIDE' | 'BARES_NOCHE' | 'CHOCOLATE_GASTRO' | 'CULTURA' | 'MIRADOR' | 'AVENTURA' | string;
+  lat: number;
+  lng: number;
+  address: string;
+  hours: string;
+  walkTimeFromJoyRide: string;
+  summary: string;
+  tip: string;
+  highlightsJson?: string[] | null;
+  imageUrl: string;
+  imagesJson?: string[] | null;
+  isActive: boolean;
+  sortOrder: number;
+  createdAt?: string;
+}
+
 export interface OrderItem {
   id: string;
   orderId: string;

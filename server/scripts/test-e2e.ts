@@ -377,7 +377,7 @@ async function run() {
     adminToken
   );
   assert.equal(uploadImgRes.status, 201);
-  assert.ok(String(uploadImgRes.data.imageUrl).startsWith('/uploads/products/'));
+  assert.ok(String(uploadImgRes.data.imageUrl).startsWith('/api/media/'));
   const imgFetch = await fetch(`http://127.0.0.1:4000${uploadImgRes.data.imageUrl}`);
   assert.equal(imgFetch.status, 200);
 

@@ -16,12 +16,14 @@ import {
   Navigation,
   Sparkles,
 } from 'lucide-react';
-import { JOYRIDE_LOCATION, SUCRE_TOURIST_SPOTS, SucreTouristSpot } from '../lib/constants';
+import { JOYRIDE_LOCATION, SucreTouristSpot } from '../lib/constants';
+import { usePublicMapSpots } from '../lib/mapSpots';
 import { useDocumentTitle } from '../hooks/useDocumentTitle';
 import { useI18n } from '../context/I18nContext';
 import { useToast } from '../context/ToastContext';
 import { joySound } from '../lib/sound';
 import { Navbar } from '../components/layout/Navbar';
+import { BrandWatermarkBg } from '../components/ui/BrandWatermarkBg';
 import { ProbablyTagline } from '../components/ui/ProbablyTagline';
 
 const CATEGORY_FILTERS: Array<{
@@ -51,12 +53,15 @@ export function SucreMapGuidePage() {
   const routeHaloRef = useRef<L.Polyline | null>(null);
   const routeLayerRef = useRef<L.Polyline | null>(null);
 
+  const { spots: allSpots } = usePublicMapSpots();
   const initialSpotParam = searchParams.get('spot');
-  const initialSpot =
-    SUCRE_TOURIST_SPOTS.find((s) => s.id === initialSpotParam) || SUCRE_TOURIST_SPOTS[0];
-
   const [filter, setFilter] = useState<'ALL' | SucreTouristSpot['category']>('ALL');
-  const [selectedSpot, setSelectedSpot] = useState<SucreTouristSpot>(initialSpot);
+  const [selectedSpotId, setSelectedSpotId] = useState<string>(
+    () => initialSpotParam || allSpots[0].id
+  );
+  const selectedSpot =
+    allSpots.find((s) => s.id === selectedSpotId) || allSpots[0];
+
   const [userCoords, setUserCoords] = useState<{ lat: number; lng: number; label: string } | null>(
     null
   );
@@ -67,7 +72,7 @@ export function SucreMapGuidePage() {
     null
   );
 
-  const visibleSpots = SUCRE_TOURIST_SPOTS.filter(
+  const visibleSpots = allSpots.filter(
     (s) => filter === 'ALL' || s.category === filter || s.category === 'JOYRIDE'
   );
 
@@ -76,7 +81,7 @@ export function SucreMapGuidePage() {
     if (!mapContainerRef.current) return;
 
     const map = L.map(mapContainerRef.current, {
-      center: [initialSpot.lat, initialSpot.lng],
+      center: [selectedSpot.lat, selectedSpot.lng],
       zoom: 15,
       zoomControl: true,
       attributionControl: false,
@@ -134,7 +139,7 @@ export function SucreMapGuidePage() {
       marker.on('click', () => handleSelectSpot(spot));
       markersRef.current.set(spot.id, marker);
     }
-  }, [filter, selectedSpot.id]);
+  }, [filter, selectedSpot.id, visibleSpots]);
 
   // Draw or clear User GPS Marker
   useEffect(() => {
@@ -267,7 +272,7 @@ export function SucreMapGuidePage() {
   }, [selectedSpot.id, selectedSpot.images.length]);
 
   const handleSelectSpot = (spot: SucreTouristSpot) => {
-    setSelectedSpot(spot);
+    setSelectedSpotId(spot.id);
     setPhotoIdx(0);
     setPanelShimmer(true);
     setTimeout(() => setPanelShimmer(false), 260);
@@ -339,10 +344,15 @@ export function SucreMapGuidePage() {
   const currentPhoto = selectedSpot.images[photoIdx % selectedSpot.images.length] || selectedSpot.imageUrl;
 
   return (
-    <div className="min-h-screen bg-obsidian text-ink">
+    <div className="relative min-h-screen overflow-x-clip bg-obsidian text-ink">
+      <BrandWatermarkBg
+        variant="map"
+        bgImage="/images/sucre-mirador-sunset.webp"
+        emblemSide="left"
+      />
       <Navbar />
 
-      <main className="mx-auto max-w-[1640px] px-5 pb-20 pt-28 sm:px-8 lg:px-12 xl:px-14">
+      <main className="relative z-10 mx-auto max-w-[1640px] px-5 pb-20 pt-28 sm:px-8 lg:px-12 xl:px-14">
         <div className="mb-8 flex flex-col justify-between gap-5 lg:flex-row lg:items-end">
           <div>
             <Link

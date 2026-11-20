@@ -1,8 +1,26 @@
-import nodemailer from 'nodemailer';
+import fs from 'node:fs';
+import path from 'node:path';
+import nodemailer, { type SendMailOptions } from 'nodemailer';
 import { prisma } from '../config/prisma';
 import { env } from '../config/env';
 
 export type EmailDeliveryMode = 'SMTP' | 'RESEND' | 'PREVIEW_ONLY';
+export type EmailBannerKey = 'order' | 'salsa' | 'patio' | 'ops';
+
+const BANNER_FILES: Record<EmailBannerKey, string> = {
+  order: 'banner-order.jpg',
+  salsa: 'banner-salsa.jpg',
+  patio: 'banner-patio.jpg',
+  ops: 'banner-ops.jpg',
+};
+
+const EMAIL_ASSETS_DIR =
+  [
+    path.resolve(__dirname, '../../assets/email'),
+    path.resolve(__dirname, '../assets/email'),
+    path.resolve(process.cwd(), 'assets/email'),
+    path.resolve(process.cwd(), 'server/assets/email'),
+  ].find((dir) => fs.existsSync(dir)) || path.resolve(process.cwd(), 'assets/email');
 
 export function escapeHtml(value: unknown): string {
   return String(value ?? '')
@@ -23,15 +41,108 @@ export function getEmailDeliveryMode(): EmailDeliveryMode {
   return 'PREVIEW_ONLY';
 }
 
+function getPublicAppUrl(): string {
+  const base = (env.APP_URL || '').replace(/\/+$/, '');
+  if (!base || /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(base)) {
+    return 'https://joyride-cafe-sucre.onrender.com';
+  }
+  return base;
+}
+
+function encodeNonLatin1Entities(html: string): string {
+  return html.replace(/[^\u0000-\u00ff]/g, (ch) => `&#${ch.codePointAt(0)};`);
+}
+
+function getPreviewBaseUrl(): string {
+  return (env.APP_URL || 'http://localhost:4000').replace(/\/+$/, '');
+}
+
+async function resolveCidAttachments(params: {
+  bannerKey: EmailBannerKey;
+  customBannerMediaUrl?: string;
+}): Promise<{
+  attachments: SendMailOptions['attachments'];
+  previewBannerPath: string;
+}> {
+  const attachments: NonNullable<SendMailOptions['attachments']> = [];
+  const logoPath = path.join(EMAIL_ASSETS_DIR, 'logo-joyride.png');
+  if (fs.existsSync(logoPath)) {
+    attachments.push({
+      filename: 'logo-joyride.png',
+      path: logoPath,
+      cid: 'joyride-logo',
+      contentDisposition: 'inline',
+    });
+  }
+
+  const defaultBannerFile = BANNER_FILES[params.bannerKey] || BANNER_FILES.order;
+  let previewBannerPath = `/email-assets/${defaultBannerFile}`;
+  let attachedCustom = false;
+
+  if (params.customBannerMediaUrl?.startsWith('/api/media/')) {
+    const assetId = params.customBannerMediaUrl.replace('/api/media/', '').trim();
+    const asset = await prisma.mediaAsset.findUnique({ where: { id: assetId } }).catch(() => null);
+    if (asset && (asset.mimeType === 'image/jpeg' || asset.mimeType === 'image/png')) {
+      const ext = asset.mimeType === 'image/png' ? 'png' : 'jpg';
+      attachments.push({
+        filename: `event-banner.${ext}`,
+        content: Buffer.from(asset.data),
+        contentType: asset.mimeType,
+        cid: 'joyride-banner',
+        contentDisposition: 'inline',
+      });
+      previewBannerPath = params.customBannerMediaUrl;
+      attachedCustom = true;
+    }
+  }
+
+  if (!attachedCustom) {
+    const bannerPath = path.join(EMAIL_ASSETS_DIR, defaultBannerFile);
+    if (fs.existsSync(bannerPath)) {
+      attachments.push({
+        filename: defaultBannerFile,
+        path: bannerPath,
+        cid: 'joyride-banner',
+        contentDisposition: 'inline',
+      });
+    }
+  }
+
+  return { attachments, previewBannerPath };
+}
+
 async function sendOrStoreEmail(params: {
   toEmail: string;
   recipientRole: string;
   templateType: string;
   subject: string;
-  htmlBody: string;
+  cidHtmlBody: string;
+  bannerKey: EmailBannerKey;
+  customBannerMediaUrl?: string;
   relatedOrderId?: string;
 }) {
   let status = 'STORED_PREVIEW';
+  const { attachments, previewBannerPath } = await resolveCidAttachments({
+    bannerKey: params.bannerKey,
+    customBannerMediaUrl: params.customBannerMediaUrl,
+  });
+
+  const previewBase = getPreviewBaseUrl();
+  const publicBase = getPublicAppUrl();
+
+  const previewHtmlBody = encodeNonLatin1Entities(
+    params.cidHtmlBody
+      .replace(/cid:joyride-logo/g, `${previewBase}/email-assets/logo-joyride.png`)
+      .replace(/cid:joyride-banner/g, `${previewBase}${previewBannerPath}`)
+  );
+
+  const publicHtmlBody = encodeNonLatin1Entities(
+    params.cidHtmlBody
+      .replace(/cid:joyride-logo/g, `${publicBase}/email-assets/logo-joyride.png`)
+      .replace(/cid:joyride-banner/g, `${publicBase}${previewBannerPath}`)
+  );
+
+  const safeSubject = params.subject.replace(/[^\u0000-\u00ff\u2013\u2014]/g, '');
 
   if (isSmtpConfigured()) {
     try {
@@ -45,7 +156,8 @@ async function sendOrStoreEmail(params: {
         from: env.SMTP_FROM,
         to: params.toEmail,
         subject: params.subject,
-        html: params.htmlBody,
+        html: params.cidHtmlBody,
+        attachments,
       });
       status = 'SENT';
     } catch (err) {
@@ -64,7 +176,7 @@ async function sendOrStoreEmail(params: {
           from: env.SMTP_FROM || 'Joy Ride Café Sucre <onboarding@resend.dev>',
           to: [params.toEmail],
           subject: params.subject,
-          html: params.htmlBody,
+          html: publicHtmlBody,
         }),
         signal: AbortSignal.timeout(8000),
       });
@@ -86,42 +198,86 @@ async function sendOrStoreEmail(params: {
       toEmail: params.toEmail,
       recipientRole: params.recipientRole,
       templateType: params.templateType,
-      subject: params.subject,
-      htmlBody: params.htmlBody,
+      subject: safeSubject,
+      htmlBody: previewHtmlBody,
       status,
       relatedOrderId: params.relatedOrderId,
     },
   });
 }
 
-function wrapJoyRideShell(badge: string, heading: string, bodyHtml: string, accent = '#00A0DF'): string {
+function wrapJoyRideShell(params: {
+  badge: string;
+  heading: string;
+  bodyHtml: string;
+  accent?: string;
+  showBanner?: boolean;
+  bannerAlt?: string;
+}): string {
+  const accent = params.accent || '#00A0DF';
+  const badgeText = accent === '#F20574' ? '#FFFFFF' : '#0B0D12';
+  const publicBase = getPublicAppUrl();
+  const showBanner = params.showBanner !== false;
+
   return `<!doctype html>
 <html lang="es">
-<body style="margin:0;padding:24px;background:#0B0D12;font-family:'Plus Jakarta Sans',Arial,sans-serif;color:#F8FAFC;">
-  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:620px;margin:0 auto;background:#141821;border:1px solid #262C3A;border-radius:20px;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,0.45);">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+</head>
+<body style="margin:0;padding:24px 14px;background-color:#07090D;font-family:'Plus Jakarta Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;color:#F8FAFC;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:620px;margin:0 auto;background-color:#111622;border:1px solid #262E40;border-radius:22px;overflow:hidden;">
     <tr>
-      <td style="padding:26px 30px;background:linear-gradient(135deg,#0B0D12 0%,#171C28 100%);border-bottom:1px solid #262C3A;">
-        <table width="100%" cellspacing="0" cellpadding="0">
+      <td height="5" style="height:5px;line-height:5px;font-size:0;background:linear-gradient(90deg,#00A0DF 0%,#7B2CBF 52%,#F20574 100%);">&nbsp;</td>
+    </tr>
+    <tr>
+      <td style="padding:24px 28px 20px;background:linear-gradient(145deg,#0B0E17 0%,#151B2B 100%);border-bottom:1px solid #262E40;">
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0">
           <tr>
-            <td>
-              <span style="display:inline-block;padding:5px 14px;border-radius:999px;background:${accent};color:#0B0D12;font-size:11px;font-weight:800;letter-spacing:0.08em;">${escapeHtml(badge)}</span>
+            <td style="width:66px;vertical-align:middle;">
+              <img src="cid:joyride-logo" alt="Joy Ride Café Sucre" width="54" height="54" style="width:54px;height:54px;border-radius:50%;border:2px solid ${accent};display:block;" />
             </td>
-            <td style="text-align:right;font-size:11px;font-weight:700;color:#94A3B8;font-family:monospace;">SUCRE · EST. 2001</td>
+            <td style="vertical-align:middle;padding-left:10px;">
+              <div style="font-size:17px;font-weight:900;letter-spacing:0.04em;color:#F8FAFC;line-height:1.15;">JOY RIDE CAFÉ<span style="color:#00A0DF;">®</span></div>
+              <div style="font-size:11px;font-weight:700;color:#94A3B8;margin-top:3px;">Probably the Best Bar in Town®</div>
+            </td>
+            <td style="text-align:right;vertical-align:middle;">
+              <span style="display:inline-block;padding:5px 12px;border-radius:999px;background-color:${accent};color:${badgeText};font-size:10px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;">${escapeHtml(params.badge)}</span>
+              <div style="margin-top:6px;font-size:10px;font-weight:700;color:#64748B;font-family:monospace;">SUCRE · EST. 2001</div>
+            </td>
           </tr>
         </table>
-        <h1 style="margin:14px 0 6px;font-size:24px;line-height:1.25;color:#F8FAFC;font-weight:800;">${escapeHtml(heading)}</h1>
-        <p style="margin:0;font-size:13px;color:#94A3B8;">JOY RIDE CAFÉ® · Calle Nicolás Ortiz N° 14 (Frente a la Catedral)</p>
+        <h1 style="margin:20px 0 6px;font-size:24px;line-height:1.25;color:#F8FAFC;font-weight:800;letter-spacing:-0.01em;">${escapeHtml(params.heading)}</h1>
+        <p style="margin:0;font-size:13px;color:#94A3B8;">Calle Nicolás Ortiz N° 14 · Frente a la Catedral Metropolitana</p>
+      </td>
+    </tr>
+    ${
+      showBanner
+        ? `<tr>
+      <td style="padding:18px 28px 0;">
+        <div style="border-radius:16px;overflow:hidden;border:1px solid #262E40;background-color:#0B0D12;">
+          <img src="cid:joyride-banner" alt="${escapeHtml(params.bannerAlt || params.heading)}" width="564" style="width:100%;max-height:210px;height:auto;object-fit:cover;display:block;border:0;" />
+        </div>
+      </td>
+    </tr>`
+        : ''
+    }
+    <tr>
+      <td style="padding:22px 28px 26px;font-size:15px;line-height:1.65;color:#E2E8F0;">
+        ${params.bodyHtml}
       </td>
     </tr>
     <tr>
-      <td style="padding:26px 30px;font-size:15px;line-height:1.65;color:#E2E8F0;">
-        ${bodyHtml}
-      </td>
-    </tr>
-    <tr>
-      <td style="padding:20px 30px;background:#0B0D12;border-top:1px solid #262C3A;font-size:12px;color:#94A3B8;text-align:center;">
-        <div style="font-weight:700;color:#00A0DF;margin-bottom:4px;">&ldquo;No solo para gringos — Probably the best bar in town&rdquo;</div>
-        <div>WhatsApp +591 76116875 · <a href="${escapeHtml(env.APP_URL)}/mapa-sucre" style="color:#F20574;text-decoration:none;font-weight:700;">Ver Guía Turística de Sucre</a></div>
+      <td style="padding:20px 28px;background-color:#090C12;border-top:1px solid #262E40;font-size:12px;color:#94A3B8;text-align:center;">
+        <div style="font-weight:800;color:#00A0DF;margin-bottom:6px;letter-spacing:0.02em;">&ldquo;No solo para gringos — Probably the best bar in town&rdquo;</div>
+        <div style="margin-bottom:10px;">Calle Nicolás Ortiz N° 14 · Sucre, Bolivia · WhatsApp +591 76116875</div>
+        <div>
+          <a href="${escapeHtml(publicBase)}/carta" style="color:#00A0DF;text-decoration:none;font-weight:700;margin:0 8px;">Explorar Carta</a>
+          <span style="color:#334155;">·</span>
+          <a href="${escapeHtml(publicBase)}/?reservar=1" style="color:#F20574;text-decoration:none;font-weight:700;margin:0 8px;">Reservar Mesa</a>
+          <span style="color:#334155;">·</span>
+          <a href="${escapeHtml(publicBase)}/mapa-sucre" style="color:#34D399;text-decoration:none;font-weight:700;margin:0 8px;">Mapa Turístico</a>
+        </div>
       </td>
     </tr>
   </table>
@@ -139,21 +295,22 @@ export async function sendOrderConfirmedEmail(params: {
   totalUsd: number;
   items: Array<{ productName: string; quantity: number; subtotalBs: unknown }>;
 }) {
+  const publicBase = getPublicAppUrl();
   const rows = params.items
     .map(
       (i) =>
-        `<tr><td style="padding:8px 0;border-bottom:1px solid #262C3A;"><strong>${Number(i.quantity)}×</strong> ${escapeHtml(i.productName)}</td><td style="padding:8px 0;border-bottom:1px solid #262C3A;text-align:right;font-family:monospace;">Bs. ${Number(i.subtotalBs).toFixed(2)}</td></tr>`
+        `<tr><td style="padding:9px 0;border-bottom:1px solid #262E40;color:#F8FAFC;"><strong>${Number(i.quantity)}×</strong> ${escapeHtml(i.productName)}</td><td style="padding:9px 0;border-bottom:1px solid #262E40;text-align:right;font-family:monospace;color:#CBD5E1;">Bs. ${Number(i.subtotalBs).toFixed(2)}</td></tr>`
     )
     .join('');
 
   const body = `
-    <p>Hola <strong>${escapeHtml(params.customerName)}</strong>, tu pago vía <strong>${escapeHtml(params.paymentMethod)}</strong> fue confirmado y tu comanda ya ingresó a Cocina &amp; Bar.</p>
-    <table width="100%" cellspacing="0" cellpadding="0" style="margin:16px 0;font-size:13px;">${rows}</table>
-    <div style="background:#0B0D12;border:1px solid #00A0DF;border-radius:12px;padding:14px 16px;margin-top:14px;">
-      <div style="font-size:12px;color:#94A3B8;">Total Confirmado</div>
-      <div style="font-size:22px;font-weight:800;color:#00A0DF;font-family:monospace;">Bs. ${params.totalBs.toFixed(2)} <span style="font-size:13px;color:#94A3B8;">($ ${params.totalUsd.toFixed(2)} USD)</span></div>
+    <p style="margin-top:0;">Hola <strong style="color:#FFFFFF;">${escapeHtml(params.customerName)}</strong>, tu pago vía <strong style="color:#00A0DF;">${escapeHtml(params.paymentMethod)}</strong> fue confirmado y tu comanda ya ingresó a Cocina &amp; Bar.</p>
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="margin:14px 0;font-size:13px;">${rows}</table>
+    <div style="background-color:#0B0E17;border:1px solid #00A0DF;border-radius:14px;padding:15px 18px;margin-top:14px;">
+      <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:#94A3B8;">Total Confirmado</div>
+      <div style="font-size:24px;font-weight:900;color:#00A0DF;font-family:monospace;margin-top:4px;">Bs. ${params.totalBs.toFixed(2)} <span style="font-size:13px;color:#94A3B8;font-weight:600;">($ ${params.totalUsd.toFixed(2)} USD)</span></div>
     </div>
-    <p style="margin-top:18px;"><a href="${escapeHtml(env.APP_URL)}/mis-pedidos" style="display:inline-block;padding:11px 20px;background:#F20574;color:#FFFFFF;text-decoration:none;border-radius:10px;font-weight:700;font-size:13px;">Rastrear mi Pedido en Vivo</a></p>
+    <p style="margin:20px 0 4px;"><a href="${escapeHtml(publicBase)}/mis-pedidos" style="display:inline-block;padding:12px 22px;background-color:#F20574;color:#FFFFFF;text-decoration:none;border-radius:12px;font-weight:800;font-size:13px;">Rastrear mi Pedido en Vivo →</a></p>
   `;
 
   return sendOrStoreEmail({
@@ -161,7 +318,14 @@ export async function sendOrderConfirmedEmail(params: {
     recipientRole: 'CLIENTE',
     templateType: 'ORDER_CONFIRMED',
     subject: `Pedido ${params.orderCode} Confirmado — Joy Ride Café® Sucre`,
-    htmlBody: wrapJoyRideShell('RECIBO OFICIAL', `Pedido ${params.orderCode} en marcha`, body, '#00A0DF'),
+    cidHtmlBody: wrapJoyRideShell({
+      badge: 'RECIBO OFICIAL',
+      heading: `Pedido ${params.orderCode} en marcha`,
+      bodyHtml: body,
+      accent: '#00A0DF',
+      bannerAlt: 'Barra y cocina Joy Ride Café Sucre',
+    }),
+    bannerKey: 'order',
     relatedOrderId: params.orderId,
   });
 }
@@ -174,14 +338,15 @@ export async function sendOrderPackedPinEmail(params: {
   deliveryPin: string;
   packageLabelCode: string;
 }) {
+  const publicBase = getPublicAppUrl();
   const body = `
-    <p>¡Buenas noticias, <strong>${escapeHtml(params.customerName)}</strong>! Tu pedido <strong>${escapeHtml(params.orderCode)}</strong> acaba de sellarse en empaque (${escapeHtml(params.packageLabelCode)}).</p>
-    <div style="background:#0B0D12;border:2px solid #F20574;border-radius:14px;padding:18px;text-align:center;margin:18px 0;">
-      <div style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#F9A8D4;">Tu PIN de Entrega Segura</div>
-      <div style="font-size:36px;font-weight:900;letter-spacing:0.25em;color:#F20574;font-family:monospace;margin-top:6px;">${escapeHtml(params.deliveryPin)}</div>
-      <div style="font-size:12px;color:#94A3B8;margin-top:6px;">Dicta este código al repartidor únicamente al recibir tu pedido.</div>
+    <p style="margin-top:0;">¡Buenas noticias, <strong style="color:#FFFFFF;">${escapeHtml(params.customerName)}</strong>! Tu pedido <strong style="color:#00A0DF;">${escapeHtml(params.orderCode)}</strong> acaba de sellarse en empaque (<span style="font-family:monospace;color:#CBD5E1;">${escapeHtml(params.packageLabelCode)}</span>).</p>
+    <div style="background-color:#0B0E17;border:2px solid #F20574;border-radius:16px;padding:20px;text-align:center;margin:18px 0;">
+      <div style="font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:#F9A8D4;font-weight:800;">Tu PIN de Entrega Segura</div>
+      <div style="font-size:40px;font-weight:900;letter-spacing:0.26em;color:#F20574;font-family:monospace;margin:8px 0 6px;">${escapeHtml(params.deliveryPin)}</div>
+      <div style="font-size:12px;color:#94A3B8;">Dicta este código de 4 dígitos al repartidor o mesero únicamente al recibir tu pedido.</div>
     </div>
-    <p><a href="${escapeHtml(env.APP_URL)}/mis-pedidos" style="display:inline-block;padding:11px 20px;background:#00A0DF;color:#0B0D12;text-decoration:none;border-radius:10px;font-weight:800;font-size:13px;">Ver Mapa &amp; Chat con Repartidor</a></p>
+    <p style="margin:18px 0 4px;"><a href="${escapeHtml(publicBase)}/mis-pedidos" style="display:inline-block;padding:12px 22px;background-color:#00A0DF;color:#0B0D12;text-decoration:none;border-radius:12px;font-weight:800;font-size:13px;">Ver Mapa &amp; Chat en Vivo →</a></p>
   `;
 
   return sendOrStoreEmail({
@@ -189,7 +354,14 @@ export async function sendOrderPackedPinEmail(params: {
     recipientRole: 'CLIENTE',
     templateType: 'ORDER_PACKED_PIN',
     subject: `Tu Pedido ${params.orderCode} está Empacado · PIN ${params.deliveryPin}`,
-    htmlBody: wrapJoyRideShell('EMPAQUE SELLADO', `Tu PIN de entrega: ${params.deliveryPin}`, body, '#F20574'),
+    cidHtmlBody: wrapJoyRideShell({
+      badge: 'EMPAQUE SELLADO',
+      heading: `Tu PIN de entrega: ${params.deliveryPin}`,
+      bodyHtml: body,
+      accent: '#F20574',
+      bannerAlt: 'Pedido listo en Joy Ride Café',
+    }),
+    bannerKey: 'order',
     relatedOrderId: params.orderId,
   });
 }
@@ -205,16 +377,21 @@ export async function sendReservationEmail(params: {
   includeSalsaClass: boolean;
   qrPassToken: string;
 }) {
+  const publicBase = getPublicAppUrl();
   const body = `
-    <p>Hola <strong>${escapeHtml(params.guestName)}</strong>, tu mesa en <strong>Joy Ride Café® Sucre</strong> está reservada.</p>
-    <div style="background:#0B0D12;border:1px solid #262C3A;border-radius:12px;padding:16px;margin:16px 0;">
-      <div><strong>Código:</strong> <span style="color:#00A0DF;font-family:monospace;">${escapeHtml(params.code)}</span></div>
+    <p style="margin-top:0;">Hola <strong style="color:#FFFFFF;">${escapeHtml(params.guestName)}</strong>, tu mesa en <strong style="color:#00A0DF;">Joy Ride Café® Sucre</strong> está confirmada.</p>
+    <div style="background-color:#0B0E17;border:1px solid #262E40;border-radius:14px;padding:18px;margin:16px 0;font-size:14px;line-height:1.8;">
+      <div><strong>Código de Reserva:</strong> <span style="color:#00A0DF;font-family:monospace;font-weight:800;">${escapeHtml(params.code)}</span></div>
       <div><strong>Ambiente:</strong> ${escapeHtml(params.zone)}</div>
       <div><strong>Fecha y Hora:</strong> ${escapeHtml(params.date)} · ${escapeHtml(params.timeSlot)}</div>
       <div><strong>Personas:</strong> ${Number(params.partySize)}</div>
-      <div><strong>Pase QR Puerta:</strong> <span style="font-family:monospace;color:#F20574;">${escapeHtml(params.qrPassToken)}</span></div>
-      ${params.includeSalsaClass ? '<div style="margin-top:8px;color:#F9A8D4;font-weight:700;">&#10003; Incluye Clase Gratis de Salsa &amp; Bachata</div>' : ''}
+      <div style="margin-top:10px;padding-top:10px;border-top:1px dashed #262E40;">
+        <strong>Pase QR Puerta:</strong>
+        <span style="display:inline-block;margin-left:6px;padding:3px 10px;border-radius:8px;background-color:#F20574;color:#FFFFFF;font-family:monospace;font-weight:800;">${escapeHtml(params.qrPassToken)}</span>
+      </div>
+      ${params.includeSalsaClass ? '<div style="margin-top:10px;color:#F9A8D4;font-weight:700;">&#10003; Incluye Clase Gratis de Salsa &amp; Bachata</div>' : ''}
     </div>
+    <p style="margin:18px 0 4px;"><a href="${escapeHtml(publicBase)}/mis-pedidos" style="display:inline-block;padding:12px 22px;background-color:#00A0DF;color:#0B0D12;text-decoration:none;border-radius:12px;font-weight:800;font-size:13px;">Ver mi Pase QR &amp; Reservas →</a></p>
   `;
 
   return sendOrStoreEmail({
@@ -222,7 +399,14 @@ export async function sendReservationEmail(params: {
     recipientRole: 'CLIENTE',
     templateType: 'RESERVATION_CONFIRMED',
     subject: `Pase QR Reserva ${params.code} — Joy Ride Café® Sucre`,
-    htmlBody: wrapJoyRideShell('PASE DE RESERVA', `Mesa confirmada (${params.code})`, body, '#00A0DF'),
+    cidHtmlBody: wrapJoyRideShell({
+      badge: 'PASE DE RESERVA',
+      heading: `Mesa confirmada (${params.code})`,
+      bodyHtml: body,
+      accent: '#00A0DF',
+      bannerAlt: 'Noches de Salsa y Patio Colonial Joy Ride',
+    }),
+    bannerKey: 'salsa',
   });
 }
 
@@ -250,7 +434,14 @@ export async function sendManagerAlertEmail(params: {
     recipientRole: 'GERENTE',
     templateType: params.templateType,
     subject: params.subject,
-    htmlBody: wrapJoyRideShell('GERENCIA / OPS', params.title, params.bodyHtml, '#F20574'),
+    cidHtmlBody: wrapJoyRideShell({
+      badge: 'GERENCIA / OPS',
+      heading: params.title,
+      bodyHtml: params.bodyHtml,
+      accent: '#F20574',
+      bannerAlt: 'Operaciones Joy Ride Café Sucre',
+    }),
+    bannerKey: 'ops',
     relatedOrderId: params.relatedOrderId,
   });
 }
@@ -262,6 +453,7 @@ export async function sendNewsletterCampaign(params: {
   promoCode?: string;
   testEmail?: string;
 }) {
+  const publicBase = getPublicAppUrl();
   let recipients: Set<string>;
   if (params.testEmail) {
     recipients = new Set<string>([params.testEmail]);
@@ -272,16 +464,17 @@ export async function sendNewsletterCampaign(params: {
   }
 
   const safeBody = escapeHtml(params.bodyText).replace(/\n/g, '<br/>');
-  const html = wrapJoyRideShell(
-    'NOVEDADES & HAPPY HOUR',
-    params.headline,
-    `<p>${safeBody}</p>${
+  const html = wrapJoyRideShell({
+    badge: 'NOVEDADES & HAPPY HOUR',
+    heading: params.headline,
+    bodyHtml: `<p style="margin-top:0;">${safeBody}</p>${
       params.promoCode
-        ? `<div style="margin:16px 0;padding:12px;border:1px dashed #F20574;border-radius:10px;text-align:center;font-family:monospace;font-size:16px;color:#F20574;font-weight:800;">CÓDIGO: ${escapeHtml(params.promoCode)}</div>`
+        ? `<div style="margin:18px 0;padding:14px;background-color:#0B0E17;border:1px dashed #F20574;border-radius:12px;text-align:center;font-family:monospace;font-size:17px;color:#F20574;font-weight:900;letter-spacing:0.12em;">CÓDIGO: ${escapeHtml(params.promoCode)}</div>`
         : ''
-    }<p><a href="${escapeHtml(env.APP_URL)}" style="display:inline-block;padding:11px 20px;background:#00A0DF;color:#0B0D12;text-decoration:none;border-radius:10px;font-weight:800;font-size:13px;">Explorar Carta y Promos</a></p>`,
-    '#F20574'
-  );
+    }<p style="margin:18px 0 4px;"><a href="${escapeHtml(publicBase)}/carta" style="display:inline-block;padding:12px 22px;background-color:#00A0DF;color:#0B0D12;text-decoration:none;border-radius:12px;font-weight:800;font-size:13px;">Explorar Carta y Promos →</a></p>`,
+    accent: '#F20574',
+    bannerAlt: 'Patio Colonial Joy Ride Café Sucre',
+  });
 
   const logs = [];
   for (const email of recipients) {
@@ -291,7 +484,8 @@ export async function sendNewsletterCampaign(params: {
         recipientRole: 'SUSCRIPTOR',
         templateType: 'NEWSLETTER_PROMO',
         subject: params.subject,
-        htmlBody: html,
+        cidHtmlBody: html,
+        bannerKey: 'patio',
       })
     );
   }
@@ -311,12 +505,12 @@ function buildManagerReservationBodyHtml(params: {
   const estRevenueBs = params.partySize * 55;
   const estRevenueUsd = Number((estRevenueBs / 6.96).toFixed(2));
   return `
-    <p>Se confirmó una nueva reserva de mesa para <strong>${escapeHtml(params.guestName)}</strong> (${escapeHtml(params.guestPhone)}).</p>
-    <div style="background:#0B0D12;border:1px solid #262C3A;border-radius:12px;padding:14px 16px;margin:12px 0;">
-      <div><strong>Código:</strong> ${escapeHtml(params.code)} · <strong>Zona:</strong> ${escapeHtml(params.zone)}</div>
+    <p style="margin-top:0;">Se confirmó una nueva reserva de mesa para <strong style="color:#FFFFFF;">${escapeHtml(params.guestName)}</strong> (${escapeHtml(params.guestPhone)}).</p>
+    <div style="background-color:#0B0E17;border:1px solid #262E40;border-radius:14px;padding:16px 18px;margin:14px 0;font-size:14px;line-height:1.8;">
+      <div><strong>Código:</strong> <span style="color:#00A0DF;font-family:monospace;">${escapeHtml(params.code)}</span> · <strong>Zona:</strong> ${escapeHtml(params.zone)}</div>
       <div><strong>Fecha y hora:</strong> ${escapeHtml(params.date)} a las ${escapeHtml(params.timeSlot)}</div>
       <div><strong>Personas:</strong> ${Number(params.partySize)}${params.includeSalsaClass ? ' (Con clase de Salsa y Bachata)' : ''}</div>
-      <div style="margin-top:8px;color:#00A0DF;font-weight:800;">Ingreso estimado en barra/cocina: Bs. ${estRevenueBs.toFixed(2)} ($ ${estRevenueUsd.toFixed(2)} USD)</div>
+      <div style="margin-top:8px;color:#00A0DF;font-weight:800;">Consumo estimado en barra/cocina: Bs. ${estRevenueBs.toFixed(2)} ($ ${estRevenueUsd.toFixed(2)} USD)</div>
     </div>
   `;
 }
@@ -346,26 +540,25 @@ function buildEventAnnouncementHtml(event: {
   badge: string;
   locationLabel: string;
   scheduleLabel: string;
-  imageUrl: string;
 }) {
-  const bannerSrc = event.imageUrl.startsWith('http')
-    ? event.imageUrl
-    : `${env.APP_URL}${event.imageUrl}`;
-
+  const publicBase = getPublicAppUrl();
   const body = `
-    <div style="border-radius:14px;overflow:hidden;border:1px solid #262C3A;margin-bottom:16px;background:#0B0D12;">
-      <img src="${escapeHtml(bannerSrc)}" alt="${escapeHtml(event.title)}" style="width:100%;max-height:220px;object-fit:cover;display:block;" />
-    </div>
-    <p style="font-size:16px;font-weight:700;color:#00A0DF;margin:0 0 8px;">${escapeHtml(event.subtitle)}</p>
-    <p>${escapeHtml(event.description)}</p>
-    <div style="background:#0B0D12;border:1px solid #262C3A;border-radius:12px;padding:14px 16px;margin:16px 0;font-size:13px;">
+    <p style="font-size:16px;font-weight:800;color:#00A0DF;margin:0 0 10px;">${escapeHtml(event.subtitle)}</p>
+    <p style="margin:0 0 14px;">${escapeHtml(event.description)}</p>
+    <div style="background-color:#0B0E17;border:1px solid #262E40;border-radius:14px;padding:15px 18px;margin:16px 0;font-size:13px;line-height:1.8;">
       <div><strong>Lugar:</strong> ${escapeHtml(event.locationLabel)}</div>
       <div><strong>Horario:</strong> ${escapeHtml(event.scheduleLabel)}</div>
     </div>
-    <p><a href="${escapeHtml(env.APP_URL)}/?reservar=1" style="display:inline-block;padding:12px 22px;background:#F20574;color:#FFFFFF;text-decoration:none;border-radius:10px;font-weight:800;font-size:13px;">Reservar Mesa en Joy Ride</a></p>
+    <p style="margin:18px 0 4px;"><a href="${escapeHtml(publicBase)}/?reservar=1" style="display:inline-block;padding:12px 24px;background-color:#F20574;color:#FFFFFF;text-decoration:none;border-radius:12px;font-weight:800;font-size:13px;">Reservar Mesa en Joy Ride →</a></p>
   `;
 
-  return wrapJoyRideShell(event.badge, event.title, body, '#F20574');
+  return wrapJoyRideShell({
+    badge: event.badge,
+    heading: event.title,
+    bodyHtml: body,
+    accent: '#F20574',
+    bannerAlt: event.title,
+  });
 }
 
 export async function sendEventActivatedCampaign(event: {
@@ -390,7 +583,9 @@ export async function sendEventActivatedCampaign(event: {
         recipientRole: 'SUSCRIPTOR',
         templateType: 'EVENT_ANNOUNCEMENT',
         subject: `Nuevo Evento Joy Ride: ${event.title}`,
-        htmlBody: html,
+        cidHtmlBody: html,
+        bannerKey: 'salsa',
+        customBannerMediaUrl: event.imageUrl,
       })
     );
   }
@@ -470,7 +665,7 @@ export async function sendFullEmailTestSuite(targetEmail: string) {
       recipientRole: 'SUSCRIPTOR',
       templateType: 'EVENT_ANNOUNCEMENT',
       subject: 'Nuevo Evento Joy Ride: Noches de Salsa, Bachata & Musica en Vivo',
-      htmlBody: buildEventAnnouncementHtml({
+      cidHtmlBody: buildEventAnnouncementHtml({
         title: 'Noches de Salsa, Bachata & Musica en Vivo',
         subtitle: 'Clases gratuitas desde las 18:00 y fiesta social hasta las 02:30',
         description:
@@ -478,8 +673,8 @@ export async function sendFullEmailTestSuite(targetEmail: string) {
         badge: 'EVENTO JOY RIDE',
         locationLabel: 'Calle Nicolas Ortiz N 14 · Centro Historico',
         scheduleLabel: 'Mar / Jue / Sab · 18:00 - 02:30',
-        imageUrl: '/images/evento-salsa.webp',
       }),
+      bannerKey: 'salsa',
     })
   );
 

@@ -14,7 +14,8 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { api } from '../../lib/api';
-import { JOYRIDE_LOCATION, SUCRE_TOURIST_SPOTS } from '../../lib/constants';
+import { JOYRIDE_LOCATION } from '../../lib/constants';
+import { usePublicMapSpots } from '../../lib/mapSpots';
 import { useI18n } from '../../context/I18nContext';
 import { joySound } from '../../lib/sound';
 import { JoyRideEvent } from '../../types';
@@ -33,6 +34,7 @@ export function SucreEventsTourismCarousel({
   onOpenReservation?: () => void;
 }) {
   const { t } = useI18n();
+  const { spots: dynamicSpots } = usePublicMapSpots();
   const { data: apiEvents, isLoading } = useQuery({
     queryKey: ['events', 'public'],
     queryFn: async () => {
@@ -46,7 +48,7 @@ export function SucreEventsTourismCarousel({
     if (apiEvents && apiEvents.length > 0) return apiEvents;
     if (isLoading) return [];
     // Graceful static fallback only if DB returned empty
-    return SUCRE_TOURIST_SPOTS.slice(0, 6).map((spot, idx) => ({
+    return dynamicSpots.slice(0, 6).map((spot, idx) => ({
       id: spot.id,
       slug: spot.id,
       title: spot.name,
@@ -96,9 +98,9 @@ export function SucreEventsTourismCarousel({
   const modalSpot = useMemo(() => {
     if (!modalEvent) return null;
     return (
-      SUCRE_TOURIST_SPOTS.find((s) => s.id === modalEvent.spotId) || SUCRE_TOURIST_SPOTS[0]
+      dynamicSpots.find((s) => s.id === modalEvent.spotId) || dynamicSpots[0]
     );
-  }, [modalEvent]);
+  }, [modalEvent, dynamicSpots]);
 
   const modalImages = useMemo(() => {
     if (!modalEvent) return [];

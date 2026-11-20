@@ -15,6 +15,7 @@ import { useAuth } from '../../context/AuthContext';
 import { ROLE_META } from '../../lib/format';
 import { Role } from '../../types';
 import { StaffOpsChat } from '../chat/StaffOpsChat';
+import { BrandWatermarkBg } from '../ui/BrandWatermarkBg';
 
 interface NavLinkItem {
   to: string;
@@ -192,7 +193,8 @@ export function OperationsLayout({
       )}
 
       {/* Main Content */}
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="relative flex min-w-0 flex-1 flex-col overflow-x-clip">
+        <BrandWatermarkBg variant="admin" emblemSide="right" />
         <header className="sticky top-0 z-30 flex items-center justify-between gap-4 border-b border-hairline bg-obsidian/90 px-4 py-3.5 backdrop-blur-md sm:px-6">
           <div className="flex items-center gap-3">
             <button
@@ -221,7 +223,7 @@ export function OperationsLayout({
           </div>
         </header>
 
-        <main className="mx-auto w-full max-w-[1600px] flex-1 p-4 pb-24 sm:p-8 sm:pb-24 lg:px-10">
+        <main className="relative z-10 mx-auto w-full max-w-[1600px] flex-1 p-4 pb-24 sm:p-8 sm:pb-24 lg:px-10">
           {children}
         </main>
       </div>

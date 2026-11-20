@@ -73,7 +73,7 @@ export function MenuPage() {
   });
 
   return (
-    <div className="min-h-screen bg-obsidian text-ink">
+    <div className="relative min-h-screen overflow-x-clip bg-obsidian text-ink">
       <Navbar
         categories={categoriesData || []}
         onSelectCategory={(slug) => setSelectedCategory(slug)}

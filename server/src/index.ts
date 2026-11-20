@@ -22,6 +22,7 @@ import adminRoutes from './routes/admin.routes';
 import chatRoutes from './routes/chat.routes';
 import reviewsRoutes from './routes/reviews.routes';
 import eventsRoutes from './routes/events.routes';
+import mapSpotsRoutes from './routes/map-spots.routes';
 import { newsletterSubscribeSchema } from './validators/schemas';
 
 const app = express();
@@ -93,6 +94,47 @@ app.use(
   express.static(uploadsDir)
 );
 
+// Static email assets (PNG logo & JPEG banners for Admin preview + email templates)
+const emailAssetsCandidates = [
+  path.resolve(__dirname, '../assets/email'),
+  path.resolve(__dirname, '../../assets/email'),
+  path.resolve(process.cwd(), 'assets/email'),
+  path.resolve(process.cwd(), 'server/assets/email'),
+];
+const emailAssetsDir = emailAssetsCandidates.find((p) => fs.existsSync(p));
+if (emailAssetsDir) {
+  app.use(
+    '/email-assets',
+    (_req, res, next) => {
+      res.setHeader('X-Content-Type-Options', 'nosniff');
+      res.setHeader('Cache-Control', 'public, max-age=86400');
+      next();
+    },
+    express.static(emailAssetsDir)
+  );
+}
+
+// Persistent media assets stored in PostgreSQL (survives Render Free ephemeral disk restarts)
+app.get('/api/media/:id', async (req, res, next) => {
+  try {
+    const asset = await prisma.mediaAsset.findUnique({ where: { id: String(req.params.id) } });
+    if (!asset) {
+      res.status(404).json({ error: 'Recurso multimedia no encontrado' });
+      return;
+    }
+    res.setHeader('Content-Type', asset.mimeType);
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader(
+      'Content-Security-Policy',
+      "default-src 'none'; img-src 'self' data:; media-src 'self'; sandbox"
+    );
+    res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+    res.send(Buffer.from(asset.data));
+  } catch (err) {
+    next(err);
+  }
+});
+
 // Health check for Render & readiness
 app.get('/api/health', async (_req, res) => {
   try {
@@ -140,6 +182,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/reviews', reviewsRoutes);
 app.use('/api/events', eventsRoutes);
+app.use('/api/map-spots', mapSpotsRoutes);
 
 // Public newsletter subscription for novelty/Happy Hour campaigns
 app.post('/api/newsletter/subscribe', publicWriteLimiter, async (req, res, next) => {
@@ -169,7 +212,11 @@ const clientDist = candidateDistPaths.find((p) => fs.existsSync(path.join(p, 'in
 if (clientDist) {
   app.use(express.static(clientDist));
   app.get('*', (req, res, next) => {
-    if (req.path.startsWith('/api/') || req.path.startsWith('/uploads/')) {
+    if (
+      req.path.startsWith('/api/') ||
+      req.path.startsWith('/uploads/') ||
+      req.path.startsWith('/email-assets/')
+    ) {
       next();
       return;
     }
